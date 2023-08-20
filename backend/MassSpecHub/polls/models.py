@@ -27,5 +27,18 @@ class UserGroup(models.Model):
 # group = models.ForeignKey(Group, on_delete=models.CASCADE())
 
 
+class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
+    profile_pic = models.ImageField()
+    description = models.TextField()
+    
+
+    # Add custom fields here, if needed
+
+    def __str__(self):
+        return self.username
+
+
+
 class Data(models.Model):
     data_publicity = models.BooleanField()
