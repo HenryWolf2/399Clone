@@ -210,4 +210,4 @@ yarn-error.log*
 next-env.d.ts
 
 # cache/webpack .gz files
-*.gz
+*.pack.gz
