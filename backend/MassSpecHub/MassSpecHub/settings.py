@@ -36,6 +36,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'polls',
+    'rest_framework',
+    'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,6 +57,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'MassSpecHub.urls'
+
+AUTH_USER_MODEL = 'polls.CustomUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    # Other settings...
+}
+
 
 TEMPLATES = [
     {
