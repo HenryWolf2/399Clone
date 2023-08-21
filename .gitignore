@@ -208,3 +208,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# cache/webpack .gz files
+*.gz
