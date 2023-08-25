@@ -9,6 +9,12 @@ class Group(models.Model):
     description = models.TextField()
     group_pic = models.ImageField()
 
+    class Meta:
+        db_table = 'Group'
+
+        def __str__(self):
+            return self.db_table
+
 class Post(models.Model):
     title = models.TextField()
     summary = models.TextField()
@@ -36,6 +42,12 @@ class CustomUser(AbstractUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+    
+    class Meta:
+        db_table = 'CustomUser'
+
+        def __str__(self):
+            return self.db_table
 
 
 class UserGroup(models.Model):
@@ -44,6 +56,12 @@ class UserGroup(models.Model):
 
     join_date = models.DateField(null=True)
     permissions = models.TextField(null=True)
+
+    class Meta:
+        db_table = 'UserGroup'
+
+        def __str__(self):
+            return self.db_table
 
 
 class Data(models.Model):
