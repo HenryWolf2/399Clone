@@ -1,13 +1,12 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from .serializers import UserSerializer, GroupSerializer, PostSerializer
+from .serializers import UserSerializer, GroupSerializer
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser, Group
-from django.http import HttpResponse
 
 @api_view(['POST'])
 def register_user(request):
@@ -66,14 +65,3 @@ def create_group(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['POST'])
-def create_post(request):
-    if request.method == 'POST':
-        serializer = PostSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
