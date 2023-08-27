@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Post
+from .models import CustomUser, Post, Group
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,3 +31,16 @@ class PostSerializer(serializers.ModelSerializer):
         # author=validated_data['author'].id
         post.save()
         return post
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['description', 'group_pic']
+
+    def create(self, validated_data):
+        group = Group(
+            description = validated_data['description'],
+            group_pic= validated_data['group_pic']
+        )
+        group.save()
+        return group
