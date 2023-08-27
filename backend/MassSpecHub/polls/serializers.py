@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import CustomUser, Post, Group
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
