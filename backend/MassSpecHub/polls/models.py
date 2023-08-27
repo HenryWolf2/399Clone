@@ -15,21 +15,6 @@ class Group(models.Model):
         def __str__(self):
             return self.db_table
 
-class Post(models.Model):
-    title = models.TextField()
-    summary = models.TextField()
-    description = models.TextField()
-    publicity = models.BooleanField()
-
-
-# author = models.ForeignKey(CustomUser, on_delete=models.CASCADE())
-
-
-
-
-
-# user = models.ForeignKey(User, on_delete=models.CASCADE())
-# group = models.ForeignKey(Group, on_delete=models.CASCADE())
 
 
 class CustomUser(AbstractUser, PermissionsMixin):
@@ -48,7 +33,12 @@ class CustomUser(AbstractUser, PermissionsMixin):
 
         def __str__(self):
             return self.db_table
-
+class Post(models.Model):
+    title = models.TextField()
+    summary = models.TextField()
+    description = models.TextField()
+    publicity = models.BooleanField()
+# author = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
 
 class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
