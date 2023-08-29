@@ -79,4 +79,44 @@ def create_group(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def assign_user_to_group(request):
+    if request.method == 'POST':
+        user_id = request.data.get('user_id')
+        group_id = request.data.get('group_id')
+        
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            group = Group.objects.get(id=group_id)
+        except ObjectDoesNotExist:
+            return Response({'error': 'User or Group not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        user.groups.add(group)
+        return Response({'message': f'User {user.username} assigned to group {group.name}.'}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_groups(request):
+    if request.method == 'GET':
+        groups = Group.objects.all()
+        serializer = GroupSerializer(groups, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_group_by_field(request):
+    if request.method == 'GET':
+        field_value = request.query_params.get('field_value')       
+        try:
+            if field_value.isdigit():
+                group = Group.objects.get(id=field_value)
+            else:
+                group = Group.objects.get(name=field_value)
+            
+            serializer = GroupSerializer(group)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response({'error': 'Group not found'}, status=status.HTTP_404_NOT_FOUND)
 
