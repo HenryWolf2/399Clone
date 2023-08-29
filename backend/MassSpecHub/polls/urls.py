@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register_user, user_login, user_logout, create_post, create_group
+from .views import register_user, user_login, user_logout, create_post, create_group, add_data
 
 
 urlpatterns = [
@@ -8,4 +8,5 @@ urlpatterns = [
     path('logout/', user_logout, name='logout'),
     path('post/create', create_post, name='create_post'),
     path('groups/create', create_group, name='create_group'),
+    path('post/create/data', add_data, name='upload_data'),
 ]

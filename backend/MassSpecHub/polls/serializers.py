@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Post, Group
+from .models import CustomUser, Post, Group, Data, PostAnalysis
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
@@ -33,6 +34,7 @@ class PostSerializer(serializers.ModelSerializer):
         post.save()
         return post
 
+
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
@@ -40,8 +42,38 @@ class GroupSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         group = Group(
-            description = validated_data['description'],
-            group_pic= validated_data['group_pic']
+            description=validated_data['description'],
+            group_pic=validated_data['group_pic']
         )
         group.save()
         return group
+
+class DataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Data
+        fields = ['data_publicity', 'compounds_file', 'adducts_file', 'bounds_file']
+
+    def create(self, validated_data):
+        data = Data(
+            data_publicty=validated_data['data_publicity'],
+            compunds_file=validated_data['compounds_file'],
+            adducts_file=validated_data['adducts_file'],
+            bounds_file=validated_data['bounds_file']
+        )
+        data.save()
+        return data
+
+class PostAnalysisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostAnalysis
+        fields = ['results', 'data_input', 'associated_post']
+
+    def create(self, validated_data):
+        postAnalysis = PostAnalysis(
+            results=validated_data['results'],
+            data_input=validated_data['data_input'],
+            associated_post=validated_data['associated_post']
+        )
+        postAnalysis.save()
+        return postAnalysis
+
