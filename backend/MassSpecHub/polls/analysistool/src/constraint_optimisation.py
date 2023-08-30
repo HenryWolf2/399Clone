@@ -1,8 +1,8 @@
 from ortools.sat.python import cp_model
 import numpy as np
 import time
-from utils import read
-from isotope_pattern import peak_isotope
+from .utils import read
+from .isotope_pattern import peak_isotope
 
 PROTON_MASS = 1.0078250319
 

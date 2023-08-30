@@ -75,8 +75,8 @@ def validate_ground_truth(ground_truth_file, binding_sites, excel_file=False):
     return result
 
 
-def generate_results(ground_truth, bound, compounds, adducts, results_file,\
-        column_name='CL', weights=[0., 1., 10., 100., 1000., 10000.], tolerance=config.tolerance, peak_height=config.peak_height):
+def generate_results(ground_truth, bound, compounds, adducts, results_file, \
+                     column_name='CL', weights=[0., 1., 10., 100., 1000., 10000.], tolerance=config.tolerance, peak_height=config.peak_height):
     '''
     Generate results for objective function and range of given weights 
     '''

@@ -2,20 +2,20 @@
 import pandas as pd 
 # import numpy as np
 import time
-import config
+from . import config
 from scipy import interpolate
 
-from utils import read, normalise
-from peak_search import peak_find, match_peaks, plot_peaks
-from feasible_set import feasible_set_df
+from .utils import read, normalise
+from .peak_search import peak_find, match_peaks, plot_peaks
+from .feasible_set import feasible_set_df
 # from os import listdir
 # from os.path import isfile, join
 import os
 
-def search(bound_file_path, compounds_file_path, adducts_file_path, tolerance=config.tolerance, peak_height=config.peak_height,\
-        multi_protein=config.multi_protein, min_primaries=config.min_primaries, max_primaries=config.max_primaries,\
-            max_adducts=config.max_adducts, valence=config.valence, only_best=config.only_best, min_dist_between_peaks=4., \
-                calibrate=config.calibrate, manual_calibration=0., plot_peak_graph=False, weight=10., return_peaks=False):
+def search(bound_file_path, compounds_file_path, adducts_file_path, tolerance=config.tolerance, peak_height=config.peak_height, \
+           multi_protein=config.multi_protein, min_primaries=config.min_primaries, max_primaries=config.max_primaries, \
+           max_adducts=config.max_adducts, valence=config.valence, only_best=config.only_best, min_dist_between_peaks=4., \
+           calibrate=config.calibrate, manual_calibration=0., plot_peak_graph=False, weight=10., return_peaks=False):
     '''
     Search for appropriate binding sites
 
@@ -79,19 +79,18 @@ def search(bound_file_path, compounds_file_path, adducts_file_path, tolerance=co
 
 
 if __name__ == "__main__":
-    path = os.path.dirname(os.path.abspath(__file__))
-    bound = os.path.join(os.path.dirname(path), "example\\bound_spectrum.xlsx")
-    adducts = os.path.join(os.path.dirname(path), "example\\adducts.xlsx")
-    compounds = os.path.join(os.path.dirname(path), "example\compounds.xlsx")
-    #compounds = "adducthunter-main/example/compounds.xlsx"
-    #adducts = "adducthunter-main/example/compounds.xlsx"
-    #bound = "example/bound_spectrum.xlsx"
+    #path = os.path.dirname(os.path.abspath(__file__))
+    #bound = os.path.join(os.path.dirname(path), "example\\bound_spectrum.xlsx")
+    #adducts = os.path.join(os.path.dirname(path), "example\\adducts.xlsx")
+    #compounds = os.path.join(os.path.dirname(path), "example\compounds.xlsx")
+    # compounds = "adducthunter-main/example/compounds.xlsx"
+    # adducts = "adducthunter-main/example/compounds.xlsx"
+    # bound = "example/bound_spectrum.xlsx"
 
     # bound = r"Data\Input Data\RAPTA-C-20220421T034334Z-001\RAPTA-C\bound_spectrum_mb_rapc_precal.xlsx"
     # compounds = r"Data\Input Data\RAPTA-C-20220421T034334Z-001\RAPTA-C\compounds_mb_rapc.xlsx"
 
     # plt.rcParams["figure.figsize"] = (18,3)
-    binding_sites = search(bound, compounds, adducts)
+   # binding_sites = search(bound, compounds, adducts)
     pd.set_option("display.max_rows", None, "display.max_columns", None)
-    print(binding_sites)
     #binding_sites.to_csv('test_output.csv', index=False)

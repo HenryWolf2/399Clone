@@ -3,6 +3,8 @@ import os.path
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Permission, PermissionsMixin
+from django.db.models import JSONField
+from django.core.validators import FileExtensionValidator
 
 
 # Create your models here.
@@ -61,12 +63,12 @@ class UserGroup(models.Model):
 
 class Data(models.Model):
     data_publicity = models.BooleanField()
-    compounds_file = models.FileField()
-    adducts_file = models.FileField()
-    bounds_file = models.FileField()
+    compounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])], default='test.csv')
+    adducts_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])], default='test.csv')
+    bounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])], default='test.csv')
 
 
 class PostAnalysis(models.Model):
-    results = models.FileField()
     data_input = models.OneToOneField('Data', on_delete=models.CASCADE)
     associated_post = models.OneToOneField('Post', on_delete=models.CASCADE)
+    result_df = JSONField()

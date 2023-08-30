@@ -66,7 +66,7 @@ class DataSerializer(serializers.ModelSerializer):
 class PostAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostAnalysis
-        fields = ['results', 'data_input', 'associated_post']
+        fields = ['results_df', 'data_input', 'associated_post']
 
     def create(self, validated_data):
         postAnalysis = PostAnalysis(

@@ -1,8 +1,8 @@
 # import pandas as pd
 import numpy as np
-from isotope_pattern import peak_isotope
+from .isotope_pattern import peak_isotope
 import time
-from constraint_optimisation import feasible_set_search
+from .constraint_optimisation import feasible_set_search
 
 PROTON_MASS = 1.0078250319
 
