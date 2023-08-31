@@ -1,0 +1,57 @@
+.App {
+    text-align: center;
+}
+  
+.App-logo {
+    height: 40vmin;
+}
+  
+.App-header {
+    background: linear-gradient(
+        to bottom,
+        #f9f9f9 0%,
+        #02AEEC 100%
+    );
+    /* Proper background style
+    background: linear-gradient(
+        to bottom,
+        #35CFFF 0%,
+        #35CFFF 50%,
+        #02AEEC 50%,
+        #02AEEC 100%
+    );
+    */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.White-circle {
+    height: 65vmin;
+    width: 65vmin;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+p {
+    color: black;
+    margin: 0px;
+    font-size: 4vmin;
+}
