@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser, Group, Post
 from .analysistool.src import binding_site_search
+import json
 
 
 @api_view(['POST'])
@@ -84,10 +85,10 @@ def create_group(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_data(request):
     if request.method == 'POST':
         post_id = request.data.get('post_id')
-        print(post_id)
         try:
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
@@ -114,8 +115,10 @@ def add_data(request):
                                                           min_primaries=min_primaries, max_primaries=max_primaries,
                                                           max_adducts=max_adducts, valence=valence, only_best=only_best,
                                                           calibrate=calibrate)
-            analysis_data = {'results_df': analysis_results, 'data_input': data, 'associated_with': post}
-            analysis_serializer = PostAnalysisSerializer(analysis_data)
+            json_df = analysis_results.to_json(orient='split', index=False)
+            json_df = json.loads(json_df)
+            analysis_data = {'result_df': json_df, 'data_input': data.id, 'associated_post': post.id}
+            analysis_serializer = PostAnalysisSerializer(data=analysis_data)
             if analysis_serializer.is_valid():
                 analysis_serializer.save()
                 return Response(analysis_serializer.data, status=status.HTTP_201_CREATED)

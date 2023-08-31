@@ -55,8 +55,8 @@ class DataSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         data = Data(
-            data_publicty=validated_data['data_publicity'],
-            compunds_file=validated_data['compounds_file'],
+            data_publicity=validated_data['data_publicity'],
+            compounds_file=validated_data['compounds_file'],
             adducts_file=validated_data['adducts_file'],
             bounds_file=validated_data['bounds_file']
         )
@@ -66,11 +66,11 @@ class DataSerializer(serializers.ModelSerializer):
 class PostAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostAnalysis
-        fields = ['results_df', 'data_input', 'associated_post']
+        fields = ['result_df', 'data_input', 'associated_post']
 
     def create(self, validated_data):
         postAnalysis = PostAnalysis(
-            results=validated_data['results'],
+            result_df=validated_data['result_df'],
             data_input=validated_data['data_input'],
             associated_post=validated_data['associated_post']
         )
