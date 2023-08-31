@@ -7,12 +7,7 @@
 }
   
 .App-header {
-    background: linear-gradient(
-        to bottom,
-        #f9f9f9 0%,
-        #02AEEC 100%
-    );
-    /* Proper background style
+
     background: linear-gradient(
         to bottom,
         #35CFFF 0%,
@@ -20,7 +15,6 @@
         #02AEEC 50%,
         #02AEEC 100%
     );
-    */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -31,8 +25,8 @@
 }
 
 .White-circle {
-    height: 65vmin;
-    width: 65vmin;
+    height: 90vmin;
+    width: 90vmin;
     background-color: #FFFFFF;
     border-radius: 50%;
     display: flex;

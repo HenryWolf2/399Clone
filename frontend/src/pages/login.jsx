@@ -1,9 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
-
-// You'll need this <3
-// import TextField from '@mui/material/TextField';
+import LoginForm from '../components/login/loginForm';
 
 export default function Login() {
   return (
@@ -12,9 +10,8 @@ export default function Login() {
       <div className="App">
         <div className='App-header'>
           <div className='White-circle'>
-            <h2 style={{ color: '#000000' }}>Login to Mass Spectrometry Hub</h2>
-            {/* Add MUI stuff here, for example */}
-            {/* <TextField id="outlined-basic" label="Email" variant="outlined" /> */}
+            <h2 style={{ color: '#000000', width: "350px" }}>Login to Mass Spectrometry Hub</h2>
+            <LoginForm/>
           </div>
         </div>
       </div>
