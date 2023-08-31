@@ -1,6 +1,10 @@
+import os.path
+
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser, Permission, Group, PermissionsMixin    
+from django.contrib.auth.models import AbstractUser, Permission, PermissionsMixin
+from django.db.models import JSONField
+from django.core.validators import FileExtensionValidator
 
 
 # Create your models here.
@@ -15,6 +19,7 @@ class Group(models.Model):
         def __str__(self):
             return self.db_table
 
+
 class Post(models.Model):
     title = models.TextField()
     summary = models.TextField()
@@ -23,14 +28,6 @@ class Post(models.Model):
 
 
 # author = models.ForeignKey(CustomUser, on_delete=models.CASCADE())
-
-
-
-
-
-# user = models.ForeignKey(User, on_delete=models.CASCADE())
-# group = models.ForeignKey(Group, on_delete=models.CASCADE())
-
 
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
@@ -42,7 +39,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
-    
+
     class Meta:
         db_table = 'CustomUser'
 
@@ -66,3 +63,12 @@ class UserGroup(models.Model):
 
 class Data(models.Model):
     data_publicity = models.BooleanField()
+    compounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])], default='test.csv')
+    adducts_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])], default='test.csv')
+    bounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])], default='test.csv')
+
+
+class PostAnalysis(models.Model):
+    data_input = models.OneToOneField('Data', on_delete=models.CASCADE)
+    associated_post = models.OneToOneField('Post', on_delete=models.CASCADE)
+    result_df = JSONField()

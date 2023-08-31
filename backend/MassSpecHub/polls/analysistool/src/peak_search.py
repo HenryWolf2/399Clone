@@ -4,7 +4,7 @@ import numpy as np
 # from scipy import interpolate
 from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
-from isotope_pattern import *
+from .isotope_pattern import *
 import time
 
 
