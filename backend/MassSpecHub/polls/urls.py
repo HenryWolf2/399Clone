@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register_user, user_login, user_logout, create_post, create_group, add_data
+from .views import register_user, user_login, user_logout, create_post, create_group, add_data, search_post
 
 
 urlpatterns = [
@@ -9,4 +9,5 @@ urlpatterns = [
     path('post/create', create_post, name='create_post'),
     path('groups/create', create_group, name='create_group'),
     path('post/create/data', add_data, name='upload_data'),
+    path('post/search', search_post, name='search_post')
 ]
