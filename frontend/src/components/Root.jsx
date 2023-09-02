@@ -6,6 +6,7 @@ import Home from '../pages/home';
 import Login from '../pages/login';
 import Register from '../pages/register';
 import Loading from '../pages/loading';
+import Post from '../pages/post';
 import NotFound from '../pages/notFound';
 
 export default function Root() {
@@ -15,6 +16,7 @@ export default function Root() {
     { path: '/login', name: 'Login', Component: Login, exact: false },
     { path: '/loading', name: 'Loading', Component: Loading, exact: false },
     { path: '/register', name: 'Register', Component: Register, exact: false },
+    { path: '/post', name: 'Post', Component: Post, exact: false },
     { path: '*', name: 'No Match', Component: NotFound, exact: false },
   ];
 
@@ -25,6 +27,7 @@ export default function Root() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/loading" element={<Loading />} />
           <Route exact path="/register" element={<Register />} />
+          <Route exact path="/post" element={<Post />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
     </Router>

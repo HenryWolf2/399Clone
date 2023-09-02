@@ -28,6 +28,11 @@ export default function NavigationBar() {
             Loading
           </NavLink>
         </li>
+        <li>
+          <NavLink to="/post" activeClassName="active" exact>
+            post
+          </NavLink>
+        </li>
       </ul>
     </nav>
   );
