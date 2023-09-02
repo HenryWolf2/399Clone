@@ -6,7 +6,7 @@ import NavigationBar from '../components/NavigationBar';
 export default function Loading() {
   return (
     <div className='container'>
-      <NavigationBar />
+      <NavigationBar></NavigationBar>
       <div className="App">
         <div className='App-header'>
           <div className='White-circle'>

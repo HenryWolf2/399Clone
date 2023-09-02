@@ -5,7 +5,7 @@ import NavigationBar from '../components/NavigationBar';
 export default function Home() {
   return (
     <div className="container">
-      <NavigationBar />
+      <NavigationBar></NavigationBar>
       <h1> HOME PAGE </h1>
     </div>
   );
