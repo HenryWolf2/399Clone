@@ -89,6 +89,7 @@ def assign_user_to_group(request):
     if request.method == 'POST':
         user_id = request.data.get('user_id')
         group_id = request.data.get('group_id')
+        permissions = request.data.get('permissions')
 
         try:
             user = CustomUser.objects.get(id=user_id)
@@ -96,8 +97,8 @@ def assign_user_to_group(request):
         except ObjectDoesNotExist:
             return Response({'error': 'User or Group not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        user.groups.add(group)
-        return Response({'message': f'User {user.username} assigned to group {group.name}.'}, status=status.HTTP_200_OK)
+        user.groups.add(group, through_defaults={'permissions': permissions})
+        return Response({'message': f'User {user.username} assigned to group {group.name} with permission {permissions}'}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

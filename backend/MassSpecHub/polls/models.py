@@ -1,3 +1,4 @@
+from datetime import datetime
 import os.path
 
 from django.db import models
@@ -13,7 +14,7 @@ class Group(models.Model):
     name = models.TextField()
     description = models.TextField()
     group_pic = models.ImageField()
-    posts = models.ManyToManyField(to="Post", through="PostGroup")
+    posts = models.ManyToManyField(to="polls.Post", through="polls.PostGroup")
 
     class Meta:
         db_table = 'Group'
@@ -22,15 +23,9 @@ class Group(models.Model):
             return self.db_table
 
 
-class Post(models.Model):
-    title = models.TextField()
-    summary = models.TextField()
-    description = models.TextField()
-    publicity = models.BooleanField()
-
 class PostGroup(models.Model):
-    group = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
-    post = models.ForeignKey('Post', on_delete=models.CASCADE, null=True)
+    group = models.ForeignKey('polls.Group', on_delete=models.CASCADE, null=True)
+    post = models.ForeignKey('polls.Post', on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = 'PostGroup'
@@ -68,7 +63,7 @@ class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
     group = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
 
-    join_date = models.DateField(null=True)
+    join_date = models.DateTimeField(default=datetime.now())
     permissions = models.TextField(null=True)
 
     class Meta:
