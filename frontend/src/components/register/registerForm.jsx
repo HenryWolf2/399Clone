@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
@@ -6,10 +6,15 @@ import instance from '../api/api_instance';
 import Grid from '@mui/material/Grid';
 import { Container, FormControlLabel, Stack } from '@mui/material';
 import {Checkbox} from '@mui/material';
-
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/Alert';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 const RegisterForm = () => {
+    const userRef = useRef();
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("")
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
@@ -19,59 +24,59 @@ const RegisterForm = () => {
 
     const [emailError,setEmailError] = useState(false)
     const [userNameError,setUserNameError] = useState(false) 
-    const [passwordError, setPasswordError] = useState(false)
+    const [passwordMatchError, setPasswordMatchError] = useState(false)
+
+    const [errorMessage, setErrorMessage] = useState('')
+
+    //effect for validating the password meeting the regex specs and compares with the re-entered password, when one changes other does so both feilds are in sync
+    useEffect(() => {
+        const match = password === rePassword;
+        setPasswordMatchError(!match);
+    },[password, rePassword])
+
+    //effect for removing the error message once the user starts editing the textfeilds again
+    useEffect(() => {
+        setErrorMessage('');
+    },[userName, password, rePassword,email])
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setEmailError(false);
-        setEmailError(false);
-        setEmailError(false);
-
-        if (email == '') {
-            setEmailError(true)
+        let data = {
+            username: userName,
+            email: email,
+            password: password,
         }
-        if (password == '') {
-            setPasswordError(true)
-        }
-        if (userName == '') {
-            setUserNameError(true)
-        }
-        else{
-            // add in the checking conditions of email and username etc here
-
-            let data = {
-                "username": userName,
-                "email": email,
-                "password": password,
-            }
-            console.log(data);
-            try{
-            await instance({
-                url: "/register/",
-                method: "POST",
-                data: data
-            }).then((res) => {
-                //redirect to profile page
-                //save token in axios, add authorization to header
-                console.log(res);
-            });
-            } catch(e){
-                //display error message (username or password incorrect)
-                //clear the password field
-                console.log(e.response.data);
+        console.log(data);
+        try{
+        await instance({
+            url: "/register/",
+            method: "POST",
+            data: data
+        }).then((res) => {
+            //redirect to login page
+            console.log(res);
+            setEmail("");
+            setPassword("");
+            setUserName("");
+            navigate("/login");
+        });
+        } catch(e){
+            //displays error message if registration does not work
+            console.log(e.response.data);
+            setErrorMessage("there is a error")
 
                 
-            }
         }
-    }
-    // add in the set errors that will be triggered if user input is not correct
-    // these could include not having enough case letters - or the user already existing 
+    } 
 
 
     return(
         <Container>
         <React.Fragment>
-        <form onSubmit ={handleSubmit} action={<Link to="/login" />}>
+        
+        {errorMessage ? <Alert severity="error" label="There was an error creating your account"> There was an error creating your account — <strong>please try again!</strong> </Alert> : null}
+        <br></br>
+        <form onSubmit ={handleSubmit}>
                 <Stack spacing={2} direction="row">
                     <TextField
                     margin="normal"
@@ -112,14 +117,16 @@ const RegisterForm = () => {
                 margin="normal"
                 required
                 fullWidth
-                value={userName}
+                ref = {userRef}
                 label="UserName"
                 name="userName"
-                autoComplete="username"
+                autoComplete="off"
                 autoFocus
-                error = {userNameError}
                 onChange={e => setUserName(e.target.value)}
+                aria-invalid = {userNameError ? "false" : "true"}
+                aria-describedby='usernameNote'
                 />
+                {passwordMatchError ? <Alert severity="error" > Passwords do not match</Alert> : null}
                 <TextField
                 margin="normal"
                 required
@@ -128,8 +135,6 @@ const RegisterForm = () => {
                 label="Password"
                 type="password"
                 value={password}
-                error={passwordError}
-                autoComplete="new-password"
                 onChange={e => setPassword(e.target.value)}
                 />
                 <TextField
@@ -146,6 +151,7 @@ const RegisterForm = () => {
                 sx={{ color: 'black' }}
                 control={<Checkbox value="accept" color="primary" />}
                 label="I accept the Terms and Conditions"
+                required
                 />
                 <Button
                 type="submit"
