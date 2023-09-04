@@ -38,12 +38,13 @@ class PostSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['description', 'group_pic']
+        fields = ['description', 'group_pic', 'name']
 
     def create(self, validated_data):
         group = Group(
             description=validated_data['description'],
-            group_pic=validated_data['group_pic']
+            group_pic=validated_data['group_pic'],
+            name=validated_data['name']
         )
         group.save()
         return group
