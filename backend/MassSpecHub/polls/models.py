@@ -20,15 +20,6 @@ class Group(models.Model):
             return self.db_table
 
 
-class Post(models.Model):
-    title = models.TextField()
-    summary = models.TextField()
-    description = models.TextField()
-    publicity = models.BooleanField()
-
-
-# author = models.ForeignKey(CustomUser, on_delete=models.CASCADE())
-
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     profile_pic = models.ImageField()
@@ -47,6 +38,14 @@ class CustomUser(AbstractUser, PermissionsMixin):
             return self.db_table
 
 
+class Post(models.Model):
+    title = models.TextField()
+    summary = models.TextField()
+    description = models.TextField()
+    publicity = models.BooleanField()
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
+
+
 class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
     group = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
@@ -63,9 +62,12 @@ class UserGroup(models.Model):
 
 class Data(models.Model):
     data_publicity = models.BooleanField()
-    compounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])], default='test.csv')
-    adducts_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])], default='test.csv')
-    bounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])], default='test.csv')
+    compounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
+                                      default='test.csv')
+    adducts_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
+                                    default='test.csv')
+    bounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
+                                   default='test.csv')
 
 
 class PostAnalysis(models.Model):
