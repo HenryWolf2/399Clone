@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register_user, user_login, user_logout, create_post, create_group, add_data
+from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group
 
 
 urlpatterns = [
@@ -8,5 +8,9 @@ urlpatterns = [
     path('logout/', user_logout, name='logout'),
     path('post/create', create_post, name='create_post'),
     path('groups/create', create_group, name='create_group'),
+    path('groups/get_all', get_all_groups, name='get_all_groups'),
+    path('groups/get_by_field', get_group_by_field, name='get_group_by_field'),
     path('post/create/data', add_data, name='upload_data'),
+    path('post/add_to_group', add_post_to_group, name='add_post_to_group'),
+    path('users/assign_groups', assign_user_to_group, name='assign_user_to_group'),
 ]
