@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group
+from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post
 
 
 urlpatterns = [
