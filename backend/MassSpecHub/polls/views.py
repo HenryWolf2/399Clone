@@ -81,22 +81,24 @@ def create_group(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def assign_user_to_group(request):
     if request.method == 'POST':
         user_id = request.data.get('user_id')
         group_id = request.data.get('group_id')
-        
+
         try:
             user = CustomUser.objects.get(id=user_id)
             group = Group.objects.get(id=group_id)
         except ObjectDoesNotExist:
             return Response({'error': 'User or Group not found'}, status=status.HTTP_404_NOT_FOUND)
-        
+
         user.groups.add(group)
         return Response({'message': f'User {user.username} assigned to group {group.name}.'}, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -105,6 +107,7 @@ def get_all_groups(request):
         groups = Group.objects.all()
         serializer = GroupSerializer(groups, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -116,7 +119,7 @@ def get_group_by_field(request):
                 group = Group.objects.get(id=field_value)
             else:
                 group = Group.objects.get(name=field_value)
-            
+
             serializer = GroupSerializer(group)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
@@ -124,10 +127,10 @@ def get_group_by_field(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_data(request):
     if request.method == 'POST':
         post_id = request.data.get('post_id')
-        print(post_id)
         try:
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
@@ -160,6 +163,7 @@ def add_data(request):
                 analysis_serializer.save()
                 return Response(analysis_serializer.data, status=status.HTTP_201_CREATED)
             return Response(analysis_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         
 @api_view(['POST'])
 def add_post_to_group(request):
@@ -176,3 +180,14 @@ def add_post_to_group(request):
             return Response({'message': f'Post {post.title} added to group {group.name}.'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def search_post(request):
+    if request.method == 'GET':
+        query = request.query_params.get('query')
+        if not query:
+            query = ''
+        posts = Post.objects.filter(title__contains=query) | Post.objects.filter(summary__contains=query) | Post.objects.filter(description__contains=query) | Post.objects.filter(author__username__contains=query)
+        data = [PostSerializer(model).data for model in posts]
+        return Response(data, status=status.HTTP_200_OK)
