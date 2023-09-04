@@ -63,7 +63,7 @@ const RegisterForm = () => {
         } catch(e){
             //displays error message if registration does not work
             console.log(e.response.data);
-            setErrorMessage("there is a error")
+            setErrorMessage("There was an error creating your account")
 
                 
         }
@@ -74,7 +74,7 @@ const RegisterForm = () => {
         <Container>
         <React.Fragment>
         
-        {errorMessage ? <Alert severity="error" label="There was an error creating your account"> There was an error creating your account — <strong>please try again!</strong> </Alert> : null}
+        {errorMessage ? <Alert severity="error"> {errorMessage} — <strong>please try again!</strong> </Alert> : null}
         <br></br>
         <form onSubmit ={handleSubmit}>
                 <Stack spacing={2} direction="row">
