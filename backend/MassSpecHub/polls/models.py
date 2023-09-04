@@ -10,6 +10,7 @@ from django.core.validators import FileExtensionValidator
 # Create your models here.
 
 class Group(models.Model):
+    name = models.TextField()
     description = models.TextField()
     group_pic = models.ImageField()
     posts = models.ManyToManyField(to="Post", through="PostGroup")
