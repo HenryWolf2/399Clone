@@ -10,8 +10,10 @@ from django.core.validators import FileExtensionValidator
 # Create your models here.
 
 class Group(models.Model):
+    name = models.TextField()
     description = models.TextField()
     group_pic = models.ImageField()
+    posts = models.ManyToManyField(to="Post", through="PostGroup")
 
     class Meta:
         db_table = 'Group'
@@ -19,6 +21,22 @@ class Group(models.Model):
         def __str__(self):
             return self.db_table
 
+
+class Post(models.Model):
+    title = models.TextField()
+    summary = models.TextField()
+    description = models.TextField()
+    publicity = models.BooleanField()
+
+class PostGroup(models.Model):
+    group = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        db_table = 'PostGroup'
+
+        def __str__(self):
+            return self.db_table
 
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)

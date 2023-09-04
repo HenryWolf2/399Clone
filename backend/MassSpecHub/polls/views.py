@@ -113,7 +113,7 @@ def get_all_groups(request):
 @permission_classes([IsAuthenticated])
 def get_group_by_field(request):
     if request.method == 'GET':
-        field_value = request.query_params.get('field_value')
+        field_value = request.data.get('field_value')   
         try:
             if field_value.isdigit():
                 group = Group.objects.get(id=field_value)
@@ -164,6 +164,22 @@ def add_data(request):
                 return Response(analysis_serializer.data, status=status.HTTP_201_CREATED)
             return Response(analysis_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        
+@api_view(['POST'])
+def add_post_to_group(request):
+    if request.method == 'POST':
+        group_id = request.data.get('group_id')
+        post_id = request.data.get('post_id')
+        try:
+            group = Group.objects.get(id=group_id)
+            post = Post.objects.get(id=post_id)
+        except ObjectDoesNotExist:
+           return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND) 
+        if post.publicity == True:
+            group.posts.add(post) 
+            return Response({'message': f'Post {post.title} added to group {group.name}.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
