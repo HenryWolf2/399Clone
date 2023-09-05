@@ -33,6 +33,7 @@ class PostGroup(models.Model):
         def __str__(self):
             return self.db_table
 
+
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     profile_pic = models.ImageField()
@@ -51,13 +52,18 @@ class CustomUser(AbstractUser, PermissionsMixin):
             return self.db_table
 
 
+class TagPost(models.Model):
+    post = models.ForeignKey('polls.Post', on_delete=models.CASCADE)
+    tag = models.ForeignKey('polls.Tag', on_delete=models.CASCADE)
+
 class Post(models.Model):
     title = models.TextField()
     summary = models.TextField()
     description = models.TextField()
     publicity = models.BooleanField()
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
-
+    post_time = models.DateTimeField(default=datetime.now())
+    tags = models.ManyToManyField(to='Tag', through=TagPost)
 
 class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
@@ -87,3 +93,10 @@ class PostAnalysis(models.Model):
     data_input = models.OneToOneField('Data', on_delete=models.CASCADE)
     associated_post = models.OneToOneField('Post', on_delete=models.CASCADE)
     result_df = JSONField()
+
+
+
+
+class Tag(models.Model):
+    name = models.TextField()
+    posts = models.ManyToManyField(to='Post', through=TagPost)

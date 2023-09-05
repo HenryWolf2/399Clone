@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Post, Group, Data, PostAnalysis
+from .models import CustomUser, Post, Group, Data, PostAnalysis, Tag
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -49,6 +49,7 @@ class GroupSerializer(serializers.ModelSerializer):
         group.save()
         return group
 
+
 class DataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Data
@@ -64,6 +65,7 @@ class DataSerializer(serializers.ModelSerializer):
         data.save()
         return data
 
+
 class PostAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostAnalysis
@@ -78,3 +80,15 @@ class PostAnalysisSerializer(serializers.ModelSerializer):
         postAnalysis.save()
         return postAnalysis
 
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['name', 'posts']
+
+    def create(self, validated_data):
+        tag = Tag(
+            name=validated_data['name']
+        )
+        tag.save()
+        return tag
