@@ -39,6 +39,8 @@ class CustomUser(AbstractUser, PermissionsMixin):
     profile_pic = models.ImageField()
     description = models.TextField()
     groups = models.ManyToManyField(to="Group", through="UserGroup")
+    first_name = models.TextField()
+    last_name = models.TextField()
 
     # Add custom fields here, if needed
 
