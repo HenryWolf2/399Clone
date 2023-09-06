@@ -21,6 +21,26 @@
     color: white;
 }
 
+.Post{
+    text-align: center;
+}
+
+.Post-header{
+    background: linear-gradient(
+        to bottom,
+        #35CFFF 0%,
+        #35CFFF 50%,
+        #02AEEC 50%,
+        #02AEEC 100%
+    );
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
 .White-circle {
     height: 90vmin;
     width: 90vmin;
@@ -30,6 +50,30 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.White-rectangle {
+    margin-top: 7vmin;
+    margin-bottom: 7vmin;
+    width: 90vmin;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0%;
+    border-radius: 20px;
+}
+
+.form-description {
+    font-size: 1.5vmin;
+    text-align: left;
+}
+
+.side-by-side {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 52vmin;
 }
 
 body {
@@ -45,4 +89,8 @@ p {
     color: black;
     margin: 0px;
     font-size: 4vmin;
+}
+
+h3 {
+    color: black;
 }
