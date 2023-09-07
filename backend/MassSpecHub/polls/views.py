@@ -13,6 +13,7 @@ from .analysistool.src import binding_site_search
 import copy
 import json
 
+
 @api_view(['POST'])
 def register_user(request):
     if request.method == 'POST':
@@ -89,7 +90,8 @@ def create_group(request):
         serializer = GroupSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            CustomUser.objects.get(id=request.user.id).groups.add(serializer.instance, through_defaults={'permissions': 'admin'})
+            CustomUser.objects.get(id=request.user.id).groups.add(serializer.instance,
+                                                                  through_defaults={'permissions': 'admin'})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -172,7 +174,9 @@ def add_data(request):
             analysis_serializer = PostAnalysisSerializer(data=analysis_data)
             if analysis_serializer.is_valid():
                 analysis_serializer.save()
-                return Response(analysis_serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    {'analysis_id': analysis_serializer.instance.id, 'analysis_object': analysis_serializer.data},
+                    status=status.HTTP_201_CREATED)
             return Response(analysis_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -229,6 +233,7 @@ def search_post_by_tag(request):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 def add_tag_to_post(request):
     if request.method == 'POST':
@@ -240,6 +245,5 @@ def add_tag_to_post(request):
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Tag not found'}, status=status.HTTP_404_NOT_FOUND)
         post.tags.add(tag)
-        return Response({'message': f'Post {post.title} has been assigned to tag {tag.name}.'}, status=status.HTTP_200_OK)
-
-
+        return Response({'message': f'Post {post.title} has been assigned to tag {tag.name}.'},
+                        status=status.HTTP_200_OK)

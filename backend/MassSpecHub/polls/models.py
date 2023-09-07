@@ -64,7 +64,7 @@ class Post(models.Model):
     description = models.TextField()
     publicity = models.BooleanField()
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
-    post_time = models.DateTimeField(default=datetime.now())
+    post_time = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(to='Tag', through=TagPost)
     associated_results = models.OneToOneField('PostAnalysis', on_delete=models.CASCADE, null=True)
 
@@ -72,7 +72,7 @@ class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
     group = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
 
-    join_date = models.DateTimeField(default=datetime.now())
+    join_date = models.DateTimeField(auto_now_add=True)
     permissions = models.TextField(null=True)
 
     class Meta:
