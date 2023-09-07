@@ -44,38 +44,38 @@ const hyperfineCoarse = [
 ]
 
 const PostForm = () => {
-    const [boundSpectrumFile, setBoundSpectrumFile] = useState("")
-    const [compoundDescriptionFile, setCompoundDescriptionFile] = useState("")
-    const [standardAdductsFile, setStandardAdductsFile] = useState("")
-    const [massTolerance, setMassTolerance] = useState("")
-    const [minimumPeakHeight, setMinimumPeakHeight] = useState("")
+    const [bound_filename, setBoundSpectrumFile] = useState("")
+    const [compounds_list_filename, setCompoundDescriptionFile] = useState("")
+    const [adducts_filename, setStandardAdductsFile] = useState("")
+    const [tolerance, setTolerance] = useState("")
+    const [peak_height, setMinimumPeakHeight] = useState("")
     const [minimumMassDifference, setMinimumMassDifference] = useState("")
-    const [spectrumCalibration, setSpectrumCalibration] = useState("")
+    const [calibrate, setSpectrumCalibration] = useState("")
     const [spectrumCalibrationValue, setSpectrumCalibrationValue] = useState("")
-    const [returnPeaksDetected, setReturnPeaksDetected] = useState("")
-    const [maximumUnique, setMaximumUnique] = useState("")
-    const [coordinationNumber, setCoordinationNumber] = useState("")
-    const [minimumProteinNumer, setMinimumProteinNumber] = useState("")
-    const [maximumProteinNumber, setMaximumProteinNumber] = useState("")
+    const [only_best, setReturnPeaksDetected] = useState("")
+    const [max_adducts, setMaximumUnique] = useState("")
+    const [valence, setCoordinationNumber] = useState("")
+    const [min_primaries, setMinimumProteinNumber] = useState("")
+    const [max_primaries, setMaximumProteinNumber] = useState("")
     const [patternGenerationMethod, setPatternGenerationMethod] = useState("")
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         let data = {
-            boundSpectrumFile: boundSpectrumFile,
-            compoundDescriptionFile: compoundDescriptionFile,
-            standardAdductsFile: standardAdductsFile,
-            massTolerance: massTolerance,
-            minimumPeakHeight: minimumPeakHeight,
+            bound_filename: bound_filename,
+            compounds_list_filename: compounds_list_filename,
+            adducts_filename: adducts_filename,
+            tolerance: tolerance,
+            peak_height: peak_height,
             minimumMassDifference: minimumMassDifference,
-            spectrumCalibration: spectrumCalibration,
+            calibrate: calibrate,
             spectrumCalibrationValue: spectrumCalibrationValue,
-            returnPeaksDetected: returnPeaksDetected,
-            maximumUnique: maximumUnique,
-            coordinationNumber: coordinationNumber,
-            minimumProteinNumer: minimumProteinNumer,
-            maximumProteinNumber: maximumProteinNumber,
+            only_best: only_best,
+            max_adducts: max_adducts,
+            valence: valence,
+            min_primaries: min_primaries,
+            max_primaries: max_primaries,
             patternGenerationMethod: patternGenerationMethod
         }
         try{
@@ -140,11 +140,11 @@ const PostForm = () => {
                 required
                 size="large"
                 label="Mass Tolerance"
-                name="massTolerance"
+                name="tolerance"
                 type="number"
                 inputProps={{step: "0.1"}}
                 defaultValue="3.1"
-                onChange={e => setMassTolerance(e.target.value)}
+                onChange={e => setTolerance(e.target.value)}
                 />
                 <TextField
                 margin="normal"
