@@ -66,6 +66,7 @@ class Post(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
     post_time = models.DateTimeField(default=datetime.now())
     tags = models.ManyToManyField(to='Tag', through=TagPost)
+    associated_results = models.OneToOneField('PostAnalysis', on_delete=models.CASCADE, null=True)
 
 class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
@@ -93,7 +94,6 @@ class Data(models.Model):
 
 class PostAnalysis(models.Model):
     data_input = models.OneToOneField('Data', on_delete=models.CASCADE)
-    associated_post = models.OneToOneField('Post', on_delete=models.CASCADE)
     result_df = JSONField()
 
 
