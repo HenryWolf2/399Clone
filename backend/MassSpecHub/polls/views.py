@@ -83,6 +83,7 @@ def create_group(request):
         serializer = GroupSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            CustomUser.objects.get(id=request.user.id).groups.add(serializer.instance, through_defaults={'permissions': 'admin'})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
