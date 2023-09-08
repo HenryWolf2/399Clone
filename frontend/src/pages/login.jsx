@@ -10,7 +10,7 @@ export default function Login() {
       <div className="App">
         <div className='App-header'>
           <div className='White-circle'>
-            <h2 style={{ color: '#000000', width: "350px" }}>Login to Mass Spectrometry Hub</h2>
+            <h2 style={{ color: '#000000', width: "600px" }}>Login to Mass Spectrometry Hub</h2>
             <LoginForm/>
           </div>
         </div>

@@ -37,6 +37,17 @@
     justify-content: center;
 }
 
+.Login-box{
+    height: 30vmin;
+    width: 50vmin;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    -webkit-box-align: center;
+}
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
