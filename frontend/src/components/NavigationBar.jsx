@@ -187,7 +187,7 @@ function ResponsiveAppBar() {
                       {/* The Profile Icon Menu */}
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="Open Settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
@@ -208,17 +208,17 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <NavLink to="/" style={{ textDecoration: 'none'}}>
+              <NavLink to="/profile" style={{ textDecoration: 'none'}}>
                 <MenuItem onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">Profile</Typography>
                 </MenuItem>
-                </NavLink>
+              </NavLink>
 
                 <NavLink to="/" style={{ textDecoration: 'none'}}>
                 <MenuItem onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">Signout</Typography>
                 </MenuItem>
-                </NavLink>
+              </NavLink>
 
             </Menu>
           </Box>
