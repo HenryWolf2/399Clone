@@ -67,17 +67,21 @@ def user_logout(request):
 @permission_classes([IsAuthenticated])
 def edit_profile(request):
     if request.method == 'PUT':
-        user = CustomUser.objects.get(id=request.user.id)
-        profile_pic = request.FILES.get('profile_pic')
-        description = request.data.get('description')
-        cover_photo = request.FILES.get('cover_photo')
-        if profile_pic:
-            user.profile_pic = profile_pic
-        if description:
-            user.description = description
-        if cover_photo:
-            user.cover_photo = cover_photo
-        user.save()
+        try:
+            user = CustomUser.objects.get(id=request.user.id)
+            profile_pic = request.FILES.get('profile_pic')
+            description = request.data.get('description')
+            cover_photo = request.FILES.get('cover_photo')
+            if profile_pic:
+                user.profile_pic = profile_pic
+            if description:
+                user.description = description
+            if cover_photo:
+                user.cover_photo = cover_photo
+            user.save()
+            return Response({'message': 'Profile updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
