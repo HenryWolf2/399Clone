@@ -37,6 +37,7 @@ class PostGroup(models.Model):
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     profile_pic = models.ImageField()
+    cover_photo = models.ImageField()
     description = models.TextField()
     groups = models.ManyToManyField(to="Group", through="UserGroup")
     first_name = models.TextField()
