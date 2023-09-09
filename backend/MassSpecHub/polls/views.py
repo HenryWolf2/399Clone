@@ -289,5 +289,4 @@ def get_post_by_id(request):
     if request.method == 'GET':
         post_id = request.data.get('post_id')
         post = Post.objects.get(id=post_id)
-        serializer = PostSerializer(post)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(post, status=status.HTTP_200_OK)

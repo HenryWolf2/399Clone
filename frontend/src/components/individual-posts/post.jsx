@@ -26,11 +26,13 @@ export default function IndividualPost(props) {
         url: "/post/get",
         method: "GET",
         data: {post_id: props.post_id}
+        
     }).then((res) => {
-      setTitle(res.data.title)
-      setSummary(res.data.summary)
-      setPublicity(res.data.publicity)
-      setDescription(res.data.description)
+      console.log(res)
+      setTitle(res.data[0].title)
+      setSummary(res.data[0].summary)
+      setPublicity(res.data[0].publicity)
+      setDescription(res.data[0].description)
     });
     } catch(e) {
       console.error(e)
