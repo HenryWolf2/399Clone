@@ -15,6 +15,7 @@ urlpatterns = [
     path('post/add_to_group', add_post_to_group, name='add_post_to_group'),
     path('users/assign_groups', assign_user_to_group, name='assign_user_to_group'),
     path('post/search', search_post, name='search_post'),
+    path('post/get', search_post, name='post_by_id'),
     path('post/create/tag', create_tag, name='create_tag'),
     path('post/get_post_by_tag', search_post_by_tag, name='post_by_tag'),
     path('post/add_to_tag', add_tag_to_post, name='add_tag_to_post'),
