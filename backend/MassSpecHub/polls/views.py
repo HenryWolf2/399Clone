@@ -285,8 +285,16 @@ def get_profile(request):
         return Response(profile_data, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_post_by_id(request):
     if request.method == 'GET':
         post_id = request.data.get('post_id')
         post = Post.objects.get(id=post_id)
         return Response(post, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
