@@ -99,3 +99,9 @@ p {
 h3 {
     color: black;
 }
+
+.MuiChip-root {
+    background-color: #02AEEC;
+    color: black;
+    width: 100px;
+}

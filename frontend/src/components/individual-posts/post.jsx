@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Contributors from './contributors';
 import ProfilePicture from './profile';
 import StockImage from '../../assets/images/stock-image.jpg';
+import { Button } from '@mui/material';
 
 import '../../assets/styles/global.css';
 
