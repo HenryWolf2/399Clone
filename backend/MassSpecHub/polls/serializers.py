@@ -1,17 +1,19 @@
 from rest_framework import serializers
-from .models import CustomUser, Post, Group, Data, PostAnalysis
+from .models import CustomUser, Post, Group, Data, PostAnalysis, Tag
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'groups', 'posts']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         user = CustomUser(
             username=validated_data['username'],
-            email=validated_data['email']
+            email=validated_data['email'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
         )
         user.set_password(validated_data['password'])
         user.save()
@@ -49,6 +51,7 @@ class GroupSerializer(serializers.ModelSerializer):
         group.save()
         return group
 
+
 class DataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Data
@@ -64,6 +67,7 @@ class DataSerializer(serializers.ModelSerializer):
         data.save()
         return data
 
+
 class PostAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostAnalysis
@@ -78,3 +82,15 @@ class PostAnalysisSerializer(serializers.ModelSerializer):
         postAnalysis.save()
         return postAnalysis
 
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['name', 'posts']
+
+    def create(self, validated_data):
+        tag = Tag(
+            name=validated_data['name']
+        )
+        tag.save()
+        return tag
