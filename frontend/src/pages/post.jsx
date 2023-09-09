@@ -8,7 +8,7 @@ export default function Post() {
     <div className="container">
       <NavigationBar />
       <h1> POST TEST PAGE </h1>
-      <IndividualPost />
+      <IndividualPost post_id={1} />
     </div>
   );
 }

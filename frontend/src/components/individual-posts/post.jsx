@@ -7,11 +7,39 @@ import Typography from '@mui/material/Typography';
 import Contributors from './contributors';
 import ProfilePicture from './profile';
 import StockImage from '../../assets/images/stock-image.jpg';
-import { Button } from '@mui/material';
+import instance from '../api/api_instance.js'
+import { useState } from 'react';
+import { Component } from 'react';
 
 import '../../assets/styles/global.css';
 
-export default function IndividualPost() {
+export default function IndividualPost(props) {
+  
+  const [title, setTitle] = useState('')
+  const [summary, setSummary] = useState('')
+  const [publicity, setPublicity] = useState('')
+  const [description, setDescription] = useState('')
+
+  async function GetPostInformation() {
+    try{ 
+      await instance ({
+        url: "/post/get",
+        method: "GET",
+        data: {post_id: props.post_id}
+    }).then((res) => {
+      setTitle(res.data.title)
+      setSummary(res.data.summary)
+      setPublicity(res.data.publicity)
+      setDescription(res.data.description)
+    });
+    } catch(e) {
+      console.error(e)
+    }
+  } 
+
+  GetPostInformation()
+  
+
   return (
     <Box sx={{ width: '100%', maxWidth: 750, bgcolor: '#D9D9D9', borderRadius: '10px', padding: "10px 0px 10px 0px", margin: "20px" }}>
       <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
@@ -24,7 +52,7 @@ export default function IndividualPost() {
           </Grid>
           <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
             <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px"}}>
-              Group name <br></br>Date and Time ~ Public
+              Group name <br></br>Date and Time ~ { publicity ? "Public":"Private" }
             </Typography>
           </Grid>
 
@@ -35,13 +63,10 @@ export default function IndividualPost() {
           </Grid>
         </Grid>
         <Typography gutterBottom variant="h4" component="div" sx={{margin: "0px 20px 0px 20px"}}>
-              Title
+              { title } --
         </Typography>
         <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam iaculis tincidunt imperdiet.
-          Phasellus tincidunt lacus et odio elementum tempus. Maecenas porta sodales arcu, ut iaculis libero vehicula in.
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam iaculis tincidunt imperdiet.
-          Phasellus tincidunt lacus et odio elementum tempus. Maecenas porta sodales arcu, ut iaculis libero vehicula in.
+          { summary }
         </Typography>
         <img src={ StockImage } className="Post-image" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>
         <Stack direction="row" spacing={1} sx={{margin: "0px 20px 0px 20px"}}>
