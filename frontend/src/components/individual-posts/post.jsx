@@ -9,7 +9,6 @@ import ProfilePicture from './profile';
 import StockImage from '../../assets/images/stock-image.jpg';
 import instance from '../api/api_instance.js'
 import { useState } from 'react';
-import { Component } from 'react';
 
 import '../../assets/styles/global.css';
 
@@ -65,7 +64,7 @@ export default function IndividualPost(props) {
           </Grid>
         </Grid>
         <Typography gutterBottom variant="h4" component="div" sx={{margin: "0px 20px 0px 20px"}}>
-              { title } --
+              { title }
         </Typography>
         <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
           { summary }
