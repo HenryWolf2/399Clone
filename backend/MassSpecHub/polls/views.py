@@ -267,3 +267,27 @@ def add_tag_to_post(request):
         post.tags.add(tag)
         return Response({'message': f'Post {post.title} has been assigned to tag {tag.name}.'},
                         status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_profile(request):
+    if request.method == 'GET':
+        user = CustomUser.objects.get(id=request.user.id)
+        profile_data = {}
+        profile_data['email'] = user.email
+        profile_data['description'] = user.description
+        profile_data['first_name'] = user.first_name
+        profile_data['last_name'] = user.last_name
+        profile_data['profile_pic'] = user.profile_pic.name
+        profile_data['cover_photo'] = user.cover_photo.name
+        posts = Post.objects.filter(author__id=user.id)
+        profile_data['posts'] = posts.values_list('id', flat=True)
+        return Response(profile_data, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+def get_post_by_id(request):
+    if request.method == 'GET':
+        post_id = request.data.get('post_id')
+        post = Post.objects.get(id=post_id)
+        serializer = PostSerializer(post)
+        return Response(serializer.data, status=status.HTTP_200_OK)
