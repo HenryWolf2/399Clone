@@ -1,12 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
+import RegisterForm from '../components/register/registerForm'
 
 export default function Register() {
   return (
     <div className="container">
       <NavigationBar />
-      <h1> REGISTER PAGE </h1>
+      <div className="App">
+        <div className='App-header'>
+          <div className='White-circle'>
+            <h2 style={{ color: '#000000', width: "350px" }}>Register for the Mass Spectrometry Hub</h2>
+            <RegisterForm/>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,12 @@
 .App {
     text-align: center;
+} 
+
+.Post-image {
+    height: 200px;
+    width: 750px;
+    object-fit: none;
 }
-  
   
 .App-header {
 

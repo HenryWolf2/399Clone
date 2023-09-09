@@ -30,6 +30,7 @@ Running the React App, after you've changed your folder to the frontend folder y
 It should automatically open the local host however it can be found at, [http://localhost:3000](http://localhost:3000).
 ```
 cd frontend
+npm install
 npm start
 ```
 
