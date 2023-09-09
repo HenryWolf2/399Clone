@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, create_tag, search_post_by_tag, add_tag_to_post, edit_profile, get_profile
+from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, create_tag, search_post_by_tag, add_tag_to_post, edit_profile, get_profile, get_all_posts, get_post_by_id
 
 
 urlpatterns = [
@@ -16,6 +16,8 @@ urlpatterns = [
     path('users/assign_groups', assign_user_to_group, name='assign_user_to_group'),
     path('post/search', search_post, name='search_post'),
     path('post/get', search_post, name='post_by_id'),
+    path('post/get_all', get_all_posts, name='get_all_posts'),
+    path('post/get_by_id', get_post_by_id, name='get_post_by_id'),
     path('post/create/tag', create_tag, name='create_tag'),
     path('post/get_post_by_tag', search_post_by_tag, name='post_by_tag'),
     path('post/add_to_tag', add_tag_to_post, name='add_tag_to_post'),
