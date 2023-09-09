@@ -6,6 +6,7 @@ import Register from '../pages/register';
 import Loading from '../pages/loading';
 import Post from '../pages/post';
 import NotFound from '../pages/notFound';
+import CreatePost from '../pages/create-post';
 import Profile from '../pages/profile';
 
 export default function Root() {
@@ -17,6 +18,7 @@ export default function Root() {
     { path: '/register', name: 'Register', Component: Register, exact: false },
     { path: '/profile', name: 'Profile', Component: Profile, exact: false },
     { path: '/post', name: 'Post', Component: Post, exact: false },
+    { path: '/create-post', name: 'Create Post', Component: CreatePost, exact: false},
     { path: '*', name: 'No Match', Component: NotFound, exact: false },
   ];
 
@@ -29,6 +31,7 @@ export default function Root() {
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/profile" element={<Profile />} />
           <Route exact path="/post" element={<Post />} />
+          <Route exact path="/create-post" element={<CreatePost />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
     </Router>

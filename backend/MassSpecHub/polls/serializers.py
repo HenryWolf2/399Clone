@@ -5,7 +5,7 @@ from .models import CustomUser, Post, Group, Data, PostAnalysis, Tag
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'groups', 'posts']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -18,23 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
-
-
-class PostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = ['title', 'summary', 'description', 'publicity', 'author']
-
-    def create(self, validated_data):
-        post = Post(
-            title=validated_data['title'],
-            summary=validated_data['summary'],
-            description=validated_data['description'],
-            publicity=validated_data['publicity'],
-            author=validated_data['author']
-        )
-        post.save()
-        return post
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -59,8 +42,8 @@ class DataSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         data = Data(
-            data_publicty=validated_data['data_publicity'],
-            compunds_file=validated_data['compounds_file'],
+            data_publicity=validated_data['data_publicity'],
+            compounds_file=validated_data['compounds_file'],
             adducts_file=validated_data['adducts_file'],
             bounds_file=validated_data['bounds_file']
         )
@@ -71,13 +54,12 @@ class DataSerializer(serializers.ModelSerializer):
 class PostAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostAnalysis
-        fields = ['results_df', 'data_input', 'associated_post']
+        fields = ['result_df', 'data_input']
 
     def create(self, validated_data):
         postAnalysis = PostAnalysis(
-            results=validated_data['results'],
-            data_input=validated_data['data_input'],
-            associated_post=validated_data['associated_post']
+            result_df=validated_data['result_df'],
+            data_input=validated_data['data_input']
         )
         postAnalysis.save()
         return postAnalysis
@@ -94,3 +76,22 @@ class TagSerializer(serializers.ModelSerializer):
         )
         tag.save()
         return tag
+
+
+class PostSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = ['title', 'summary', 'description', 'publicity', 'author', 'associated_results']
+
+    def create(self, validated_data):
+        post = Post(
+            title=validated_data['title'],
+            summary=validated_data['summary'],
+            description=validated_data['description'],
+            publicity=validated_data['publicity'],
+            author=validated_data['author'],
+            associated_results=validated_data['associated_results']
+        )
+        post.save()
+        return post
