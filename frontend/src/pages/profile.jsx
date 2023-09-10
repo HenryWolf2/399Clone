@@ -7,7 +7,7 @@ export default function Profile() {
   return (
     <div className="container">
       <NavigationBar />
-      <AccountDetails />
+      <AccountDetails id={1}/>
     </div>
   );
 }
