@@ -42,6 +42,7 @@ const LoginForm = () => {
             //display error message (username or password incorrect)
             //clear the password field
             console.error(e)
+            setPassword("")
             setErrorMessage("There was an error")
         }
     }
@@ -50,7 +51,6 @@ const LoginForm = () => {
         <Container maxWidth= "sm">
         <React.Fragment>
         {errorMessage ? <Alert severity="error" fullWidth> {errorMessage} — <strong>Please try again!</strong> </Alert> : null}
-        <br/>
         <form onSubmit ={handleSubmit}>  
                  
                 <TextField
@@ -82,8 +82,12 @@ const LoginForm = () => {
                 >
                 Login
                 </Button>
-                <Grid container>
-                    <Grid item>
+                <Grid 
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center">
+                    <Grid item >
                         <Link href="/register" variant="body2" color='#000000'>
                         {"Don't have an account? Register here"}
                         </Link>
