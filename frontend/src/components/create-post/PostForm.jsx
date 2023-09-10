@@ -97,7 +97,7 @@ const PostForm = () => {
 
     return(
         <React.Fragment>
-        <form onSubmit ={handleSubmit} action={<Link to="/post" />}>  
+        <form onSubmit ={handleSubmit} action={<Link to="/public-data" />}>  
         <Stack spacing={2}>          
                 <p className="form-description">Note: all files must be excel spreadsheets ('.csv' or '.xlsx')</p>
                 <p className="form-description">Choose file for deconvoluted mass spectrum of adducted protein sample</p>

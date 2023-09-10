@@ -33,7 +33,7 @@ const LoginForm = () => {
             //save token in axios, add authorization to header
             instance.defaults.headers.common['Authorization'] = 'Token ' + res.data.token;
             //needs to navigate to the profile page once up
-            navigate("/post");
+            navigate("/public-data");
           });
         } catch(e){
             //display error message (username or password incorrect)

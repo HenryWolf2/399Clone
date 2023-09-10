@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
@@ -19,26 +19,29 @@ export default function IndividualPost(props) {
   const [publicity, setPublicity] = useState('')
   const [description, setDescription] = useState('')
 
-  async function GetPostInformation() {
-    try{ 
-      await instance ({
-        url: "/post/get",
-        method: "GET",
-        data: {post_id: props.post_id}
-        
-    }).then((res) => {
-      console.log(res)
-      setTitle(res.data[0].title)
-      setSummary(res.data[0].summary)
-      setPublicity(res.data[0].publicity)
-      setDescription(res.data[0].description)
-    });
-    } catch(e) {
-      console.error(e)
+  useEffect(() => {
+    async function GetPostInformation() {
+      try{ 
+        await instance ({
+          url: "/post/get_post_by_id",
+          method: "GET",
+          data: {post_id: props.post_id}
+          
+      }).then((res) => {
+        console.log(res)
+        setTitle(res.data[0].title)
+        setSummary(res.data[0].summary)
+        setPublicity(res.data[0].publicity)
+        setDescription(res.data[0].description)
+      });
+      } catch(e) {
+        console.error(e)
+      }
     }
-  } 
-
-  GetPostInformation()
+    GetPostInformation();
+    } , // <- function that will run on every dependency update
+    [] // <-- empty dependency array
+  ) 
   
 
   return (
