@@ -4,11 +4,12 @@ import IndividualPost from '../components/individual-posts/post';
 import instance from '../components/api/api_instance';
 import { useEffect } from 'react';
 import PostGrid from '../components/individual-posts/postgrid';
+import { Grid, Item, Box } from '@mui/material';
 
 export default function Post() {
   const [PublicPosts, setPublicPosts] = useState([])
 
-  useState(() => {
+  useEffect(() => {
     async function GetPublicPostsIDs() {
       try{ 
         await instance ({
@@ -34,8 +35,12 @@ export default function Post() {
     <div className="container">
       <NavigationBar />
       <h1> POST TEST PAGE </h1>
-      <PostGrid narrow={false} post_array={PublicPosts} />
-      <IndividualPost post_id={1} />
+      <br></br>
+
+      <Box sx={{ flexGrow: 1, width: "98%", padding: "1%" }}>
+        <PostGrid narrow={false} post_array={PublicPosts} />    
+      </Box>
+      
     </div>
   );
 }

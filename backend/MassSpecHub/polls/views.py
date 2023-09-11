@@ -285,12 +285,12 @@ def get_profile(request):
         return Response(profile_data, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def get_post_by_id(request):
     if request.method == 'GET':
-        post_id = request.data.get('post_id')
+        post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
-        return Response(post, status=status.HTTP_200_OK)
+        serializer = PostSerializer(post)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

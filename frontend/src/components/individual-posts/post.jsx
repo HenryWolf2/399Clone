@@ -18,21 +18,24 @@ export default function IndividualPost(props) {
   const [summary, setSummary] = useState('')
   const [publicity, setPublicity] = useState('')
   const [description, setDescription] = useState('')
-
+  const [date, setDate] = useState('')
+  
   useEffect(() => {
     async function GetPostInformation() {
       try{ 
         await instance ({
-          url: "/post/get_post_by_id",
+          url: "/post/get_by_id",
           method: "GET",
-          data: {post_id: props.post_id}
+          params: {post_id: props.post_id}
           
       }).then((res) => {
+        console.log("here")
         console.log(res)
-        setTitle(res.data[0].title)
-        setSummary(res.data[0].summary)
-        setPublicity(res.data[0].publicity)
-        setDescription(res.data[0].description)
+        setTitle(res.data.title)
+        setSummary(res.data.summary)
+        setPublicity(res.data.publicity)
+        setDescription(res.data.description)
+        setDate(res.data.post_time)
       });
       } catch(e) {
         console.error(e)
@@ -45,7 +48,7 @@ export default function IndividualPost(props) {
   
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 750, bgcolor: '#D9D9D9', borderRadius: '10px', padding: "10px 0px 10px 0px", margin: "20px" }}>
+    <Box sx={{ width: '100%', bgcolor: '#D9D9D9', borderRadius: '10px', padding: "10px 0px 10px 0px" }}>
       <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
         <Grid container alignItems="center" >
 
@@ -56,7 +59,7 @@ export default function IndividualPost(props) {
           </Grid>
           <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
             <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px"}}>
-              Group name <br></br>Date and Time ~ { publicity ? "Public":"Private" }
+              Group name <br></br>{date} ~ { publicity ? "Public":"Private" }
             </Typography>
           </Grid>
 
