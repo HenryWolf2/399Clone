@@ -44,39 +44,41 @@ const hyperfineCoarse = [
 ]
 
 const PostForm = () => {
-    const [bound_filename, setBoundSpectrumFile] = useState("")
-    const [compounds_list_filename, setCompoundDescriptionFile] = useState("")
-    const [adducts_filename, setStandardAdductsFile] = useState("")
+    const [multi_protein, setMultiProtein] = useState("off")
+    const [bounds_file, setBoundSpectrumFile] = useState("")
+    const [compounds_file, setCompoundDescriptionFile] = useState("")
+    const [adducts_file, setStandardAdductsFile] = useState("")
     const [tolerance, setTolerance] = useState("")
     const [peak_height, setMinimumPeakHeight] = useState("")
-    const [minimumMassDifference, setMinimumMassDifference] = useState("")
+    // const [minimumMassDifference, setMinimumMassDifference] = useState("")
     const [calibrate, setSpectrumCalibration] = useState("")
-    const [spectrumCalibrationValue, setSpectrumCalibrationValue] = useState("")
+    // const [spectrumCalibrationValue, setSpectrumCalibrationValue] = useState("")
     const [only_best, setReturnPeaksDetected] = useState("")
     const [max_adducts, setMaximumUnique] = useState("")
     const [valence, setCoordinationNumber] = useState("")
     const [min_primaries, setMinimumProteinNumber] = useState("")
     const [max_primaries, setMaximumProteinNumber] = useState("")
-    const [patternGenerationMethod, setPatternGenerationMethod] = useState("")
+    // const [patternGenerationMethod, setPatternGenerationMethod] = useState("")
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         let data = {
-            bound_filename: bound_filename,
-            compounds_list_filename: compounds_list_filename,
-            adducts_filename: adducts_filename,
+            bounds_file: bounds_file,
+            compounds_file: compounds_file,
+            adducts_file: adducts_file,
             tolerance: tolerance,
             peak_height: peak_height,
-            minimumMassDifference: minimumMassDifference,
+            // minimumMassDifference: minimumMassDifference,
             calibrate: calibrate,
-            spectrumCalibrationValue: spectrumCalibrationValue,
+            // spectrumCalibrationValue: spectrumCalibrationValue,
             only_best: only_best,
+            multi_protein: multi_protein,
             max_adducts: max_adducts,
             valence: valence,
             min_primaries: min_primaries,
             max_primaries: max_primaries,
-            patternGenerationMethod: patternGenerationMethod
+            // patternGenerationMethod: patternGenerationMethod
         }
         try{
         await instance({
@@ -155,7 +157,7 @@ const PostForm = () => {
                 inputProps={{step: "0.01"}}
                 onChange={e => setMinimumPeakHeight(e.target.value)}
                 />
-                <TextField
+                {/* <TextField
                 margin="normal"
                 style = {{width: 350, textAlign: "center",}}
                 required
@@ -166,7 +168,7 @@ const PostForm = () => {
                 inputProps={{step: "0.5"}}
                 defaultValue="4.0"
                 onChange={e => setMinimumMassDifference(e.target.value)}
-                />
+                /> */}
                 <div className="side-by-side">
                   <TextField
                     margin="normal"
@@ -185,7 +187,7 @@ const PostForm = () => {
                       </MenuItem>
                     ))}
                   </TextField>
-                  <TextField
+                  {/* <TextField
                   margin="normal"
                   required
                   size="large"
@@ -195,7 +197,7 @@ const PostForm = () => {
                   inputProps={{step: "0.5"}}
                   defaultValue="1.0"
                   onChange={e => setSpectrumCalibrationValue(e.target.value)}
-                  />
+                  /> */}
                 </div>
                 <TextField
                   margin="normal"
@@ -263,7 +265,7 @@ const PostForm = () => {
                 defaultValue="1"
                 onChange={e => setMaximumProteinNumber(e.target.value)}
                 />
-                <TextField
+                {/* <TextField
                   margin="normal"
                   style = {{width: 240, textAlign: "center",}}
                   select
@@ -279,7 +281,7 @@ const PostForm = () => {
                       {option.label}
                     </MenuItem>
                   ))}
-                </TextField>
+                </TextField> */}
                 <Button
                 type="submit"
                 size="large"
