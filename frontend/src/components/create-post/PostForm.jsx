@@ -57,7 +57,7 @@ const PostForm = () => {
     const [valence, setCoordinationNumber] = useState("4")
     const [min_primaries, setMinimumProteinNumber] = useState("1")
     const [max_primaries, setMaximumProteinNumber] = useState("1")
-    const [data_publicity, setPostPublic] = useState("True")
+    const [data_publicity, setDataPublic] = useState("True")
     // const [patternGenerationMethod, setPatternGenerationMethod] = useState("")
 
 
@@ -285,10 +285,10 @@ const PostForm = () => {
                   select
                   required
                   size="large"
-                  label="Set post to public?"
-                  name="setPostPublic"
+                  label="Set data to public?"
+                  name="setDataPublic"
                   defaultValue="True"
-                  onChange={e => setPostPublic(e.target.value)}
+                  onChange={e => setDataPublic(e.target.value)}
                 >
                   {yesNo.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
