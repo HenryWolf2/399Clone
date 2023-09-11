@@ -4,8 +4,7 @@
 
 .Post-image {
     height: 200px;
-    /* Need to do this better */
-    width: 697.594px;
+    width: 100%;
     object-fit: none;
 }
   

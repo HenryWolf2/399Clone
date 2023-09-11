@@ -34,8 +34,11 @@ export default function Post() {
   return (
     <div className="container">
       <NavigationBar />
-      <h1> POST TEST PAGE </h1>
-      <br></br>
+      <div className="App">
+
+        <h1> Public Posts </h1>
+      </div>
+      
 
       <Box sx={{ flexGrow: 1, width: "98%", padding: "1%" }}>
         <PostGrid narrow={false} post_array={PublicPosts} />    
