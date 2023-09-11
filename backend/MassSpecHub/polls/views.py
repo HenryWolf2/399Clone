@@ -8,7 +8,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag, PostAnalysis
+from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data
 from .analysistool.src import binding_site_search
 import copy
 import json
@@ -227,8 +227,8 @@ def search_post(request):
         posts = Post.objects.filter(title__contains=query) | Post.objects.filter(
             summary__contains=query) | Post.objects.filter(description__contains=query) | Post.objects.filter(
             author__username__contains=query)
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        posts = posts.values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -345,3 +345,18 @@ def get_all_posts(request):
     if request.method == 'GET':
         posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_analysis_by_id(request):
+    if request.method == 'GET':
+        analysis_id = request.data.get('analysis_id')
+        try:
+            analysis = PostAnalysis.objects.get(id=analysis_id)
+            analysis_serializer = PostAnalysisSerializer(analysis)
+            data = Data.objects.get(id=analysis.data_input_id)
+            if data.data_publicity:
+                data_serializer = DataSerializer(data)
+                return Response({'analysis': analysis_serializer.data, 'data': data_serializer.data}, status=status.HTTP_200_OK)
+            return Response({'analysis': analysis_serializer.data, 'data': 'Data is not public'}, status=status.HTTP_200_OK)
+        except:
+            return Response({'message': "Analysis not found"}, status=status.HTTP_404_NOT_FOUND)
