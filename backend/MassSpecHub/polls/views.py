@@ -283,3 +283,69 @@ def get_profile(request):
         posts = Post.objects.filter(author__id=user.id)
         profile_data['posts'] = posts.values_list('id', flat=True)
         return Response(profile_data, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_post_by_id(request):
+    if request.method == 'GET':
+        post_id = request.data.get('post_id')
+        post = Post.objects.get(id=post_id)
+        serializer = PostSerializer(post)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_post(request):
+    if request.method == 'PUT':
+        try:
+            post_id = request.data.get('post_id')
+            post = Post.objects.get(id=post_id)
+            title = request.data.get('title')
+            summary = request.data.get('summary')
+            description = request.data.get('description')
+            publicity = request.data.get('publicity')
+            if title:
+                post.title = title
+            if description:
+                post.description = description
+            if publicity != None:
+                post.publicity = publicity
+            if summary:
+                post.summary = summary
+            post.save()
+            return Response({'message': 'Post updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_group(request):
+    if request.method == 'PUT':
+        try:
+            group_id = request.data.get('group_id')
+            group = Group.objects.get(id=group_id)
+            name = request.data.get('name')
+            group_pic = request.FILES.get('group_pic')
+            description = request.data.get('description')
+            if name:
+                group.name = name
+            if group_pic:
+                group.group_pic = group_pic
+            if description:
+                group.description = description
+            group.save()
+            return Response({'message': 'Group updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+          
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
+
