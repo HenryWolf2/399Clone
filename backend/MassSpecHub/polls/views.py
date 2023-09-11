@@ -8,9 +8,10 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag
+from .models import CustomUser, Group, Post, Tag, PostAnalysis
 from .analysistool.src import binding_site_search
 import copy
+import json
 
 
 @api_view(['POST'])
@@ -87,8 +88,14 @@ def edit_profile(request):
 @permission_classes([IsAuthenticated])
 def create_post(request):
     if request.method == 'POST':
+        analysis_id = request.data.get('analysis_id')
+        try:
+            analysis = PostAnalysis.objects.get(id=analysis_id)
+        except ObjectDoesNotExist:
+            return Response({'error': 'PostAnalysis not found'}, status=status.HTTP_404_NOT_FOUND)
         data = copy.deepcopy(request.data)
         data['author'] = request.user.id
+        data['associated_results'] = analysis.id
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -103,7 +110,8 @@ def create_group(request):
         serializer = GroupSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            CustomUser.objects.get(id=request.user.id).groups.add(serializer.instance, through_defaults={'permissions': 'admin'})
+            CustomUser.objects.get(id=request.user.id).groups.add(serializer.instance,
+                                                                  through_defaults={'permissions': 'admin'})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -158,11 +166,6 @@ def get_group_by_field(request):
 @permission_classes([IsAuthenticated])
 def add_data(request):
     if request.method == 'POST':
-        post_id = request.data.get('post_id')
-        try:
-            post = Post.objects.get(id=post_id)
-        except ObjectDoesNotExist:
-            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
         serializer = DataSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -185,11 +188,15 @@ def add_data(request):
                                                           min_primaries=min_primaries, max_primaries=max_primaries,
                                                           max_adducts=max_adducts, valence=valence, only_best=only_best,
                                                           calibrate=calibrate)
-            analysis_data = {'results_df': analysis_results, 'data_input': data, 'associated_with': post}
-            analysis_serializer = PostAnalysisSerializer(analysis_data)
+            json_df = analysis_results.to_json(orient='split', index=False)
+            json_df = json.loads(json_df)
+            analysis_data = {'result_df': json_df, 'data_input': data.id}
+            analysis_serializer = PostAnalysisSerializer(data=analysis_data)
             if analysis_serializer.is_valid():
                 analysis_serializer.save()
-                return Response(analysis_serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    {'analysis_id': analysis_serializer.instance.id, 'analysis_object': analysis_serializer.data},
+                    status=status.HTTP_201_CREATED)
             return Response(analysis_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -246,6 +253,7 @@ def search_post_by_tag(request):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 def add_tag_to_post(request):
     if request.method == 'POST':
@@ -257,6 +265,5 @@ def add_tag_to_post(request):
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Tag not found'}, status=status.HTTP_404_NOT_FOUND)
         post.tags.add(tag)
-        return Response({'message': f'Post {post.title} has been assigned to tag {tag.name}.'}, status=status.HTTP_200_OK)
-
-
+        return Response({'message': f'Post {post.title} has been assigned to tag {tag.name}.'},
+                        status=status.HTTP_200_OK)
