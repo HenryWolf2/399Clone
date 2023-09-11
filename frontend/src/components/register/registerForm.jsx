@@ -45,6 +45,8 @@ const RegisterForm = () => {
             username: userName,
             email: email,
             password: password,
+            first_name: firstName,
+            last_name: lastName
         }
         console.log(data);
         try{
@@ -71,7 +73,7 @@ const RegisterForm = () => {
 
 
     return(
-        <Container>
+        <Container maxWidth= "sm">
         <React.Fragment>
         
         {errorMessage ? <Alert severity="error"> {errorMessage} — <strong>please try again!</strong> </Alert> : null}
@@ -118,13 +120,11 @@ const RegisterForm = () => {
                 required
                 fullWidth
                 ref = {userRef}
-                label="UserName"
+                label="Username"
                 name="userName"
                 autoComplete="off"
                 autoFocus
                 onChange={e => setUserName(e.target.value)}
-                aria-invalid = {userNameError ? "false" : "true"}
-                aria-describedby='usernameNote'
                 />
                 {passwordMatchError ? <Alert severity="error" > Passwords do not match</Alert> : null}
                 <TextField
@@ -153,15 +153,20 @@ const RegisterForm = () => {
                 label="I accept the Terms and Conditions"
                 required
                 />
+                <br/>
                 <Button
                 type="submit"
-                fullWidth
+                size = "large"
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
                 >
-                Sign In
+                Create Account
                 </Button>
-                <Grid container>
+                <Grid 
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                >
                     <Grid item>
                         <Link href="/login" variant="body2" color='#000000'>
                         {"Have an account? Sign In here"}

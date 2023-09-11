@@ -57,6 +57,17 @@
     justify-content: center;
 }
 
+.White-circle-register {
+    height: 900px;
+    width: 900px;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .White-rectangle {
     margin-top: 7vmin;
     margin-bottom: 7vmin;
