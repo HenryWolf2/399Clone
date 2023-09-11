@@ -5,6 +5,7 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import instance from '../api/api_instance';
 import MenuItem from '@mui/material/MenuItem';
+import axios from 'axios';
 
 const spectrumCalibrationOptions = [
   {
@@ -23,12 +24,12 @@ const spectrumCalibrationOptions = [
 
 const yesNo = [
   {
-    value: 'Yes',
-    label: 'Yes',
+    value: 'True',
+    label: 'True',
   },
   {
-    value: 'No',
-    label: 'No',
+    value: 'False',
+    label: 'False',
   }
 ]
 
@@ -44,12 +45,11 @@ const hyperfineCoarse = [
 ]
 
 const PostForm = () => {
-    const [multi_protein, setMultiProtein] = useState("off")
     const [bounds_file, setBoundSpectrumFile] = useState("")
     const [compounds_file, setCompoundDescriptionFile] = useState("")
     const [adducts_file, setStandardAdductsFile] = useState("")
-    const [tolerance, setTolerance] = useState("")
-    const [peak_height, setMinimumPeakHeight] = useState("")
+    const [tolerance, setTolerance] = useState("3.1")
+    const [peak_height, setMinimumPeakHeight] = useState("0.01")
     // const [minimumMassDifference, setMinimumMassDifference] = useState("")
     const [calibrate, setSpectrumCalibration] = useState("")
     // const [spectrumCalibrationValue, setSpectrumCalibrationValue] = useState("")
@@ -58,35 +58,32 @@ const PostForm = () => {
     const [valence, setCoordinationNumber] = useState("")
     const [min_primaries, setMinimumProteinNumber] = useState("")
     const [max_primaries, setMaximumProteinNumber] = useState("")
+    const [data_publicity, setPostPublic] = useState("")
     // const [patternGenerationMethod, setPatternGenerationMethod] = useState("")
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        let data = {
-            bounds_file: bounds_file,
-            compounds_file: compounds_file,
-            adducts_file: adducts_file,
-            tolerance: tolerance,
-            peak_height: peak_height,
-            // minimumMassDifference: minimumMassDifference,
-            calibrate: calibrate,
-            // spectrumCalibrationValue: spectrumCalibrationValue,
-            only_best: only_best,
-            multi_protein: multi_protein,
-            max_adducts: max_adducts,
-            valence: valence,
-            min_primaries: min_primaries,
-            max_primaries: max_primaries,
-            // patternGenerationMethod: patternGenerationMethod
-        }
+        const formData = new FormData();
+        formData.append("bounds_file", bounds_file);
+        formData.append("compounds_file", compounds_file);
+        formData.append("adducts_file", adducts_file);
+        formData.append("tolerance", tolerance);
+        formData.append("peak_height", peak_height);
+        formData.append("calibrate", calibrate);
+        formData.append("only_best", only_best);
+        formData.append("max_adducts", max_adducts);
+        formData.append("valence", valence);
+        formData.append("min_primaries", min_primaries);
+        formData.append("max_primaries", max_primaries);
+        formData.append("data_publicity", data_publicity);
+  
         try{
-        await instance({
-            url: "/post/create/data",
-            method: "POST",
-            data: data
-          }).then((res) => {
-            
+        await axios.post('/post/create/data', formData, {
+            // url: "/post/create/data",
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
           });
         } catch(e){
             //display error message (username or password incorrect)
@@ -96,7 +93,7 @@ const PostForm = () => {
 
     return(
         <React.Fragment>
-        <form onSubmit ={handleSubmit} action={<Link to="/post/create/data" />}>  
+        <form onSubmit ={handleSubmit} encType="multipart/form-data">  
         <Stack spacing={2}>          
                 <p className="form-description">Note: all files must be excel spreadsheets ('.csv' or '.xlsx')</p>
                 <p className="form-description">Choose file for deconvoluted mass spectrum of adducted protein sample</p>
@@ -109,7 +106,7 @@ const PostForm = () => {
                 size="large"
                 name="boundSpectrumFile"
                 autoFocus
-                onChange={e => setBoundSpectrumFile(e.target.value)}
+                onChange={e => setBoundSpectrumFile(e.target.files[0])}
                 />
                 <p className="form-description">Choose file for compound description and constraints</p>
                 <TextField
@@ -120,7 +117,7 @@ const PostForm = () => {
                 required
                 size="large"
                 name="compoundDescriptionFile"
-                onChange={e => setCompoundDescriptionFile(e.target.value)}
+                onChange={e => setCompoundDescriptionFile(e.target.files[0])}
                 />
                 <p className="form-description">Choose file for standard adduct description and constraints (or do not upload and use default)</p>
                 <TextField
@@ -130,7 +127,7 @@ const PostForm = () => {
                 margin="normal"
                 size="large"
                 name="standardAdductsFile"
-                onChange={e => setStandardAdductsFile(e.target.value)}
+                onChange={e => setStandardAdductsFile(e.target.files[0])}
                 />
                 <h3>Peak Search</h3>
                 <TextField
@@ -142,7 +139,7 @@ const PostForm = () => {
                 name="tolerance"
                 type="number"
                 inputProps={{step: "0.1"}}
-                defaultValue="3.1"
+                defaultValue={3.1}
                 onChange={e => setTolerance(e.target.value)}
                 />
                 <TextField
@@ -153,7 +150,7 @@ const PostForm = () => {
                 name="minimumPeakHeight"
                 label="Minimum Peak Height"
                 type="number"
-                defaultValue="0.01"
+                defaultValue={0.01}
                 inputProps={{step: "0.01"}}
                 onChange={e => setMinimumPeakHeight(e.target.value)}
                 />
@@ -207,7 +204,7 @@ const PostForm = () => {
                   size="large"
                   label="Return all peaks detected (Even those without any feasible species)"
                   name="returnPeaksDetected"
-                  defaultValue="Yes"
+                  defaultValue={"True"}
                   onChange={e => setReturnPeaksDetected(e.target.value)}
                 >
                   {yesNo.map((option) => (
@@ -226,7 +223,7 @@ const PostForm = () => {
                 name="maximumUnique"
                 type="number"
                 inputProps={{step: "1"}}
-                defaultValue="2"
+                defaultValue={2}
                 onChange={e => setMaximumUnique(e.target.value)}
                 />
                 <TextField
@@ -238,7 +235,7 @@ const PostForm = () => {
                 name="coordinationNumber"
                 type="number"
                 inputProps={{step: "1"}}
-                defaultValue="4"
+                defaultValue={4}
                 onChange={e => setCoordinationNumber(e.target.value)}
                 />
                 <TextField
@@ -250,7 +247,7 @@ const PostForm = () => {
                 name="minimumProteinNumber"
                 type="number"
                 inputProps={{step: "1"}}
-                defaultValue="1"
+                defaultValue={1}
                 onChange={e => setMinimumProteinNumber(e.target.value)}
                 />
                 <TextField
@@ -262,7 +259,7 @@ const PostForm = () => {
                 name="maximumProteinNumber"
                 type="number"
                 inputProps={{step: "1"}}
-                defaultValue="1"
+                defaultValue={1}
                 onChange={e => setMaximumProteinNumber(e.target.value)}
                 />
                 {/* <TextField
@@ -282,6 +279,23 @@ const PostForm = () => {
                     </MenuItem>
                   ))}
                 </TextField> */}
+                <TextField
+                  margin="normal"
+                  style = {{width: 230, textAlign: "center",}}
+                  select
+                  required
+                  size="large"
+                  label="Set post to public?"
+                  name="setPostPublic"
+                  defaultValue="True"
+                  onChange={e => setPostPublic(e.target.value)}
+                >
+                  {yesNo.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
                 <Button
                 type="submit"
                 size="large"
