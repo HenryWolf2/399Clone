@@ -4,7 +4,7 @@
 
 .Post-image {
     height: 200px;
-    width: 750px;
+    width: 100%;
     object-fit: none;
 }
   
@@ -109,4 +109,10 @@ p {
 
 h3 {
     color: black;
+}
+
+.MuiChip-root {
+    background-color: #02AEEC;
+    color: black;
+    width: 100px;
 }
