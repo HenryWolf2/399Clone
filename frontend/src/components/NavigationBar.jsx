@@ -136,7 +136,7 @@ function ResponsiveAppBar() {
               </Button>
               </NavLink>
 
-              <NavLink to="/" style={{ textDecoration: 'none' }}>
+              <NavLink to="/public-data" style={{ textDecoration: 'none' }}>
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {

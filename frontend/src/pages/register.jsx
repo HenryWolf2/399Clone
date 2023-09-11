@@ -9,8 +9,8 @@ export default function Register() {
       <NavigationBar />
       <div className="App">
         <div className='App-header'>
-          <div className='White-circle'>
-            <h2 style={{ color: '#000000', width: "350px" }}>Register for the Mass Spectrometry Hub</h2>
+          <div className='White-circle-register'>
+            <h2 style={{ color: '#000000', width: "600px", lineHeight: "1" }}>Register for the Mass Spectrometry Hub</h2>
             <RegisterForm/>
           </div>
         </div>
