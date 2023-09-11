@@ -285,6 +285,7 @@ def get_profile(request):
         return Response(profile_data, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_post_by_id(request):
     if request.method == 'GET':
         post_id = request.data.get('post_id')
@@ -339,5 +340,12 @@ def edit_group(request):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+          
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
 
