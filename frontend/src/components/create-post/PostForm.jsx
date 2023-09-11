@@ -5,7 +5,6 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import instance from '../api/api_instance';
 import MenuItem from '@mui/material/MenuItem';
-import axios from 'axios';
 
 const spectrumCalibrationOptions = [
   {
@@ -51,14 +50,14 @@ const PostForm = () => {
     const [tolerance, setTolerance] = useState("3.1")
     const [peak_height, setMinimumPeakHeight] = useState("0.01")
     // const [minimumMassDifference, setMinimumMassDifference] = useState("")
-    const [calibrate, setSpectrumCalibration] = useState("")
+    const [calibrate, setSpectrumCalibration] = useState("Automatic")
     // const [spectrumCalibrationValue, setSpectrumCalibrationValue] = useState("")
-    const [only_best, setReturnPeaksDetected] = useState("")
-    const [max_adducts, setMaximumUnique] = useState("")
-    const [valence, setCoordinationNumber] = useState("")
-    const [min_primaries, setMinimumProteinNumber] = useState("")
-    const [max_primaries, setMaximumProteinNumber] = useState("")
-    const [data_publicity, setPostPublic] = useState("")
+    const [only_best, setReturnPeaksDetected] = useState("False")
+    const [max_adducts, setMaximumUnique] = useState("2")
+    const [valence, setCoordinationNumber] = useState("4")
+    const [min_primaries, setMinimumProteinNumber] = useState("1")
+    const [max_primaries, setMaximumProteinNumber] = useState("1")
+    const [data_publicity, setPostPublic] = useState("True")
     // const [patternGenerationMethod, setPatternGenerationMethod] = useState("")
 
 
@@ -79,16 +78,16 @@ const PostForm = () => {
         formData.append("data_publicity", data_publicity);
   
         try{
-        await axios.post('/post/create/data', formData, {
-            // url: "/post/create/data",
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-        } catch(e){
-            //display error message (username or password incorrect)
-            console.error(e)
-        }
+          await instance.post('/post/create/data', formData, {
+              // url: "/post/create/data",
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+          } catch(e){
+              //display error message (username or password incorrect)
+              console.error(e)
+          }
     }
 
     return(
@@ -125,6 +124,7 @@ const PostForm = () => {
                 style = {{width: 400, textAlign: "center",}}
                 inputProps={{accept:".csv, .xlsx"}}
                 margin="normal"
+                required
                 size="large"
                 name="standardAdductsFile"
                 onChange={e => setStandardAdductsFile(e.target.files[0])}
