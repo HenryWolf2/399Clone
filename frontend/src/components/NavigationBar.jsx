@@ -39,6 +39,11 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const handleLogoutTokens = () =>{
+    localStorage.removeItem("token");
+    setAnchorElUser(null);
+  }
+
   const logoStyle = {
     paddingBottom: 10,
     paddingTop: 10,
@@ -225,7 +230,7 @@ function ResponsiveAppBar() {
               </NavLink>
 
                 <NavLink to="/" style={{ textDecoration: 'none'}}>
-                <MenuItem onClick={handleCloseUserMenu}>
+                <MenuItem onClick={handleLogoutTokens}>
                   <Typography textAlign="center">Signout</Typography>
                 </MenuItem>
               </NavLink>
