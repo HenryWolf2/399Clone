@@ -166,7 +166,6 @@ def get_group_by_field(request):
 @permission_classes([IsAuthenticated])
 def add_data(request):
     if request.method == 'POST':
-        print(request.data)
         data = copy.deepcopy(request.data)
         data_fields = {'compounds_file': data['compounds_file'], 'bounds_file': data['bounds_file'], 'adducts_file': data['adducts_file'], 'data_publicity': True}
         serializer = DataSerializer(data=data_fields)
