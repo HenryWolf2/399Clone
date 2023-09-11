@@ -16,6 +16,8 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import AddIcon from '@mui/icons-material/Add';
 import { NavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import instance from './api/api_instance';
 
 
 function ResponsiveAppBar() {
@@ -41,6 +43,14 @@ function ResponsiveAppBar() {
     paddingBottom: 10,
     paddingTop: 10,
   };
+
+  // adding in effect for getting the token from lcoal storage
+  useEffect(() => {
+    if(localStorage.getItem('token') != null){
+      instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
+      console.log(instance.defaults.headers.common['Authorization']);
+    }
+  },[])
 
   return (
     <AppBar position="static" sx={{backgroundColor:'black'}}>
