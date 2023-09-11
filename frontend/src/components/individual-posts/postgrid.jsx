@@ -9,9 +9,6 @@ export default function PostGrid({narrow, post_array}) {
     } else {
         arrayDataItems = post_array.map((post_id) => <Grid item xs={6}><IndividualPost post_id={post_id} /></Grid>);
     }
-    
-    console.log(arrayDataItems)
-    console.log("wtf")
 
     return (
         

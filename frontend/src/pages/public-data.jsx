@@ -17,7 +17,6 @@ export default function Post() {
           url: "/post/get_all",
           method: "GET",
       }).then((res) => {
-        console.log(res.data)
         setPublicPosts(res.data)
       });
       } catch(e) {

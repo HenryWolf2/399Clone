@@ -29,8 +29,6 @@ export default function IndividualPost(props) {
           params: {post_id: props.post_id}
           
       }).then((res) => {
-        console.log("here")
-        console.log(res)
         setTitle(res.data.title)
         setSummary(res.data.summary)
         setPublicity(res.data.publicity)

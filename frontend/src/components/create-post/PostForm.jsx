@@ -84,13 +84,10 @@ const PostForm = () => {
             method: "POST",
             data: data
           }).then((res) => {
-            //redirect to profile page
-            //save token in axios, add authorization to header
-            console.log(res);
+            
           });
         } catch(e){
             //display error message (username or password incorrect)
-            //clear the password field
             console.error(e)
         }
     }

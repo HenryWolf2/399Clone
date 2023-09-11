@@ -46,7 +46,6 @@ const RegisterForm = () => {
             email: email,
             password: password,
         }
-        console.log(data);
         try{
         await instance({
             url: "/register/",
@@ -54,7 +53,6 @@ const RegisterForm = () => {
             data: data
         }).then((res) => {
             //redirect to login page
-            console.log(res);
             setEmail("");
             setPassword("");
             setUserName("");
