@@ -25,10 +25,10 @@ function AccountDetails(props) {
           
       }).then((res) => {
         console.log(res)
-        setFirstName(res.data[0].first_name)
-        setLastName(res.data[0].last_name)
-        setEmail(res.data[0].email)
-        setDescription(res.data[0].description)
+        setFirstName(res.data.first_name)
+        setLastName(res.data.last_name)
+        setEmail(res.data.email)
+        setDescription(res.data.description)
       });
       } catch(e) {
         console.error(e)
