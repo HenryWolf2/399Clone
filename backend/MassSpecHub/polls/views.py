@@ -349,7 +349,7 @@ def get_all_posts(request):
 @api_view(['GET'])
 def get_analysis_by_id(request):
     if request.method == 'GET':
-        analysis_id = request.data.get('analysis_id')
+        analysis_id = request.query_params.get('analysis_id')
         try:
             analysis = PostAnalysis.objects.get(id=analysis_id)
             analysis_serializer = PostAnalysisSerializer(analysis)
