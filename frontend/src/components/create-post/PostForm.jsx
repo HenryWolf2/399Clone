@@ -5,6 +5,7 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import instance from '../api/api_instance';
 import MenuItem from '@mui/material/MenuItem';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const spectrumCalibrationOptions = [
   {
@@ -21,7 +22,7 @@ const spectrumCalibrationOptions = [
   }
 ];
 
-const yesNo = [
+const trueFalse = [
   {
     value: 'True',
     label: 'True',
@@ -32,67 +33,92 @@ const yesNo = [
   }
 ]
 
-const hyperfineCoarse = [
-  {
-    value: 'Hyperfine',
-    label: 'Hyperfine',
-  },
-  {
-    value: 'Coarse',
-    label: 'Coarse',
-  }
-]
-
 const PostForm = () => {
+    const [isFormVisible, setIsFormVisible] = useState(true)
+
+    const [analysis_id, setAnalysisID] = useState("")
+    const navigate = useNavigate();
+
     const [bounds_file, setBoundSpectrumFile] = useState("")
     const [compounds_file, setCompoundDescriptionFile] = useState("")
     const [adducts_file, setStandardAdductsFile] = useState("")
     const [tolerance, setTolerance] = useState("3.1")
     const [peak_height, setMinimumPeakHeight] = useState("0.01")
-    // const [minimumMassDifference, setMinimumMassDifference] = useState("")
     const [calibrate, setSpectrumCalibration] = useState("Automatic")
-    // const [spectrumCalibrationValue, setSpectrumCalibrationValue] = useState("")
     const [only_best, setReturnPeaksDetected] = useState("False")
     const [max_adducts, setMaximumUnique] = useState("2")
     const [valence, setCoordinationNumber] = useState("4")
     const [min_primaries, setMinimumProteinNumber] = useState("1")
     const [max_primaries, setMaximumProteinNumber] = useState("1")
     const [data_publicity, setDataPublic] = useState("True")
-    // const [patternGenerationMethod, setPatternGenerationMethod] = useState("")
 
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
+    const [summary, setSummary] = useState("")
+    const [publicity, setPostPublic] = useState("True")
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const formData = new FormData();
-        formData.append("bounds_file", bounds_file);
-        formData.append("compounds_file", compounds_file);
-        formData.append("adducts_file", adducts_file);
-        formData.append("tolerance", tolerance);
-        formData.append("peak_height", peak_height);
-        formData.append("calibrate", calibrate);
-        formData.append("only_best", only_best);
-        formData.append("max_adducts", max_adducts);
-        formData.append("valence", valence);
-        formData.append("min_primaries", min_primaries);
-        formData.append("max_primaries", max_primaries);
-        formData.append("data_publicity", data_publicity);
-  
-        try{
-          await instance.post('/post/create/data', formData, {
-              // url: "/post/create/data",
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            });
-          } catch(e){
-              //display error message (username or password incorrect)
-              console.error(e)
-          }
+    const handleSubmit1 = async (event) => {
+      event.preventDefault();
+      setIsFormVisible(false)
+      const formData = new FormData();
+      formData.append("bounds_file", bounds_file);
+      formData.append("compounds_file", compounds_file);
+      formData.append("adducts_file", adducts_file);
+      formData.append("tolerance", tolerance);
+      formData.append("peak_height", peak_height);
+      formData.append("calibrate", calibrate);
+      formData.append("only_best", only_best);
+      formData.append("max_adducts", max_adducts);
+      formData.append("valence", valence);
+      formData.append("min_primaries", min_primaries);
+      formData.append("max_primaries", max_primaries);
+      formData.append("data_publicity", data_publicity);
+
+      try{
+        await instance.post('/post/create/data', formData, {
+            // url: "/post/create/data",
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }).then(
+            (res) => {
+              setAnalysisID(res.data.analysis_id)
+            }
+          );
+        } catch(e){
+            //display error message (username or password incorrect)
+            console.error(e)
+        }
+  }
+
+  const handleSubmit2 = async (event) => {
+    event.preventDefault();
+    let data = {
+        title: title,
+        description: description,
+        summary: summary,
+        publicity: publicity,
+        analysis_id: analysis_id
     }
+    try{
+    await instance({
+        url: "/post/create",
+        method: "POST",
+        data: data
+      }).then((res) => {
+        //needs to navigate to the profile page once up
+        console.log(res)
+        navigate("/");
+      });
+    } catch(e){
+        console.error(e)
+    }
+}
 
     return(
         <React.Fragment>
-        <form onSubmit ={handleSubmit} encType="multipart/form-data">  
+        {isFormVisible && (
+        <form onSubmit ={handleSubmit1} encType="multipart/form-data">  
         <Stack spacing={2}>          
                 <p className="form-description">Note: all files must be excel spreadsheets ('.csv' or '.xlsx')</p>
                 <p className="form-description">Choose file for deconvoluted mass spectrum of adducted protein sample</p>
@@ -154,18 +180,6 @@ const PostForm = () => {
                 inputProps={{step: "0.01"}}
                 onChange={e => setMinimumPeakHeight(e.target.value)}
                 />
-                {/* <TextField
-                margin="normal"
-                style = {{width: 350, textAlign: "center",}}
-                required
-                size="large"
-                label="Minimum mass difference between two protein adducts"
-                name="minimumMassDifference"
-                type="number"
-                inputProps={{step: "0.5"}}
-                defaultValue="4.0"
-                onChange={e => setMinimumMassDifference(e.target.value)}
-                /> */}
                 <div className="side-by-side">
                   <TextField
                     margin="normal"
@@ -184,17 +198,6 @@ const PostForm = () => {
                       </MenuItem>
                     ))}
                   </TextField>
-                  {/* <TextField
-                  margin="normal"
-                  required
-                  size="large"
-                  label="Re-calibration of mass spectrum"
-                  name="spectrumCalibrationValue"
-                  type="number"
-                  inputProps={{step: "0.5"}}
-                  defaultValue="1.0"
-                  onChange={e => setSpectrumCalibrationValue(e.target.value)}
-                  /> */}
                 </div>
                 <TextField
                   margin="normal"
@@ -207,7 +210,7 @@ const PostForm = () => {
                   defaultValue={"True"}
                   onChange={e => setReturnPeaksDetected(e.target.value)}
                 >
-                  {yesNo.map((option) => (
+                  {trueFalse.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
@@ -262,23 +265,6 @@ const PostForm = () => {
                 defaultValue={1}
                 onChange={e => setMaximumProteinNumber(e.target.value)}
                 />
-                {/* <TextField
-                  margin="normal"
-                  style = {{width: 240, textAlign: "center",}}
-                  select
-                  required
-                  size="large"
-                  label="Isotope pattern generation method"
-                  name="patternGenerationMethod"
-                  defaultValue="Hyperfine"
-                  onChange={e => setPatternGenerationMethod(e.target.value)}
-                >
-                  {hyperfineCoarse.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField> */}
                 <TextField
                   margin="normal"
                   style = {{width: 230, textAlign: "center",}}
@@ -307,6 +293,65 @@ const PostForm = () => {
                 </Button>
         </Stack>
         </form>
+        )}
+
+        {!isFormVisible && (
+        <form onSubmit ={handleSubmit2} encType="multipart/form-data">  
+        <Stack spacing={2}>          
+                <h3>Comment your post</h3>
+                <TextField
+                margin="normal"
+                style = {{width: 140, textAlign: "center",}}
+                required
+                size="large"
+                label="Title"
+                name="title"
+                type="text"
+                onChange={e => setTitle(e.target.value)}
+                />
+                <TextField
+                id="outlined-multiline-static"
+                label="Write a description of your post"
+                multiline
+                rows={4}
+                onChange={e => setDescription(e.target.value)}
+                />
+                <TextField
+                id="outlined-multiline-static"
+                label="Write a summary of your post"
+                multiline
+                rows={4}
+                onChange={e => setSummary(e.target.value)}
+                />
+                <TextField
+                  margin="normal"
+                  style = {{width: 230, textAlign: "center",}}
+                  select
+                  required
+                  size="large"
+                  label="Set post to public?"
+                  name="setPostPublic"
+                  defaultValue="True"
+                  onChange={e => setPostPublic(e.target.value)}
+                >
+                  {trueFalse.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <Button
+                type="submit"
+                size="large"
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                style = {{margin: 30}}
+                >
+                Submit post
+                </Button>
+        </Stack>
+        </form>
+        )}
         </React.Fragment>
     )
 }
