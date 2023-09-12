@@ -1,12 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import Banner from '../../assets/images/template-banner.jpg';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import GroupBar from './GroupBar'
 import instance from '../api/api_instance';
 import '../../assets/styles/global.css';
+import EditWindow from './EditProfileWindow';
+import PostGrid from '../individual-posts/postgrid';
+import Box from '@mui/material/Box';
+import Image from './template-banner.jpg';
 
 function AccountDetails(props) {
+
+  const [PublicPosts, setPublicPosts] = useState([])
+
+  useEffect(() => {
+    async function GetPublicPostsIDs() {
+      try{ 
+        await instance ({
+          // Set URL to get all posts by ID
+          url: "/post/get_all",
+          method: "GET",
+      }).then((res) => {
+        setPublicPosts(res.data)
+      });
+      } catch(e) {
+        console.error(e)
+      }
+    }
+    GetPublicPostsIDs();
+    } , // <- function that will run on every dependency update
+    [] // <-- empty dependency array
+  ) 
   
   {/* API Integration */}
 
@@ -14,6 +38,8 @@ function AccountDetails(props) {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [description, setDescription] = useState('')
+  const [bannerImage, setBannerImage] = useState('');
+  const [profileImage, setProfileImage] = useState('');
 
   useEffect(() => {
     async function GetProfileInformation() {
@@ -25,6 +51,8 @@ function AccountDetails(props) {
           
       }).then((res) => {
         console.log(res)
+        setBannerImage(res.data.cover_photo)
+        setProfileImage(res.data.profile_pic)
         setFirstName(res.data.first_name)
         setLastName(res.data.last_name)
         setEmail(res.data.email)
@@ -63,29 +91,21 @@ function AccountDetails(props) {
     };
   }, []);
 
-  const isWindowWideEnough = windowSize.width >= 1000; // Set your minimum width here
+  {/* Styling is present as it requires API reference or is used for responsiveness; styling that doesn't require API is located is global.css */}
 
-  /*
-  const containerStyle = {
-    position: 'relative',
-    height: '500px', // Set a fixed height for the container
-    display: 'flex',
-    flexDirection: 'column',
-  };
-  */
-  
-  /*
+  const imagePath1 = './'+bannerImage;
+
   const bannerStyle = {
     height: '200px',
     display: 'flex',
     flexDirection: 'column',
-    backgroundImage: `url(${Banner})`,
+    backgroundImage:url('./template-banner.jpg'),
     borderBottom: '3px solid white',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'top left',
     boxShadow: '0px 5px 5px rgba(0, 0, 0, 0.2)',
   };
-  */
+
 
   // Calculate the position of the overlay based on window size
   const overlayPosition = {
@@ -109,7 +129,6 @@ function AccountDetails(props) {
     position: 'absolute',
     width: '900px',
     height: '400px',
-    zIndex: 1,
     ...overlayPosition,
   };
 
@@ -118,7 +137,6 @@ function AccountDetails(props) {
     alignItems: 'left',
     width: '400px',
     height: '400px',
-    zIndex: 1,
     ...overlay2Position,
   };
 
@@ -133,47 +151,15 @@ function AccountDetails(props) {
   }
   */
 
-  const headerStyle = {
-    fontSize: '40px', // Adjust the font size as needed
-    fontWeight: 'bold', // Adjust the font weight as needed
-    color: 'black', // Text color
-    textAlign: 'left', // Text alignment (centered in this example)
-    marginTop: '0px',
-
-  }
-
-  const headerStyle2 = {
-    fontSize: '40px', // Adjust the font size as needed
-    fontWeight: 'bold', // Adjust the font weight as needed
-    color: 'black', // Text color
-    marginRight: '55px',
-    marginTop: '10px',
-
-  }
-
-  const emailHeader = {
-    fontSize: '24px', // Adjust the font size as needed
-    fontWeight: 'bold', // Adjust the font weight as needed
-    color: 'black', // Text color
-    textAlign: 'left', // Text alignment (centered in this example)
-    marginTop: '-25px',
-  }
-
-  const aboutStyle = {
-    fontSize: '16px', // Adjust the font size as needed
-    color: 'black', // Text color
-    width: '480px',
-    marginTop: '20px',
-    textAlign: 'justify', // Text alignment (centered in this example)
-  }
 
   return (
     <div>
     <div className='container-style'>
 
+
     {/* Banner and Group Bar Elements */}
 
-        <div className='banner-style'></div>
+        <div style={bannerStyle}></div>
         <div
           style={{
             height: '300px',
@@ -183,6 +169,7 @@ function AccountDetails(props) {
             
           }}
         >
+          {/* GROUP BAR ELEMENT NEEDS TO BE IMPLEMENTED IN NEXT ITERATION
           <div className='group-bar-div'>
             {isWindowWideEnough && (
               <>
@@ -200,13 +187,14 @@ function AccountDetails(props) {
               </>
             )}
           </div>
+                */}
         </div>
 
                       {/* Overlay Container for Avatar Icon and edit button*/}
 
         <div style={overlayStyle}>
           <Avatar
-            alt="Remy Sharp"
+            src={Image}
             sx={{
               width: '225px',
               height: '225px',
@@ -216,25 +204,24 @@ function AccountDetails(props) {
               marginTop: '10px',
             }}
           />
-          <Button sx={{margin:3.5, top:'250px', left: '25px'}} className="custom-button" variant='contained'>Edit Profile</Button>
-
+          <EditWindow sx={{zIndex:1000}}/>
 
         </div>
 
                             {/* Overlay Container Account Details */}
 
         <div style={overlay2Style}>
-          <h1 style={headerStyle}> { firstName } { lastName } </h1>
-          <h1 style={emailHeader}> { email } </h1>
-          <hr style={{width:'350px', border:' 2px solid #000', marginRight: '450px'}} />
-          <p style={aboutStyle}> { description } </p>
+          <h1 className='header-style'> { firstName } { lastName } </h1>
+          <h1 className='email-header'> { email } </h1>
+          <hr style={{width:'350px', border:' 2px solid #000', marginRight: '450px',zIndex:900}} />
+          <p className='about-style'> { description } </p>
 
         </div>
 
 
     </div> {/* END OF INITIAL CONTAINER*/}
 
-          <div style={{height: '75px', backgroundColor:'#02AEEC', display:'flex'}}>
+          <div style={{height: '85px', backgroundColor:'#02AEEC', display:'flex'}}>
           <div style={{flex:1, flexDirection: 'row', borderRight: '1px solid grey', height: '100%', boxShadow: '0px 5px 5px rgba(0, 0, 0, 0.2)',}}>
             <h1 style={{textAlign: 'center', color:'white', }}>Personal Data Navigation</h1>
           </div>
@@ -246,12 +233,19 @@ function AccountDetails(props) {
 
         <div style={{height: '400px', backgroundColor: 'white'}}>
               <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
-              <div style={{ flex: 1, borderRight: '1px solid grey'}}>
+              <div style={{ flex: 1,borderRight: '1px solid grey', display: 'flex', overflow: 'auto'}}>
                 {/* Content for the left div */}
+
+                <Box sx={{ flexGrow: 1, width: "48.5%", padding: "5%" }}>
+                  <PostGrid narrow={true} post_array={PublicPosts} />    
+                </Box>
 
               </div>
               <div style={{ flex: 1}}>
                 {/* Content for the right div */}
+
+                {bannerImage}
+                {imagePath1}
 
               </div>
             </div>
