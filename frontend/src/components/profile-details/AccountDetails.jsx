@@ -12,26 +12,6 @@ import Image from './template-banner.jpg';
 function AccountDetails(props) {
 
   const [PublicPosts, setPublicPosts] = useState([])
-
-  useEffect(() => {
-    async function GetPublicPostsIDs() {
-      try{ 
-        await instance ({
-          // Set URL to get all posts by ID
-          url: "/post/get_all",
-          method: "GET",
-      }).then((res) => {
-        setPublicPosts(res.data)
-      });
-      } catch(e) {
-        console.error(e)
-      }
-    }
-    GetPublicPostsIDs();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
-  ) 
-  
   {/* API Integration */}
 
   const [firstName, setFirstName] = useState('')
@@ -46,9 +26,7 @@ function AccountDetails(props) {
       try{ 
         await instance ({
           url: "/profile/get",
-          method: "GET",
-          data: { id: props.id }
-          
+          method: "GET",          
       }).then((res) => {
         console.log(res)
         setBannerImage(res.data.cover_photo)
@@ -57,6 +35,7 @@ function AccountDetails(props) {
         setLastName(res.data.last_name)
         setEmail(res.data.email)
         setDescription(res.data.description)
+        setPublicPosts(res.data.posts)
       });
       } catch(e) {
         console.error(e)
