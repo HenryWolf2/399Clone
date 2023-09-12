@@ -5,10 +5,10 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import UserSerializer, PostSerializer, GroupSerializer, DataSerializer, PostAnalysisSerializer, \
     TagSerializer
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag, PostAnalysis
+from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data
 from .analysistool.src import binding_site_search
 import copy
 import json
@@ -58,7 +58,7 @@ def user_logout(request):
     if request.method == 'POST':
         try:
             # Delete the user's token to logout
-            request.user.auth_token.delete()
+            logout(request)
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -166,7 +166,9 @@ def get_group_by_field(request):
 @permission_classes([IsAuthenticated])
 def add_data(request):
     if request.method == 'POST':
-        serializer = DataSerializer(data=request.data)
+        data = copy.deepcopy(request.data)
+        data_fields = {'compounds_file': data['compounds_file'], 'bounds_file': data['bounds_file'], 'adducts_file': data['adducts_file'], 'data_publicity': True}
+        serializer = DataSerializer(data=data_fields)
         if serializer.is_valid():
             serializer.save()
             data = serializer.instance
@@ -227,8 +229,8 @@ def search_post(request):
         posts = Post.objects.filter(title__contains=query) | Post.objects.filter(
             summary__contains=query) | Post.objects.filter(description__contains=query) | Post.objects.filter(
             author__username__contains=query)
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        posts = posts.values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -345,3 +347,18 @@ def get_all_posts(request):
     if request.method == 'GET':
         posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_analysis_by_id(request):
+    if request.method == 'GET':
+        analysis_id = request.query_params.get('analysis_id')
+        try:
+            analysis = PostAnalysis.objects.get(id=analysis_id)
+            analysis_serializer = PostAnalysisSerializer(analysis)
+            data = Data.objects.get(id=analysis.data_input_id)
+            if data.data_publicity:
+                data_serializer = DataSerializer(data)
+                return Response({'analysis': analysis_serializer.data, 'data': data_serializer.data}, status=status.HTTP_200_OK)
+            return Response({'analysis': analysis_serializer.data, 'data': 'Data is not public'}, status=status.HTTP_200_OK)
+        except:
+            return Response({'message': "Analysis not found"}, status=status.HTTP_404_NOT_FOUND)

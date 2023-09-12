@@ -35,6 +35,8 @@ const LoginForm = () => {
           }).then((res) => {
             //save token in axios, add authorization to header
             instance.defaults.headers.common['Authorization'] = 'Token ' + res.data.token;
+            //saving the token in local storage
+            localStorage.setItem('token', res.data.token)
             //needs to navigate to the profile page once up
             navigate("/");
           });

@@ -37,7 +37,6 @@ const PostForm = () => {
     const [isFormVisible, setIsFormVisible] = useState(true)
 
     const [analysis_id, setAnalysisID] = useState("")
-
     const navigate = useNavigate();
 
     const [bounds_file, setBoundSpectrumFile] = useState("")
@@ -112,7 +111,6 @@ const PostForm = () => {
         navigate("/");
       });
     } catch(e){
-        //clear the password field
         console.error(e)
     }
 }
@@ -278,7 +276,7 @@ const PostForm = () => {
                   defaultValue="True"
                   onChange={e => setDataPublic(e.target.value)}
                 >
-                  {trueFalse.map((option) => (
+                  {yesNo.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>

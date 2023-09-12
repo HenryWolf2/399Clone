@@ -2,11 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import RegisterForm from '../components/register/registerForm'
+import RestrictedNavigationBar from '../components/restrictedNavigationBar'
 
 export default function Register() {
   return (
     <div className="container">
-      <NavigationBar />
+      <RestrictedNavigationBar />
       <div className="App">
         <div className='App-header'>
           <div className='White-circle-register'>
