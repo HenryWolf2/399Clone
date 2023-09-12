@@ -42,7 +42,7 @@ export default function IndividualPost(props) {
     GetPostInformation();
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
-  ) 
+  )
   
 
   return (
@@ -79,6 +79,7 @@ export default function IndividualPost(props) {
           <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag2" />
           <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag3" />
           <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag4" />
+          
         </Stack>
       </Box>
     </Box>

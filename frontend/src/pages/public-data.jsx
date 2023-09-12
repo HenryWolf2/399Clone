@@ -42,7 +42,6 @@ export default function Post() {
       <Box sx={{ flexGrow: 1, width: "98%", padding: "1%" }}>
         <PostGrid narrow={false} post_array={PublicPosts} />    
       </Box>
-      
     </div>
   );
 }
