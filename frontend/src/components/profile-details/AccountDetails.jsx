@@ -95,11 +95,13 @@ function AccountDetails(props) {
 
   const imagePath1 = './'+bannerImage;
 
+  const Image2 = require('./template-banner.jpg');
+
   const bannerStyle = {
     height: '200px',
     display: 'flex',
     flexDirection: 'column',
-    backgroundImage:url('./template-banner.jpg'),
+    backgroundImage:`url(${Image2})`,
     borderBottom: '3px solid white',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'top left',
@@ -194,7 +196,7 @@ function AccountDetails(props) {
 
         <div style={overlayStyle}>
           <Avatar
-            src={Image}
+            src={require('./template-banner.jpg').default}
             sx={{
               width: '225px',
               height: '225px',
@@ -243,9 +245,6 @@ function AccountDetails(props) {
               </div>
               <div style={{ flex: 1}}>
                 {/* Content for the right div */}
-
-                {bannerImage}
-                {imagePath1}
 
               </div>
             </div>
