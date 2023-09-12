@@ -17,7 +17,7 @@
         #02AEEC 50%,
         #02AEEC 100%
     );
-    min-height: 100vh;
+    min-height: 92.5vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -111,8 +111,7 @@ h3 {
     color: black;
 }
 
-.MuiChip-root {
-    background-color: #02AEEC;
-    color: black;
-    width: 100px;
+.Post-image-page {
+    height: 500px;
+    width: 100%;
 }
