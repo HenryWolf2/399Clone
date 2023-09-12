@@ -6,12 +6,6 @@ import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function Profile() {
-  const navigate = useNavigate();
-  useEffect(() => {
-    if(localStorage.getItem('token') == null){
-      navigate("/login");
-    };
-  },)
   return (
     <div className="container">
       <NavigationBar />

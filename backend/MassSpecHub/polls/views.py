@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import UserSerializer, PostSerializer, GroupSerializer, DataSerializer, PostAnalysisSerializer, \
     TagSerializer
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser, Group, Post, Tag, PostAnalysis
@@ -58,7 +58,7 @@ def user_logout(request):
     if request.method == 'POST':
         try:
             # Delete the user's token to logout
-            request.user.auth_token.delete()
+            logout(request)
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

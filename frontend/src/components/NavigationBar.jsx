@@ -18,11 +18,13 @@ import AddIcon from '@mui/icons-material/Add';
 import { NavLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import instance from './api/api_instance';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -39,8 +41,18 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
-  const handleLogoutTokens = () =>{
+  const handleLogoutTokens = async (event) =>{
     localStorage.removeItem("token");
+    try{
+      await instance({
+          url: "/logout/",
+          method: "POST",
+        }).then((res) => {
+          console.log(res)
+        });
+      } catch(e){
+          console.error(e)
+      }
     setAnchorElUser(null);
   }
 
@@ -49,10 +61,12 @@ function ResponsiveAppBar() {
     paddingTop: 10,
   };
 
-  // adding in effect for getting the token from lcoal storage
+  // adding in effect for getting the token from local storage
   useEffect(() => {
     if(localStorage.getItem('token') != null){
       instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
+    }else{
+      navigate("/login")
     }
   },[])
 
@@ -228,7 +242,7 @@ function ResponsiveAppBar() {
                 </MenuItem>
               </NavLink>
 
-                <NavLink to="/" style={{ textDecoration: 'none'}}>
+                <NavLink to="/login" style={{ textDecoration: 'none'}}>
                 <MenuItem onClick={handleLogoutTokens}>
                   <Typography textAlign="center">Signout</Typography>
                 </MenuItem>
