@@ -176,7 +176,7 @@ function ResponsiveAppBar() {
 
                 {/* Temporary Links for Testing */}
 
-              <NavLink to="/loading" style={{ textDecoration: 'none' }}>
+              {/* <NavLink to="/loading" style={{ textDecoration: 'none' }}>
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
@@ -204,7 +204,7 @@ function ResponsiveAppBar() {
                 },}}
               > Register
               </Button>
-              </NavLink>
+              </NavLink> */}
 
           </Box>
 
