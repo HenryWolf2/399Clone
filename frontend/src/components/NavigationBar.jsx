@@ -210,7 +210,7 @@ function ResponsiveAppBar() {
 
                                 {/* Create Button */}
                   
-            <Button sx={{margin:2}} className="custom-button" variant='contained' endIcon={<AddIcon/>}>CREATE</Button>
+            <Button sx={{margin:2}} href="/create-post" className="custom-button" variant='contained' endIcon={<AddIcon/>} >CREATE</Button>
 
                       {/* The Profile Icon Menu */}
 
