@@ -276,7 +276,7 @@ const PostForm = () => {
                   defaultValue="True"
                   onChange={e => setDataPublic(e.target.value)}
                 >
-                  {yesNo.map((option) => (
+                  {trueFalse.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
