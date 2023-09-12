@@ -92,6 +92,39 @@
     width: 52vmin;
 }
 
+/* == Styling Elements for the accountDetails component == */
+
+.container-style {
+    position: relative;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header-style {
+    font-size: 40px;
+    font-weight: bold;
+    color: black;
+    text-align: left;
+    margin-top: 0px;
+}
+
+.email-header {
+    font-size: 24px;
+    color: black;
+    font-weight: bold;
+    text-align: left;
+    margin-top: -25px;
+}
+
+.about-style {
+    font-size: 16px;
+    color: black;
+    width: 480px;
+    margin-top: 20px;
+    text-align: justify;
+}
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
