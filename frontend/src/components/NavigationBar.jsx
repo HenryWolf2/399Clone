@@ -16,11 +16,15 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import AddIcon from '@mui/icons-material/Add';
 import { NavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import instance from './api/api_instance';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -37,10 +41,34 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const handleLogoutTokens = async (event) =>{
+    localStorage.removeItem("token");
+    try{
+      await instance({
+          url: "/logout/",
+          method: "POST",
+        }).then((res) => {
+          console.log(res)
+        });
+      } catch(e){
+          console.error(e)
+      }
+    setAnchorElUser(null);
+  }
+
   const logoStyle = {
     paddingBottom: 10,
     paddingTop: 10,
   };
+
+  // adding in effect for getting the token from local storage
+  useEffect(() => {
+    if(localStorage.getItem('token') != null){
+      instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
+    }else{
+      navigate("/login")
+    }
+  },[])
 
   return (
     <AppBar position="static" sx={{backgroundColor:'black'}}>
@@ -136,7 +164,7 @@ function ResponsiveAppBar() {
               </Button>
               </NavLink>
 
-              <NavLink to="/" style={{ textDecoration: 'none' }}>
+              <NavLink to="/public-data" style={{ textDecoration: 'none' }}>
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
@@ -148,7 +176,7 @@ function ResponsiveAppBar() {
 
                 {/* Temporary Links for Testing */}
 
-              <NavLink to="/loading" style={{ textDecoration: 'none' }}>
+              {/* <NavLink to="/loading" style={{ textDecoration: 'none' }}>
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
@@ -176,18 +204,18 @@ function ResponsiveAppBar() {
                 },}}
               > Register
               </Button>
-              </NavLink>
+              </NavLink> */}
 
           </Box>
 
                                 {/* Create Button */}
                   
-            <Button sx={{margin:2}} className="custom-button" variant='contained' endIcon={<AddIcon/>}>CREATE</Button>
+            <Button sx={{margin:2}} href="/create-post" className="custom-button" variant='contained' endIcon={<AddIcon/>} >CREATE</Button>
 
                       {/* The Profile Icon Menu */}
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+            <Tooltip title="Open Settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
@@ -208,17 +236,17 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <NavLink to="/" style={{ textDecoration: 'none'}}>
+              <NavLink to="/profile" style={{ textDecoration: 'none'}}>
                 <MenuItem onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">Profile</Typography>
                 </MenuItem>
-                </NavLink>
+              </NavLink>
 
-                <NavLink to="/" style={{ textDecoration: 'none'}}>
-                <MenuItem onClick={handleCloseUserMenu}>
+                <NavLink to="/login" style={{ textDecoration: 'none'}}>
+                <MenuItem onClick={handleLogoutTokens}>
                   <Typography textAlign="center">Signout</Typography>
                 </MenuItem>
-                </NavLink>
+              </NavLink>
 
             </Menu>
           </Box>

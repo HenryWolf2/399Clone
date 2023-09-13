@@ -4,7 +4,7 @@
 
 .Post-image {
     height: 200px;
-    width: 750px;
+    width: 100%;
     object-fit: none;
 }
   
@@ -17,7 +17,7 @@
         #02AEEC 50%,
         #02AEEC 100%
     );
-    min-height: 100vh;
+    min-height: 92.5vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,15 +26,103 @@
     color: white;
 }
 
+.Post{
+    text-align: center;
+}
+
+.Post-header{
+    background: linear-gradient(
+        to bottom,
+        #35CFFF 0%,
+        #35CFFF 50%,
+        #02AEEC 50%,
+        #02AEEC 100%
+    );
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
 .White-circle {
-    height: 90vmin;
-    width: 90vmin;
+    height: 700px;
+    width: 700px;
     background-color: #FFFFFF;
     border-radius: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.White-circle-register {
+    height: 900px;
+    width: 900px;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.White-rectangle {
+    margin-top: 7vmin;
+    margin-bottom: 7vmin;
+    width: 90vmin;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0%;
+    border-radius: 20px;
+}
+
+.form-description {
+    font-size: 1.5vmin;
+    text-align: left;
+}
+
+.side-by-side {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 52vmin;
+}
+
+/* == Styling Elements for the accountDetails component == */
+
+.container-style {
+    position: relative;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header-style {
+    font-size: 40px;
+    font-weight: bold;
+    color: black;
+    text-align: left;
+    margin-top: 0px;
+}
+
+.email-header {
+    font-size: 24px;
+    color: black;
+    font-weight: bold;
+    text-align: left;
+    margin-top: -25px;
+}
+
+.about-style {
+    font-size: 16px;
+    color: black;
+    width: 480px;
+    margin-top: 20px;
+    text-align: justify;
 }
 
 body {
@@ -50,4 +138,13 @@ p {
     color: black;
     margin: 0px;
     font-size: 4vmin;
+}
+
+h3 {
+    color: black;
+}
+
+.Post-image-page {
+    height: 500px;
+    width: 100%;
 }

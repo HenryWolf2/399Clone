@@ -5,12 +5,13 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import UserSerializer, PostSerializer, GroupSerializer, DataSerializer, PostAnalysisSerializer, \
     TagSerializer
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag
+from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data
 from .analysistool.src import binding_site_search
 import copy
+import json
 
 
 @api_view(['POST'])
@@ -57,18 +58,44 @@ def user_logout(request):
     if request.method == 'POST':
         try:
             # Delete the user's token to logout
-            request.user.auth_token.delete()
+            logout(request)
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_profile(request):
+    if request.method == 'PUT':
+        try:
+            user = CustomUser.objects.get(id=request.user.id)
+            profile_pic = request.FILES.get('profile_pic')
+            description = request.data.get('description')
+            cover_photo = request.FILES.get('cover_photo')
+            if profile_pic:
+                user.profile_pic = profile_pic
+            if description:
+                user.description = description
+            if cover_photo:
+                user.cover_photo = cover_photo
+            user.save()
+            return Response({'message': 'Profile updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_post(request):
     if request.method == 'POST':
+        analysis_id = request.data.get('analysis_id')
+        try:
+            analysis = PostAnalysis.objects.get(id=analysis_id)
+        except ObjectDoesNotExist:
+            return Response({'error': 'PostAnalysis not found'}, status=status.HTTP_404_NOT_FOUND)
         data = copy.deepcopy(request.data)
         data['author'] = request.user.id
+        data['associated_results'] = analysis.id
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -83,6 +110,8 @@ def create_group(request):
         serializer = GroupSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            CustomUser.objects.get(id=request.user.id).groups.add(serializer.instance,
+                                                                  through_defaults={'permissions': 'admin'})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,12 +166,9 @@ def get_group_by_field(request):
 @permission_classes([IsAuthenticated])
 def add_data(request):
     if request.method == 'POST':
-        post_id = request.data.get('post_id')
-        try:
-            post = Post.objects.get(id=post_id)
-        except ObjectDoesNotExist:
-            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = DataSerializer(data=request.data)
+        data = copy.deepcopy(request.data)
+        data_fields = {'compounds_file': data['compounds_file'], 'bounds_file': data['bounds_file'], 'adducts_file': data['adducts_file'], 'data_publicity': True}
+        serializer = DataSerializer(data=data_fields)
         if serializer.is_valid():
             serializer.save()
             data = serializer.instance
@@ -164,11 +190,15 @@ def add_data(request):
                                                           min_primaries=min_primaries, max_primaries=max_primaries,
                                                           max_adducts=max_adducts, valence=valence, only_best=only_best,
                                                           calibrate=calibrate)
-            analysis_data = {'results_df': analysis_results, 'data_input': data, 'associated_with': post}
-            analysis_serializer = PostAnalysisSerializer(analysis_data)
+            json_df = analysis_results.to_json(orient='split', index=False)
+            json_df = json.loads(json_df)
+            analysis_data = {'result_df': json_df, 'data_input': data.id}
+            analysis_serializer = PostAnalysisSerializer(data=analysis_data)
             if analysis_serializer.is_valid():
                 analysis_serializer.save()
-                return Response(analysis_serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    {'analysis_id': analysis_serializer.instance.id, 'analysis_object': analysis_serializer.data},
+                    status=status.HTTP_201_CREATED)
             return Response(analysis_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -199,8 +229,8 @@ def search_post(request):
         posts = Post.objects.filter(title__contains=query) | Post.objects.filter(
             summary__contains=query) | Post.objects.filter(description__contains=query) | Post.objects.filter(
             author__username__contains=query)
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        posts = posts.values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -225,6 +255,7 @@ def search_post_by_tag(request):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 def add_tag_to_post(request):
     if request.method == 'POST':
@@ -236,6 +267,98 @@ def add_tag_to_post(request):
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Tag not found'}, status=status.HTTP_404_NOT_FOUND)
         post.tags.add(tag)
-        return Response({'message': f'Post {post.title} has been assigned to tag {tag.name}.'}, status=status.HTTP_200_OK)
+        return Response({'message': f'Post {post.title} has been assigned to tag {tag.name}.'},
+                        status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_profile(request):
+    if request.method == 'GET':
+        user = CustomUser.objects.get(id=request.user.id)
+        profile_data = {}
+        profile_data['email'] = user.email
+        profile_data['description'] = user.description
+        profile_data['first_name'] = user.first_name
+        profile_data['last_name'] = user.last_name
+        profile_data['profile_pic'] = user.profile_pic.name
+        profile_data['cover_photo'] = user.cover_photo.name
+        posts = Post.objects.filter(author__id=user.id)
+        profile_data['posts'] = posts.values_list('id', flat=True)
+        return Response(profile_data, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+def get_post_by_id(request):
+    if request.method == 'GET':
+        post_id = request.query_params.get('post_id')
+        post = Post.objects.get(id=post_id)
+        serializer = PostSerializer(post)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_post(request):
+    if request.method == 'PUT':
+        try:
+            post_id = request.data.get('post_id')
+            post = Post.objects.get(id=post_id)
+            title = request.data.get('title')
+            summary = request.data.get('summary')
+            description = request.data.get('description')
+            publicity = request.data.get('publicity')
+            if title:
+                post.title = title
+            if description:
+                post.description = description
+            if publicity != None:
+                post.publicity = publicity
+            if summary:
+                post.summary = summary
+            post.save()
+            return Response({'message': 'Post updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_group(request):
+    if request.method == 'PUT':
+        try:
+            group_id = request.data.get('group_id')
+            group = Group.objects.get(id=group_id)
+            name = request.data.get('name')
+            group_pic = request.FILES.get('group_pic')
+            description = request.data.get('description')
+            if name:
+                group.name = name
+            if group_pic:
+                group.group_pic = group_pic
+            if description:
+                group.description = description
+            group.save()
+            return Response({'message': 'Group updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_analysis_by_id(request):
+    if request.method == 'GET':
+        analysis_id = request.query_params.get('analysis_id')
+        try:
+            analysis = PostAnalysis.objects.get(id=analysis_id)
+            analysis_serializer = PostAnalysisSerializer(analysis)
+            data = Data.objects.get(id=analysis.data_input_id)
+            if data.data_publicity:
+                data_serializer = DataSerializer(data)
+                return Response({'analysis': analysis_serializer.data, 'data': data_serializer.data}, status=status.HTTP_200_OK)
+            return Response({'analysis': analysis_serializer.data, 'data': 'Data is not public'}, status=status.HTTP_200_OK)
+        except:
+            return Response({'message': "Analysis not found"}, status=status.HTTP_404_NOT_FOUND)

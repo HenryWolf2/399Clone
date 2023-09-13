@@ -4,8 +4,14 @@ import Home from '../pages/home';
 import Login from '../pages/login';
 import Register from '../pages/register';
 import Loading from '../pages/loading';
-import Post from '../pages/post';
+import PublicPosts from '../pages/public-data';
 import NotFound from '../pages/notFound';
+import CreatePost from '../pages/create-post';
+import Profile from '../pages/profile';
+import IndividualPost from './individual-posts/post';
+import { useState, useEffect } from 'react';
+import instance from './api/api_instance';
+import PostPage from '../pages/postPage';
 
 export default function Root() {
   /* Unsure if this section here is needed but going to keep it for now */
@@ -14,9 +20,36 @@ export default function Root() {
     { path: '/login', name: 'Login', Component: Login, exact: false },
     { path: '/loading', name: 'Loading', Component: Loading, exact: false },
     { path: '/register', name: 'Register', Component: Register, exact: false },
-    { path: '/post', name: 'Post', Component: Post, exact: false },
+    { path: '/profile', name: 'Profile', Component: Profile, exact: false },
+    { path: '/public-data', name: 'PublicPosts', Component: PublicPosts, exact: false },
+    { path: '/create-post', name: 'Create Post', Component: CreatePost, exact: false},
     { path: '*', name: 'No Match', Component: NotFound, exact: false },
   ];
+
+  const [AllPosts, setAllPosts] = useState([])
+
+  useEffect(() => {
+    async function GetAllPostsIDs() {
+      try{ 
+        await instance ({
+          // Set URL to get all posts by ID
+          url: "/post/get_all",
+          method: "GET",
+      }).then((res) => {
+        setAllPosts(res.data)
+      });
+      } catch(e) {
+        console.error(e)
+      }
+    }
+    GetAllPostsIDs();
+    } , // <- function that will run on every dependency update
+    [] // <-- empty dependency array
+  ) 
+
+  let dataRoutes = AllPosts.map((post_id) => <Route key={post_id} path={`/post/${post_id}`} element = {<PostPage post_id={post_id} />} />);
+
+  console.log(dataRoutes)
 
   return (
     <Router>
@@ -25,7 +58,12 @@ export default function Root() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/loading" element={<Loading />} />
           <Route exact path="/register" element={<Register />} />
-          <Route exact path="/post" element={<Post />} />
+          <Route exact path="/profile" element={<Profile />} />
+          <Route exact path="/public-data" element={<PublicPosts />} />
+          <Route exact path="/create-post" element={<CreatePost />} />
+          
+          {dataRoutes}
+
           <Route path="*" element={<NotFound />} />
         </Routes>
     </Router>

@@ -2,15 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import RegisterForm from '../components/register/registerForm'
+import RestrictedNavigationBar from '../components/restrictedNavigationBar'
 
 export default function Register() {
   return (
     <div className="container">
-      <NavigationBar />
+      <RestrictedNavigationBar />
       <div className="App">
         <div className='App-header'>
-          <div className='White-circle'>
-            <h2 style={{ color: '#000000', width: "350px" }}>Register for the Mass Spectrometry Hub</h2>
+          <div className='White-circle-register'>
+            <h2 style={{ color: '#000000', width: "600px", lineHeight: "1" }}>Register for the Mass Spectrometry Hub</h2>
             <RegisterForm/>
           </div>
         </div>

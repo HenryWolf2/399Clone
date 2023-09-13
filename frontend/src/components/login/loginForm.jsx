@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
 import instance from '../api/api_instance';
 import { Navigate, useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
+import Grid from '@mui/material/Grid';
+import{Box, Container} from '@mui/material';
+
+import '../../assets/styles/global.css';
 
 
 const LoginForm = () => {
@@ -32,27 +35,30 @@ const LoginForm = () => {
           }).then((res) => {
             //save token in axios, add authorization to header
             instance.defaults.headers.common['Authorization'] = 'Token ' + res.data.token;
+            //saving the token in local storage
+            localStorage.setItem('token', res.data.token)
             //needs to navigate to the profile page once up
-            navigate("/");
+            navigate("/profile");
           });
         } catch(e){
             //display error message (username or password incorrect)
             //clear the password field
             console.error(e)
-            setErrorMessage("There was an error logging in")
+            setPassword("")
+            setErrorMessage("There was an error")
         }
     }
 
     return(
+        <Container maxWidth= "sm">
         <React.Fragment>
-        {errorMessage ? <Alert severity="error"> {errorMessage} — <strong>please try again!</strong> </Alert> : null}
-        <br/>
+        {errorMessage ? <Alert severity="error" fullWidth> {errorMessage} — <strong>Please try again!</strong> </Alert> : null}
         <form onSubmit ={handleSubmit}>  
-        <Stack spacing={2}>          
+                 
                 <TextField
                 margin="normal"
                 required
-                size="large"
+                fullWidth
                 value={username}
                 label="Username"
                 name="username"
@@ -63,7 +69,7 @@ const LoginForm = () => {
                 <TextField
                 margin="normal"
                 required
-                size="large"
+                fullWidth
                 name="password"
                 label="Password"
                 type="password"
@@ -73,15 +79,26 @@ const LoginForm = () => {
                 />
                 <Button
                 type="submit"
-                size="large"
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                size = "large"
                 >
-                Sign In
+                Login
                 </Button>
-        </Stack>
+                <Grid 
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center">
+                    <Grid item >
+                        <Link href="/register" variant="body2" color='#000000'>
+                        {"Don't have an account? Register here"}
+                        </Link>
+                    </Grid>
+                </Grid>
+        
         </form>
         </React.Fragment>
+        </Container>
     )
 }
 

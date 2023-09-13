@@ -37,8 +37,11 @@ class PostGroup(models.Model):
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     profile_pic = models.ImageField()
+    cover_photo = models.ImageField()
     description = models.TextField()
     groups = models.ManyToManyField(to="Group", through="UserGroup")
+    first_name = models.TextField()
+    last_name = models.TextField()
 
     # Add custom fields here, if needed
 
@@ -62,14 +65,15 @@ class Post(models.Model):
     description = models.TextField()
     publicity = models.BooleanField()
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
-    post_time = models.DateTimeField(default=datetime.now())
+    post_time = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(to='Tag', through=TagPost)
+    associated_results = models.OneToOneField('PostAnalysis', on_delete=models.CASCADE, null=True)
 
 class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
     group = models.ForeignKey('Group', on_delete=models.CASCADE, null=True)
 
-    join_date = models.DateTimeField(default=datetime.now())
+    join_date = models.DateTimeField(auto_now_add=True)
     permissions = models.TextField(null=True)
 
     class Meta:
@@ -91,7 +95,6 @@ class Data(models.Model):
 
 class PostAnalysis(models.Model):
     data_input = models.OneToOneField('Data', on_delete=models.CASCADE)
-    associated_post = models.OneToOneField('Post', on_delete=models.CASCADE)
     result_df = JSONField()
 
 
