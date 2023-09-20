@@ -207,14 +207,18 @@ def add_post_to_group(request):
     if request.method == 'POST':
         group_id = request.data.get('group_id')
         post_id = request.data.get('post_id')
+        user = CustomUser.objects.get(id=request.user.id)
         try:
             group = Group.objects.get(id=group_id)
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
         if post.publicity == True:
-            group.posts.add(post)
-            return Response({'message': f'Post {post.title} added to group {group.name}.'}, status=status.HTTP_200_OK)
+            if user.groups.get(id=group_id).permissions in ('admin', 'member'):
+                group.posts.add(post)
+                return Response({'message': f'Post {post.title} added to group {group.name}.'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'User does not have permission to add post to group'}, status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
 
