@@ -102,4 +102,3 @@ class PostAnalysis(models.Model):
 
 class Tag(models.Model):
     name = models.TextField()
-    posts = models.ManyToManyField(to='Post', through=TagPost)
