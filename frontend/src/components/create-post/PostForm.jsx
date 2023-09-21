@@ -6,6 +6,13 @@ import Stack from '@mui/material/Stack';
 import instance from '../api/api_instance';
 import MenuItem from '@mui/material/MenuItem';
 import { Navigate, useNavigate } from 'react-router-dom';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+
+const steps = ['Post files', 'Peak search settings', 'Feasible set settings', 'Post description']
 
 const spectrumCalibrationOptions = [
   {
@@ -34,7 +41,7 @@ const trueFalse = [
 ]
 
 const PostForm = () => {
-    const [isFormVisible, setIsFormVisible] = useState(true)
+    const [activeStep, setActiveStep] = useState(0)
 
     const [analysis_id, setAnalysisID] = useState("")
     const navigate = useNavigate();
@@ -59,7 +66,7 @@ const PostForm = () => {
 
     const handleSubmit1 = async (event) => {
       event.preventDefault();
-      setIsFormVisible(false)
+      setActiveStep(3)
       const formData = new FormData();
       formData.append("bounds_file", bounds_file);
       formData.append("compounds_file", compounds_file);
@@ -114,47 +121,84 @@ const PostForm = () => {
         console.error(e)
     }
 }
+  const handleNext = () => {
+    setActiveStep(activeStep + 1)
+  }
+
+  const handleBack = () => {
+    setActiveStep(activeStep - 1)
+  }
 
     return(
         <React.Fragment>
-        {isFormVisible && (
+          <Box sx={{ width: '100%' }}>
+            <Stepper activeStep={activeStep}>
+              {steps.map((label, index) => {
+                const stepProps = {};
+                const labelProps = {};
+                return (
+                  <Step key={label} {...stepProps}>
+                    <StepLabel {...labelProps}>{label}</StepLabel>
+                  </Step>
+                );
+              })}
+            </Stepper>
+            {activeStep === steps.length ? (
+              <React.Fragment>
+                <Typography sx={{ mt: 2, mb: 1 }}>
+                  All steps completed - you&apos;re finished
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                  <Box sx={{ flex: '1 1 auto' }} />
+                </Box>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+              </React.Fragment>
+            )}
+          </Box>
+        <br />
         <form onSubmit ={handleSubmit1} encType="multipart/form-data">  
-        <Stack spacing={2}>          
-                <p className="form-description">Note: all files must be excel spreadsheets ('.csv' or '.xlsx')</p>
-                <p className="form-description">Choose file for deconvoluted mass spectrum of adducted protein sample</p>
-                <TextField
-                type="file"
-                style = {{width: 400, textAlign: "center",}}
-                inputProps={{accept:".csv, .xlsx"}}
-                margin="normal"
-                required
-                size="large"
-                name="boundSpectrumFile"
-                autoFocus
-                onChange={e => setBoundSpectrumFile(e.target.files[0])}
-                />
-                <p className="form-description">Choose file for compound description and constraints</p>
-                <TextField
-                type="file"
-                style = {{width: 400, textAlign: "center",}}
-                inputProps={{accept:".csv, .xlsx"}}
-                margin="normal"
-                required
-                size="large"
-                name="compoundDescriptionFile"
-                onChange={e => setCompoundDescriptionFile(e.target.files[0])}
-                />
-                <p className="form-description">Choose file for standard adduct description and constraints (or do not upload and use default)</p>
-                <TextField
-                type="file"
-                style = {{width: 400, textAlign: "center",}}
-                inputProps={{accept:".csv, .xlsx"}}
-                margin="normal"
-                required
-                size="large"
-                name="standardAdductsFile"
-                onChange={e => setStandardAdductsFile(e.target.files[0])}
-                />
+        <Stack spacing={2}>
+                {activeStep == 0 && (
+                  <div className = "File-div">
+                  <p className="form-description">Note: all files must be excel spreadsheets ('.csv' or '.xlsx')</p>
+                  <p className="form-description">Choose file for deconvoluted mass spectrum of adducted protein sample</p>
+                  <TextField
+                  type="file"
+                  className = "Upload-file"
+                  inputProps={{accept:".csv, .xlsx"}}
+                  margin="normal"
+                  required
+                  size="large"
+                  name="boundSpectrumFile"
+                  autoFocus
+                  onChange={e => setBoundSpectrumFile(e.target.files[0])}
+                  />
+                  <p className="form-description">Choose file for compound description and constraints</p>
+                  <TextField
+                  type="file"
+                  inputProps={{accept:".csv, .xlsx"}}
+                  margin="normal"
+                  required
+                  size="large"
+                  name="compoundDescriptionFile"
+                  onChange={e => setCompoundDescriptionFile(e.target.files[0])}
+                  />
+                  <p className="form-description">Choose file for standard adduct description and constraints (or do not upload and use default)</p>
+                  <TextField
+                  type="file"
+                  inputProps={{accept:".csv, .xlsx"}}
+                  margin="normal"
+                  required
+                  size="large"
+                  name="standardAdductsFile"
+                  onChange={e => setStandardAdductsFile(e.target.files[0])}
+                  />
+                  </div>
+                )}
+                {activeStep == 1 && (
+                  <div>
                 <h3>Peak Search</h3>
                 <TextField
                 margin="normal"
@@ -216,6 +260,10 @@ const PostForm = () => {
                     </MenuItem>
                   ))}
                 </TextField>
+                </div>
+                )}
+                {activeStep == 2 && (
+                  <div>
                 <h3>Feasible Set</h3>
                 <TextField
                 margin="normal"
@@ -289,13 +337,13 @@ const PostForm = () => {
                 sx={{ mt: 3, mb: 2 }}
                 style = {{margin: 30}}
                 >
-                Create Post
+                Send Data
                 </Button>
+                </div>
+                )}
         </Stack>
         </form>
-        )}
-
-        {!isFormVisible && (
+        {activeStep == 3 && (
         <form onSubmit ={handleSubmit2} encType="multipart/form-data">  
         <Stack spacing={2}>          
                 <h3>Comment your post</h3>
@@ -352,6 +400,27 @@ const PostForm = () => {
         </Stack>
         </form>
         )}
+        <div className="Movement-buttons">
+        {(activeStep == 1 || activeStep === 2) && (
+        <Button
+          size="medium"
+          hidden = {activeStep == 1}
+          variant="outlined"
+          sx={{ mt: 3, mb: 2 }}
+          style = {{margin: 30}}
+          onClick = {handleBack}
+          >Back</Button>
+        )}
+        {(activeStep == 0 || activeStep == 1) && (
+          <Button
+        size="medium"
+        variant="contained"
+        sx={{ mt: 0, mb: 1 }}
+        style = {{margin: 30}}
+        onClick = {handleNext}
+        >Next</Button>
+      )}
+        </div>
         </React.Fragment>
     )
 }
