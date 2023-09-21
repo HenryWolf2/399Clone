@@ -267,6 +267,7 @@ def add_tags_to_post(request):
             except ObjectDoesNotExist:
                 tag = Tag.objects.create(name=tag_name)
             post.tags.add(tag)
+        return Response({'message': 'Tags added successfully.'}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
