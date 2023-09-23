@@ -16,7 +16,6 @@ function GroupDetails() {
     width: minimized ? '15%' : '50%',
     backgroundColor: 'grey', // Use 'backgroundColor' instead of 'backgroundColour'
     height: '1000px',
-    textAlign: minimized ? 'center' : 'left'
   };
 
   const bannerStyle = {
@@ -135,8 +134,14 @@ function GroupDetails() {
         </div>
 
         <div style={overlayStyleMinimized}> 
-            <h1 style={{color: 'white', marginTop: '100px', fontSize: '30px'}}> University of Auckland </h1>
+        <h1 style={{color: 'white', marginTop: '50px'}}> University of Auckland </h1>
+          <div style={{display: 'flex', marginTop: '-40px', color: 'white', fontSize: '14px'}}>
+            <h1 style={{marginRight: '15px'}}>21.08.2023</h1>
+          </div>
+          <hr style={{width:'250px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
+
         </div>
+        
         
 
 
