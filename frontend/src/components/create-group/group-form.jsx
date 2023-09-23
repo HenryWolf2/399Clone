@@ -37,7 +37,7 @@ const GroupForm = () => {
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
-          
+          fullWidth
           margin="normal"
           label="Name"
           variant="outlined"
@@ -47,6 +47,7 @@ const GroupForm = () => {
         />
         <TextField
           multiline
+          rows={4}
           fullWidth
           margin="normal"
           label="Description"
