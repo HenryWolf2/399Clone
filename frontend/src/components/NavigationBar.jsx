@@ -233,10 +233,10 @@ function ResponsiveAppBar() {
               }}
             >
               <NavLink to="/create-post" style={{ textDecoration: 'none'}}>
-                <MenuItem onClick={handleClose}>Post</MenuItem>
+                <MenuItem onClick={handleClose}><Typography textAlign={'center'}>Post</Typography></MenuItem>
               </NavLink>
               <NavLink to="/create-group" style={{ textDecoration: 'none'}}>
-                <MenuItem onClick={handleClose}>Group</MenuItem>
+                <MenuItem onClick={handleClose}><Typography textAlign={'center'}>Group</Typography></MenuItem>
               </NavLink>
             </Menu>
                       {/* The Profile Icon Menu */}
