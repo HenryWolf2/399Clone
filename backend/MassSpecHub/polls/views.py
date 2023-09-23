@@ -349,6 +349,7 @@ def get_all_posts(request):
         return Response(posts, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_analysis_by_id(request):
     if request.method == 'GET':
         analysis_id = request.query_params.get('analysis_id')
@@ -362,3 +363,14 @@ def get_analysis_by_id(request):
             return Response({'analysis': analysis_serializer.data, 'data': 'Data is not public'}, status=status.HTTP_200_OK)
         except:
             return Response({'message': "Analysis not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_group_landing_info(request):
+    if request.method == 'GET':
+        user = CustomUser.objects.get(id=request.user.id)
+        groups = user.groups.all()
+        posts = Post.objects.filter(group__in=groups).values_list('id', flat=True).order_by('post_time')
+        all_groups = Group.objects.all().difference(groups)
+        all_groups = all_groups.values_list('id', flat=True)
+        return Response({'posts': posts, 'groups': all_groups}, status=status.HTTP_200_OK)

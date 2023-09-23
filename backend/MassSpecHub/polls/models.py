@@ -14,7 +14,7 @@ class Group(models.Model):
     name = models.TextField()
     description = models.TextField()
     group_pic = models.ImageField()
-    posts = models.ManyToManyField(to="polls.Post", through="polls.PostGroup")
+    posts = models.ManyToManyField(to="Post", through="PostGroup")
 
     class Meta:
         db_table = 'Group'
