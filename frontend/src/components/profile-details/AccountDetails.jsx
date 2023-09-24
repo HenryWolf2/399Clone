@@ -8,6 +8,7 @@ import EditWindow from './EditProfileWindow';
 import PostGrid from '../individual-posts/postgrid';
 import Box from '@mui/material/Box';
 import Image from './template-banner.jpg';
+import TextField from '@mui/material/TextField';
 
 function AccountDetails(props) {
 
@@ -19,6 +20,7 @@ function AccountDetails(props) {
   const [email, setEmail] = useState('')
   const [description, setDescription] = useState('')
   const [bannerImage, setBannerImage] = useState('');
+  const [notepad, setNotepad] = useState('');
   const [profileImage, setProfileImage] = useState('');
 
   useEffect(() => {
@@ -32,6 +34,7 @@ function AccountDetails(props) {
         setBannerImage(res.data.cover_photo)
         setProfileImage(res.data.profile_pic)
         setFirstName(res.data.first_name)
+        setNotepad(res.data.notepad)
         setLastName(res.data.last_name)
         setEmail(res.data.email)
         setDescription(res.data.description)
@@ -222,9 +225,17 @@ function AccountDetails(props) {
                 </Box>
 
               </div>
-              <div style={{ flex: 1}}>
+              <div style={{ display: 'inline', flex: 1, alignContent: 'center', alignItems:'center', overflow: 'hidden'}}>
                 {/* Content for the right div */}
-
+                <TextField
+                  id="filled-multiline-static"
+                  label="Use This Box for Your Notes"
+                  sx={{width: '100%', height: '100%'}}
+                  multiline
+                  rows={100}
+                  defaultValue={notepad}
+                  variant="filled"
+                />
               </div>
             </div>
         </div>
