@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .serializers import UserSerializer, PostSerializer, GroupSerializer, DataSerializer, PostAnalysisSerializer, \
     TagSerializer
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate,logout
+from django.contrib.auth import authenticate, logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data
@@ -64,10 +64,10 @@ def user_logout(request):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['PUT'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def edit_profile(request):
-    if request.method == 'PUT':
+    if request.method == 'POST':
         try:
             user = CustomUser.objects.get(id=request.user.id)
             profile_pic = request.FILES.get('profile_pic')
@@ -83,6 +83,7 @@ def edit_profile(request):
             return Response({'message': 'Profile updated successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -167,7 +168,8 @@ def get_group_by_field(request):
 def add_data(request):
     if request.method == 'POST':
         data = copy.deepcopy(request.data)
-        data_fields = {'compounds_file': data['compounds_file'], 'bounds_file': data['bounds_file'], 'adducts_file': data['adducts_file'], 'data_publicity': True}
+        data_fields = {'compounds_file': data['compounds_file'], 'bounds_file': data['bounds_file'],
+                       'adducts_file': data['adducts_file'], 'data_publicity': True}
         serializer = DataSerializer(data=data_fields)
         if serializer.is_valid():
             serializer.save()
@@ -269,6 +271,7 @@ def add_tags_to_post(request):
             post.tags.add(tag)
         return Response({'message': 'Tags added successfully.'}, status=status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_profile(request):
@@ -284,7 +287,8 @@ def get_profile(request):
         posts = Post.objects.filter(author__id=user.id)
         profile_data['posts'] = posts.values_list('id', flat=True)
         return Response(profile_data, status=status.HTTP_200_OK)
-    
+
+
 @api_view(['GET'])
 def get_post_by_id(request):
     if request.method == 'GET':
@@ -339,13 +343,15 @@ def edit_group(request):
             return Response({'message': 'Group updated successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_posts(request):
     if request.method == 'GET':
         posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def get_analysis_by_id(request):
@@ -357,7 +363,19 @@ def get_analysis_by_id(request):
             data = Data.objects.get(id=analysis.data_input_id)
             if data.data_publicity:
                 data_serializer = DataSerializer(data)
-                return Response({'analysis': analysis_serializer.data, 'data': data_serializer.data}, status=status.HTTP_200_OK)
-            return Response({'analysis': analysis_serializer.data, 'data': 'Data is not public'}, status=status.HTTP_200_OK)
+                return Response({'analysis': analysis_serializer.data, 'data': data_serializer.data},
+                                status=status.HTTP_200_OK)
+            return Response({'analysis': analysis_serializer.data, 'data': 'Data is not public'},
+                            status=status.HTTP_200_OK)
         except:
             return Response({'message': "Analysis not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+def get_spectrum_dataframe(request):
+    if request.method == 'GET':
+        bounds_file = request.FILES.get('bounds_file')
+        dataframe = pd.read_excel(bounds_file)
+        json_df = dataframe.to_json(orient='split', index=False)
+        json_df = json.loads(json_df)
+        return Response(json_df, status=status.HTTP_200_OK)
