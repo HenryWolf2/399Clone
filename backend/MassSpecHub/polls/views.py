@@ -64,10 +64,10 @@ def user_logout(request):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['PUT'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def edit_profile(request):
-    if request.method == 'PUT':
+    if request.method == 'POST':
         try:
             user = CustomUser.objects.get(id=request.user.id)
             profile_pic = request.FILES.get('profile_pic')
