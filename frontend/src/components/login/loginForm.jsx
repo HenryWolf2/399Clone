@@ -48,7 +48,7 @@ const LoginForm = () => {
                 setErrorMessage("Invalid Username or Password")
             }else{
                 setPassword("")
-                setErrorMessage("Internal Server Error - Please Try Again")
+                setErrorMessage("Internal Server Error")
             }
         }
     }
