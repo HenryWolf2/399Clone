@@ -374,3 +374,15 @@ def get_group_landing_info(request):
         all_groups = Group.objects.all().difference(groups)
         all_groups = all_groups.values_list('id', flat=True)
         return Response({'posts': posts, 'groups': all_groups}, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_group_by_id(request):
+    if request.method == 'GET':
+        group_id = request.query_params.get('group_id')
+        try:
+            group = Group.objects.get(id=group_id)
+            serializer = GroupSerializer(group)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)

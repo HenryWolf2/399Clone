@@ -5,6 +5,7 @@ import instance from '../components/api/api_instance';
 import { useEffect } from 'react';
 import PostGrid from '../components/individual-posts/postgrid';
 import { Grid, Item, Box, Typography } from '@mui/material';
+import GroupGrid from '../components/group-card/group-grid';
 
 export default function Groups() {
     const [postIDs, setPostIDs] = useState([])
@@ -26,6 +27,7 @@ export default function Groups() {
         }
         }
         GetGroupInformation();
+        
         } , // <- function that will run on every dependency update
         [] // <-- empty dependency array
     ) 
@@ -35,9 +37,15 @@ export default function Groups() {
   return (
     <div className="container">
       <NavigationBar />
-      <Box sx={{width: "49%", height: "100vh", padding: "1%", backgroundColor: "#09A9EC" }}>
+      <Box sx={{width: '100%', display: 'flex' }}>
+      <Box sx={{width: "49%", height: "100vh", padding: "1%", backgroundColor: "#09A9EC", flex: '1' }}>
         <Typography variant='h3' textAlign={'center'} marginBottom={"10px"}>Your Group Posts</Typography>
         <PostGrid narrow={true} post_array={postIDs} />    
+      </Box>
+      <Box sx={{width: "49%", height: "100vh", padding: "1%", backgroundColor: "white"}}>
+        <Typography variant='h3' textAlign={'center'} marginBottom={"10px"}>Recommended Groups</Typography>
+        <GroupGrid  group_array={groupIDs} />    
+      </Box>
       </Box>
     </div>
   );
