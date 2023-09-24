@@ -53,7 +53,7 @@ function GroupDetails() {
     position: 'relative',
     alignItems: 'center',
     width: '500px',
-    marginRight: '40px',
+    marginRight: '20px',
     height: '400px',
     display: minimized ? 'none' : 'inline',
   }
@@ -104,6 +104,7 @@ function GroupDetails() {
               position: 'relative',
               marginTop: '40px',
               marginRight: '40px',
+              marginLeft: '40px',
               float:'left',
               display: minimized ? 'none' : 'flex',
             }}
