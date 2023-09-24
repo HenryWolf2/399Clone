@@ -73,7 +73,7 @@ function GroupData() {
           height:'875px',
           display: 'flex',
           flexDirection: 'row',
-          backgroundColor: '#055C96',
+          backgroundColor: '#fff',
           boxShadow: '0px 8px 5px rgba(0, 0, 0, 0.2)',
           justifyContent: 'right',
           overflow: 'scroll',

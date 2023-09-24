@@ -154,7 +154,7 @@ function ResponsiveAppBar() {
               </Button>
             </NavLink>
 
-            <NavLink to="/group-specific" style={{ textDecoration: 'none' }}>
+            <NavLink to="/" style={{ textDecoration: 'none' }}>
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
