@@ -73,19 +73,19 @@ export default function PostPage(props) {
           </Typography>
 
           
-
+          <Stack sx={{margin: "0px 20px 0px 20px"}}>
           { isShown ? (
             <div>
-              <Button onClick={handleClick}> Switch to full table </Button>
+              <Button sx={{ background: '#02AEEC', color: 'white' }} onClick={handleClick}> Switch to full table </Button>
               <PostGraph results_id={results_id} />
             </div>
           ) : (
             <div>
-              <Button onClick={handleClick}> Switch to data stuff </Button>
+              <Button sx={{ background: '#02AEEC', color: 'white' }} onClick={handleClick}> Switch to data stuff </Button>
               <PostTable results_id={results_id} />
             </div>
           )}
-          
+          </Stack>
         </Box>
       </Box> 
       

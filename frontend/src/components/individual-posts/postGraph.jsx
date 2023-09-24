@@ -49,7 +49,7 @@ export default function PostGraph(props) {
         <XAxis label={"Atomic Mass"} dataKey="Theoretical Peak Mass" height={80} />
         <YAxis label={{value:'Relative Abundance', angle:'-90'}} width={100} dataKey="Relative Abundance" />
         <Tooltip />
-        <Line type="monotone" dataKey="Relative Abundance" stroke="#8884d8" dot={false} activeDot={false} />
+        <Line type="monotone" dataKey="Relative Abundance" stroke="#02AEEC" dot={false} activeDot={false} />
       </LineChart>
     </ResponsiveContainer>
   );
