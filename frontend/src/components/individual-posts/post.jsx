@@ -9,6 +9,7 @@ import ProfilePicture from './profile';
 import StockImage from '../../assets/images/stock-image.jpg';
 import instance from '../api/api_instance.js'
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import '../../assets/styles/global.css';
 
@@ -19,6 +20,7 @@ export default function IndividualPost(props) {
   const [publicity, setPublicity] = useState('')
   const [description, setDescription] = useState('')
   const [date, setDate] = useState('')
+  const [post_id, setPostID] = useState('')
   
   useEffect(() => {
     async function GetPostInformation() {
@@ -33,7 +35,8 @@ export default function IndividualPost(props) {
         setSummary(res.data.summary)
         setPublicity(res.data.publicity)
         setDescription(res.data.description)
-        setDate(res.data.post_time)
+        setDate(new Date(res.data.post_time).toLocaleDateString())
+        setPostID("/post/"+props.post_id)
       });
       } catch(e) {
         console.error(e)
@@ -46,6 +49,7 @@ export default function IndividualPost(props) {
   
 
   return (
+    <Link to={post_id} style={{ textDecoration: "none", color: 'black' }}>
     <Box sx={{ width: '100%', bgcolor: '#D9D9D9', borderRadius: '10px', padding: "10px 0px 10px 0px" }}>
       <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
         <Grid container alignItems="center" >
@@ -71,7 +75,7 @@ export default function IndividualPost(props) {
               { title }
         </Typography>
         <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
-          { summary }
+          { description.slice(0,250) }...
         </Typography>
         <img src={ StockImage } className="Post-image" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>
         <Stack direction="row" spacing={1} sx={{margin: "0px 20px 0px 20px"}}>
@@ -83,6 +87,7 @@ export default function IndividualPost(props) {
         </Stack>
       </Box>
     </Box>
+    </Link>
   );
 }
 
