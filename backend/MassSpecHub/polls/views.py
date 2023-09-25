@@ -95,11 +95,19 @@ def create_post(request):
         except ObjectDoesNotExist:
             return Response({'error': 'PostAnalysis not found'}, status=status.HTTP_404_NOT_FOUND)
         data = copy.deepcopy(request.data)
+        del data['tags']
         data['author'] = request.user.id
         data['associated_results'] = analysis.id
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+            post = Post.objects.get(id=serializer.instance.id)
+            for tag_name in request.POST.getlist('tags'):
+                try:
+                    tag = Tag.objects.get(name=tag_name)
+                except ObjectDoesNotExist:
+                    tag = Tag.objects.create(name=tag_name)
+                post.tags.add(tag)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -239,17 +247,6 @@ def search_post(request):
         return Response(posts, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_tag(request):
-    if request.method == 'POST':
-        serializer = TagSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def search_post_by_tag(request):
@@ -261,19 +258,6 @@ def search_post_by_tag(request):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-@api_view(['POST'])
-def add_tags_to_post(request):
-    if request.method == 'POST':
-        post_id = request.data.get('post_id')
-        post = Post.objects.get(id=post_id)
-        for tag_name in request.POST.getlist('tags'):
-            try:
-                tag = Tag.objects.get(name=tag_name)
-            except ObjectDoesNotExist:
-                tag = Tag.objects.create(name=tag_name)
-            post.tags.add(tag)
-        return Response({'message': 'Tags added successfully.'}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
