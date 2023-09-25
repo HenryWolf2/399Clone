@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['description', 'group_pic', 'name']
+        fields = ['description', 'group_pic', 'name', 'group_banner']
 
     def create(self, validated_data):
         group = Group(

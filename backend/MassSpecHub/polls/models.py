@@ -13,7 +13,8 @@ from django.core.validators import FileExtensionValidator
 class Group(models.Model):
     name = models.TextField()
     description = models.TextField()
-    group_pic = models.ImageField()
+    group_pic = models.ImageField(upload_to='group_pics')
+    group_banner = models.ImageField(upload_to='group_banners', default='default.jpg')
     posts = models.ManyToManyField(to="polls.Post", through="polls.PostGroup")
 
     class Meta:
@@ -36,8 +37,8 @@ class PostGroup(models.Model):
 
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    profile_pic = models.ImageField()
-    cover_photo = models.ImageField()
+    profile_pic = models.ImageField(upload_to='profile_pics')
+    cover_photo = models.ImageField(upload_to='profile_banners', default='default.jpg')
     description = models.TextField()
     groups = models.ManyToManyField(to="Group", through="UserGroup")
     first_name = models.TextField()
@@ -68,6 +69,7 @@ class Post(models.Model):
     post_time = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(to='Tag', through=TagPost)
     associated_results = models.OneToOneField('PostAnalysis', on_delete=models.CASCADE, null=True)
+    post_pic = models.ImageField(upload_to='post_pics', default='default.png')
 
 class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
@@ -86,11 +88,11 @@ class UserGroup(models.Model):
 class Data(models.Model):
     data_publicity = models.BooleanField()
     compounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
-                                      default='test.csv')
+                                      default='test.csv', upload_to='compounds')
     adducts_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
-                                    default='test.csv')
+                                    default='test.csv', upload_to='adducts')
     bounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
-                                   default='test.csv')
+                                   default='test.csv', upload_to='bound_spectrum')
 
 
 class PostAnalysis(models.Model):
@@ -102,4 +104,3 @@ class PostAnalysis(models.Model):
 
 class Tag(models.Model):
     name = models.TextField()
-    posts = models.ManyToManyField(to='Post', through=TagPost)
