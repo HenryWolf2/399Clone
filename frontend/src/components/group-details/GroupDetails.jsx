@@ -164,7 +164,18 @@ function GroupDetails() {
           height: '300px',
           backgroundColor: '#02AEEC',
           display: minimized ? 'none' : 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}>
+          <div style={{width: '100%', marginBottom: '-15px'}}>
+          <p style={{fontSize: '15px', color: 'white', fontWeight: 'bold', textAlign:'left', marginLeft:'5px', marginTop: '5px'}}>Status: ADMIN</p>
+          </div>
+
+          <h1 style={{color: 'white', marginTop: '10px'}}> Permissions </h1>
+          <div style={{backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
+
+
+          </div>
           
       </div>
 
