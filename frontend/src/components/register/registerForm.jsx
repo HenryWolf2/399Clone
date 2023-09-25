@@ -62,8 +62,21 @@ const RegisterForm = () => {
         });
         } catch(e){
             //displays error message if registration does not work
-            console.log(e.response.data);
-            setErrorMessage("There was an error creating your account")
+            //console.log(e.response.data);
+            //console.log(e.response.data.email)
+            console.log(e.response)
+            //setErrorMessage("There was an error creating your account")
+            if(e.response.status === 400){
+                if(e.response.data.email){
+                    setErrorMessage(e.response.data.email)
+                }else if (e.response.data.username){
+                    setErrorMessage(e.response.data.username)
+                }
+            }else{
+                setErrorMessage("Internal Server Error")
+            }
+            
+            
 
                 
         }
