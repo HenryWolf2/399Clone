@@ -157,7 +157,7 @@ const handleProfileUpdate = async () => {
                 autoFocus
                 onChange={handleProfilePicChange}
                 />
-            <Button onClick={handleProfileUpdate} sx={{marginTop:'30px'}}>Save Changes</Button>
+            <Button onClick={()=> {handleProfileUpdate(); handleClose(); }} sx={{marginTop:'30px'}}>Save Changes</Button>
           </FormControl>
 
         </Box>
