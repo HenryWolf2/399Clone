@@ -9,6 +9,7 @@ import PostGrid from '../individual-posts/postgrid';
 import Box from '@mui/material/Box';
 import Image from './template-banner.jpg';
 import TextField from '@mui/material/TextField';
+import ReactMarkdown from 'react-markdown';
 
 function AccountDetails(props) {
 
@@ -22,6 +23,7 @@ function AccountDetails(props) {
   const [bannerImage, setBannerImage] = useState('');
   const [notepad, setNotepad] = useState('');
   const [profileImage, setProfileImage] = useState('');
+  
 
   useEffect(() => {
     async function GetProfileInformation() {
@@ -48,6 +50,39 @@ function AccountDetails(props) {
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   ) 
+
+  {/* Handle Notepad Functionality */}
+
+  const [editing, setEditing] = useState(false);
+  
+  const handleTextFieldBlur = () => {
+    setEditing(false);
+    handleNotepadUpdate();
+  };
+
+  const handleNotepadUpdate = async () => {
+    const formData = new FormData();
+    formData.append('notepad', notepad);
+  
+    console.log(formData);
+  
+    try{
+      await instance.post('/profile/notepad', formData, {
+        // url: "/post/create/data",
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(
+        (res) => {
+          
+        }
+      );
+    } catch(e){
+        //display error message (username or password incorrect)
+        console.error(e)
+    }
+  }
+
 
   {/* Responsive Design Control */}
 
@@ -225,18 +260,28 @@ function AccountDetails(props) {
                 </Box>
 
               </div>
-              <div style={{ display: 'inline', flex: 1, alignContent: 'center', alignItems:'center', overflow: 'hidden'}}>
-                {/* Content for the right div */}
-                <TextField
-                  id="filled-multiline-static"
-                  label="Use This Box for Your Notes"
-                  sx={{width: '100%', height: '100%'}}
-                  multiline
-                  rows={100}
-                  defaultValue={notepad}
-                  variant="filled"
-                />
-              </div>
+              <div style={{ display: 'inline', flex: 1, alignContent: 'center', alignItems:'center', overflow: 'scroll'}}>
+                          {editing ? (
+                    <TextField
+                      id="notepad"
+                      sx={{ width: '100%', height: '100%' }}
+                      multiline
+                      rows={100}
+                      value={notepad}
+                      variant="filled"
+                      onBlur={handleTextFieldBlur}
+                      onChange={(e) => setNotepad(e.target.value)}
+                    />
+                  ) : (
+                    <div style={{marginLeft:'10px', marginTop:'20px'}} onClick={() => setEditing(true)}>
+                      <ReactMarkdown components={{
+                      p: ({ node, ...props }) => (
+                        <p style={{ fontSize: '18px' }} {...props} />
+                      ),
+                      }}>{notepad}</ReactMarkdown>
+                    </div>
+                  )}
+                </div>
             </div>
         </div>
 
