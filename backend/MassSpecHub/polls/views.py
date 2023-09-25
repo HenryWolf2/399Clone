@@ -13,6 +13,7 @@ from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
 import math
+import numpy
 
 
 @api_view(['POST'])
@@ -405,24 +406,30 @@ def get_group_by_id(request):
 @api_view(['GET'])
 def get_graph_data(request):
     if request.method == 'GET':
-        bounds_file = request.FILES.get('bounds_file')
         post_id = request.data.get('post_id')
         post = Post.objects.get(id=post_id)
+        analysis = post.associated_results
         linked_analysis = post.associated_results.result_df
-        dataframe = pd.read_excel(bounds_file)
+        data_id = analysis.data_input_id
+        data = Data.objects.get(id=data_id)
+        dataframe = pd.read_excel(data.bounds_file)
         normalised_dataframe = utils.normalise(dataframe)
         peak_search.peak_find(normalised_dataframe, peak_height=0.01)
-        graph_data = {'m/z': [], 'normalised_intensity': [], 'species': []}
         values = [row[4] for row in linked_analysis['data']]
         i = 0
         j = 0
+        species_row = []
         for point in normalised_dataframe['m/z']:
+            species_row.append('N/A')
             for val in values:
                 if math.isclose(point, val, abs_tol=10e-15):
                     if linked_analysis['data'][i][7]:
-                        graph_data['m/z'].append(point)
-                        graph_data['normalised_intensity'].append(normalised_dataframe['normalised_intensity'][j])
-                        graph_data['species'].append(linked_analysis['data'][i][0])
+                        species_row[j] = linked_analysis['data'][i][0]
                     i += 1
             j += 1
-        return Response({'peaks': graph_data, 'all_points': normalised_dataframe}, status=status.HTTP_200_OK)
+        normalised_dataframe['species'] = species_row
+        normalised_dataframe.drop(normalised_dataframe.columns[[0, 2]], axis=1, inplace=True)
+        normalised_dataframe = normalised_dataframe.to_numpy()
+        keys = ['m/z', 'normalised_intensity', 'species']
+        data_points = [dict(zip(keys, values)) for values in normalised_dataframe]
+        return Response({'all_points': data_points}, status=status.HTTP_200_OK)

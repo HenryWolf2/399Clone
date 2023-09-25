@@ -28,7 +28,7 @@ urlpatterns = [
     path('post/edit', edit_post, name='edit_post'),
     path('groups/edit', edit_group, name='edit_groups'),
     path('post/analysis_by_id', get_analysis_by_id, name='analysis_by_id'),
-    path('post/get/graph_data', get_graph_data, name='get_graph_data')
+    path('post/get/graph_data', get_graph_data, name='get_graph_data'),
     path('group/landing', get_group_landing_info, name='get_group_landing_info'),
     path('group/id', get_group_by_id, name='get_group_by_id'),
 ]
