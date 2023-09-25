@@ -29,4 +29,5 @@ urlpatterns = [
     path('group/id', get_group_by_id, name='get_group_by_id'),
     path('post/get/spectrum', get_spectrum_dataframe, name='get_spectrum_dataframe'),
     path('group/info', get_group_info, name='get_group_info')
+    path('post/get/spectrum', get_spectrum_dataframe, name='get_spectrum_dataframe')
 ]
