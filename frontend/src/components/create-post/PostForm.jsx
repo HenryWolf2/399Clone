@@ -13,8 +13,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Autocomplete from '@mui/material/Autocomplete';
-import { createTheme } from '@mui/material/styles';
-import { ThemeProvider } from '@emotion/react';
 
 const steps = ['Post files', 'Peak search settings', 'Feasible set settings', 'Post description']
 
@@ -54,14 +52,6 @@ const yesNo = [
     label: 'No',
   }
 ]
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#02AEEC',
-    },
-  },
-});
 
 const PostForm = () => {
     const [activeStep, setActiveStep] = useState(0)
@@ -506,10 +496,8 @@ const PostForm = () => {
       )}
       {(activeStep == 3) && (
         <div className = "Submit-button">
-        <ThemeProvider theme={theme}>
         <Button
         className = "Next-button"
-        color = "primary"
         type="submit"
         form="form2"
         size="large"
@@ -519,7 +507,6 @@ const PostForm = () => {
         >
         Submit post
         </Button>
-        </ThemeProvider>
         </div>
       )}
         </div>
