@@ -259,18 +259,17 @@ def search_post_by_tag(request):
 
 
 @api_view(['POST'])
-def add_tag_to_post(request):
+def add_tags_to_post(request):
     if request.method == 'POST':
-        tag_id = request.data.get('tag_id')
         post_id = request.data.get('post_id')
-        try:
-            tag = Tag.objects.get(id=tag_id)
-            post = Post.objects.get(id=post_id)
-        except ObjectDoesNotExist:
-            return Response({'error': 'Post or Tag not found'}, status=status.HTTP_404_NOT_FOUND)
-        post.tags.add(tag)
-        return Response({'message': f'Post {post.title} has been assigned to tag {tag.name}.'},
-                        status=status.HTTP_200_OK)
+        post = Post.objects.get(id=post_id)
+        for tag_name in request.POST.getlist('tags'):
+            try:
+                tag = Tag.objects.get(name=tag_name)
+            except ObjectDoesNotExist:
+                tag = Tag.objects.create(name=tag_name)
+            post.tags.add(tag)
+        return Response({'message': 'Tags added successfully.'}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
