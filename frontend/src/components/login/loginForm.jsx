@@ -43,9 +43,13 @@ const LoginForm = () => {
         } catch(e){
             //display error message (username or password incorrect)
             //clear the password field
-            console.error(e)
-            setPassword("")
-            setErrorMessage("There was an error")
+            if(e.response.status === 401){
+                setPassword("")
+                setErrorMessage("Invalid Username or Password")
+            }else{
+                setPassword("")
+                setErrorMessage("Internal Server Error")
+            }
         }
     }
 
