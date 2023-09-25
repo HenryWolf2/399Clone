@@ -9,9 +9,10 @@ from django.contrib.auth import authenticate, logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup
-from .analysistool.src import binding_site_search
+from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
+import math
 
 
 @api_view(['POST'])
@@ -218,9 +219,11 @@ def add_post_to_group(request):
         if post.publicity == True:
             if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
                 group.posts.add(post)
-                return Response({'message': f'Post {post.title} added to group {group.name}.'}, status=status.HTTP_200_OK)
+                return Response({'message': f'Post {post.title} added to group {group.name}.'},
+                                status=status.HTTP_200_OK)
             else:
-                return Response({'error': 'User does not have permission to add post to group'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'error': 'User does not have permission to add post to group'},
+                                status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -376,10 +379,26 @@ def get_analysis_by_id(request):
 
 
 @api_view(['GET'])
-def get_spectrum_dataframe(request):
+def get_graph_data(request):
     if request.method == 'GET':
         bounds_file = request.FILES.get('bounds_file')
+        post_id = request.data.get('post_id')
+        post = Post.objects.get(id=post_id)
+        linked_analysis = post.associated_results.result_df
         dataframe = pd.read_excel(bounds_file)
-        json_df = dataframe.to_json(orient='split', index=False)
-        json_df = json.loads(json_df)
-        return Response(json_df, status=status.HTTP_200_OK)
+        normalised_dataframe = utils.normalise(dataframe)
+        peak_search.peak_find(normalised_dataframe, peak_height=0.01)
+        graph_data = {'m/z': [], 'normalised_intensity': [], 'species': []}
+        values = [row[4] for row in linked_analysis['data']]
+        i = 0
+        j = 0
+        for point in normalised_dataframe['m/z']:
+            for val in values:
+                if math.isclose(point, val, abs_tol=10e-15):
+                    if linked_analysis['data'][i][7]:
+                        graph_data['m/z'].append(point)
+                        graph_data['normalised_intensity'].append(normalised_dataframe['normalised_intensity'][j])
+                        graph_data['species'].append(linked_analysis['data'][i][0])
+                    i += 1
+            j += 1
+        return Response({'peaks': graph_data, 'all_points': normalised_dataframe}, status=status.HTTP_200_OK)

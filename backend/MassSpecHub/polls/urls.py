@@ -1,7 +1,7 @@
 from django.urls import path
 
 
-from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, create_tag, search_post_by_tag, add_tag_to_post, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_spectrum_dataframe
+from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, create_tag, search_post_by_tag, add_tags_to_post, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_graph_data
 
 
 urlpatterns = [
@@ -27,5 +27,5 @@ urlpatterns = [
     path('post/edit', edit_post, name='edit_post'),
     path('groups/edit', edit_group, name='edit_groups'),
     path('post/analysis_by_id', get_analysis_by_id, name='analysis_by_id'),
-    path('post/get/spectrum', get_spectrum_dataframe, name='get_spectrum_dataframe')
+    path('post/get/graph_data', get_graph_data, name='get_spectrum_dataframe')
 ]
