@@ -48,7 +48,7 @@
 
 .Post-logo{
     height: 20vmin;
-    padding-top: 1vmin;
+    padding-top: 0vmin;
     padding-bottom: 1vmin;
     pointer-events: none;
 }
@@ -56,21 +56,47 @@
 .Post-title{
     padding-top: 1vmin;
     margin-top: 0vmin;
+    margin-bottom: 2.5vmin;
     font-family: monospace;
 }
 
 .File-div{
-    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-gap: 1vmin;
+    padding: 1vmin;
+    width: 80vmin;
 }
 
 .Movement-buttons {
     display: flex;
-    -webkit-box-pack: end;
-    justify-content: flex-end;
+    width: 86.5vmin;
+    height: 6vmin;
+    padding: 0vmin;
+    justify-content: space-between;
+}
+
+.Back-button {
+    height: 4vmin;
+    margin: 1vmin;
+}
+
+.Next-button {
+    height: 4vmin;
+}
+
+.Submit-button {
+    margin-right: 3vmin;
+}
+
+.Tag-input {
+    margin-top: 1.5vmin;
+    margin-right: 0vmin;
 }
 
 .Upload-file{
-    padding-left: 10vmin;
+    float: left;
 }
 
 .White-circle {
@@ -99,25 +125,42 @@
     margin-top: 7vmin;
     margin-bottom: 7vmin;
     width: 90vmin;
+    height: 85vmin;
     background-color: #FFFFFF;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0%;
+    padding: 3vmin;
     border-radius: 5px;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.4);
+}
+
+.Grid-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-gap: 1vmin;
+    padding: 0vmin;
+    width: 80vmin;
+}
+
+.Grid-container2{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-gap: 1vmin;
+    padding: 0vmin;
+    width: 80vmin;
+}
+
+.Post-descriptions{
+
+    align-items: left;
 }
 
 .form-description {
     font-size: 1.5vmin;
     text-align: left;
-}
-
-.side-by-side {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 52vmin;
 }
 
 /* == Styling Elements for the accountDetails component == */
@@ -170,6 +213,15 @@ p {
 
 h3 {
     color: black;
+    margin-top: 1vmin;
+    margin-bottom: 1vmin;
+}
+
+h6 {
+    color: black;
+    margin-top: 1vmin;
+    margin-bottom: 1vmin;
+    padding: 1vmin;
 }
 
 .Post-image-page {

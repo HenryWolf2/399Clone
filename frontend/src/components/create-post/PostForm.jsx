@@ -11,6 +11,10 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import Autocomplete from '@mui/material/Autocomplete';
+import { createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@emotion/react';
 
 const steps = ['Post files', 'Peak search settings', 'Feasible set settings', 'Post description']
 
@@ -29,19 +33,40 @@ const spectrumCalibrationOptions = [
   }
 ];
 
-const trueFalse = [
+const publicPrivate = [
   {
     value: 'True',
-    label: 'True',
+    label: 'Public',
   },
   {
     value: 'False',
-    label: 'False',
+    label: 'Private',
   }
 ]
 
+const yesNo = [
+  {
+    value: 'True',
+    label: 'Yes',
+  },
+  {
+    value: 'False',
+    label: 'No',
+  }
+]
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#02AEEC',
+    },
+  },
+});
+
 const PostForm = () => {
     const [activeStep, setActiveStep] = useState(0)
+
+    const [tags, setTags] = useState([]);
 
     const [analysis_id, setAnalysisID] = useState("")
     const navigate = useNavigate();
@@ -103,9 +128,9 @@ const PostForm = () => {
     let data = {
         title: title,
         description: description,
-        summary: summary,
         publicity: publicity,
-        analysis_id: analysis_id
+        analysis_id: analysis_id,
+        tags: tags
     }
     try{
     await instance({
@@ -129,15 +154,45 @@ const PostForm = () => {
     setActiveStep(activeStep - 1)
   }
 
+  const handleAddTag = (event, newTag) => {
+    if (newTag && !tags.includes(newTag)) {
+      setTags([...tags, newTag]);
+    }
+  };
+
+  const handleDeleteTag = (tagToDelete) => {
+    setTags(tags.filter((tag) => tag !== tagToDelete));
+  };
+
     return(
         <React.Fragment>
           <Box sx={{ width: '100%' }}>
-            <Stepper activeStep={activeStep}>
+            <Stepper 
+            activeStep={activeStep}
+            >
               {steps.map((label, index) => {
                 const stepProps = {};
                 const labelProps = {};
                 return (
-                  <Step key={label} {...stepProps}>
+                  <Step 
+                  key={label} 
+                  sx={{
+                    '& .MuiStepIcon-root.Mui-completed': {
+                      color: '#02AEEC', // circle color (COMPLETED)
+                    },
+                    '& .MuiStepIcon-root.Mui-active':
+                      {
+                        color: '#02AEEC', // Just text label (COMPLETED)
+                      },
+                    '& .MuiStepLabel-label.Mui-active.MuiStepLabel-alternativeLabel':
+                      {
+                        color: 'common.white', // Just text label (ACTIVE)
+                      },
+                    '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
+                      fill: 'white', // circle's number (ACTIVE)
+                    },
+                  }}
+                  {...stepProps}>
                     <StepLabel {...labelProps}>{label}</StepLabel>
                   </Step>
                 );
@@ -157,12 +212,14 @@ const PostForm = () => {
               </React.Fragment>
             )}
           </Box>
-        <br />
-        <form onSubmit ={handleSubmit1} encType="multipart/form-data">  
+        
+        <form id="form1" onSubmit ={handleSubmit1} encType="multipart/form-data">  
         <Stack spacing={2}>
                 {activeStep == 0 && (
+                  <div>
+                  <h6>Upload your files</h6>
                   <div className = "File-div">
-                  <p className="form-description">Note: all files must be excel spreadsheets ('.csv' or '.xlsx')</p>
+                  <p className="form-description" >Note: all files must be excel spreadsheets ('.csv' or '.xlsx')</p>
                   <p className="form-description">Choose file for deconvoluted mass spectrum of adducted protein sample</p>
                   <TextField
                   type="file"
@@ -196,38 +253,36 @@ const PostForm = () => {
                   onChange={e => setStandardAdductsFile(e.target.files[0])}
                   />
                   </div>
+                  </div>
                 )}
                 {activeStep == 1 && (
                   <div>
-                <h3>Peak Search</h3>
+                <h6>Set your peak search settings</h6>
+                <div className = "Grid-container"> 
                 <TextField
                 margin="normal"
-                style = {{width: 140, textAlign: "center",}}
                 required
                 size="large"
                 label="Mass Tolerance"
                 name="tolerance"
                 type="number"
-                inputProps={{step: "0.1"}}
+                inputProps={{step: "0.1", min: "0"}}
                 defaultValue={3.1}
                 onChange={e => setTolerance(e.target.value)}
                 />
                 <TextField
                 margin="normal"
-                style = {{width: 170, textAlign: "center",}}
                 required
                 size="large"
                 name="minimumPeakHeight"
                 label="Minimum Peak Height"
                 type="number"
                 defaultValue={0.01}
-                inputProps={{step: "0.01"}}
+                inputProps={{step: "0.01", min: "0"}}
                 onChange={e => setMinimumPeakHeight(e.target.value)}
                 />
-                <div className="side-by-side">
                   <TextField
                     margin="normal"
-                    style = {{width: 250, textAlign: "center",}}
                     select
                     required
                     size="large"
@@ -242,80 +297,77 @@ const PostForm = () => {
                       </MenuItem>
                     ))}
                   </TextField>
-                </div>
                 <TextField
                   margin="normal"
-                  style = {{width: 430, textAlign: "center",}}
                   select
                   required
                   size="large"
-                  label="Return all peaks detected (Even those without any feasible species)"
+                  label="Return all peaks detected"
                   name="returnPeaksDetected"
                   defaultValue={"True"}
                   onChange={e => setReturnPeaksDetected(e.target.value)}
                 >
-                  {trueFalse.map((option) => (
+                  {yesNo.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
                   ))}
                 </TextField>
                 </div>
+                </div>
                 )}
                 {activeStep == 2 && (
                   <div>
-                <h3>Feasible Set</h3>
+                <h6>Set your feasible set settings</h6>
+                <div className = "Grid-container"> 
                 <TextField
                 margin="normal"
-                style = {{width: 250, textAlign: "center",}}
                 required
                 size="large"
                 label="Maximum unique standard adducts"
                 name="maximumUnique"
                 type="number"
-                inputProps={{step: "1"}}
+                inputProps={{step: "1", min: "0"}}
                 defaultValue={2}
                 onChange={e => setMaximumUnique(e.target.value)}
                 />
                 <TextField
                 margin="normal"
-                style = {{width: 220, textAlign: "center",}}
                 required
                 size="large"
                 label="Coordination number of metal"
                 name="coordinationNumber"
                 type="number"
-                inputProps={{step: "1"}}
+                inputProps={{step: "1", min: "0"}}
                 defaultValue={4}
                 onChange={e => setCoordinationNumber(e.target.value)}
                 />
                 <TextField
                 margin="normal"
-                style = {{width: 220, textAlign: "center",}}
                 required
                 size="large"
                 label="Minimum number of proteins"
                 name="minimumProteinNumber"
                 type="number"
-                inputProps={{step: "1"}}
+                inputProps={{step: "1", min: "1"}}
                 defaultValue={1}
                 onChange={e => setMinimumProteinNumber(e.target.value)}
                 />
                 <TextField
                 margin="normal"
-                style = {{width: 220, textAlign: "center",}}
                 required
                 size="large"
                 label="Maximum number of proteins"
                 name="maximumProteinNumber"
                 type="number"
-                inputProps={{step: "1"}}
+                inputProps={{step: "1", min: "1"}}
                 defaultValue={1}
                 onChange={e => setMaximumProteinNumber(e.target.value)}
                 />
+                </div>
                 <TextField
                   margin="normal"
-                  style = {{width: 230, textAlign: "center",}}
+                  style={{ width: 300 }}
                   select
                   required
                   size="large"
@@ -324,32 +376,24 @@ const PostForm = () => {
                   defaultValue="True"
                   onChange={e => setDataPublic(e.target.value)}
                 >
-                  {trueFalse.map((option) => (
+                  {publicPrivate.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
                   ))}
                 </TextField>
-                <Button
-                type="submit"
-                size="large"
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                style = {{margin: 30}}
-                >
-                Send Data
-                </Button>
                 </div>
                 )}
         </Stack>
         </form>
         {activeStep == 3 && (
-        <form onSubmit ={handleSubmit2} encType="multipart/form-data">  
+        <form id="form2" onSubmit ={handleSubmit2} encType="multipart/form-data">  
         <Stack spacing={2}>          
-                <h3>Comment your post</h3>
+                <h6>Describe your post</h6>
+                <div>
                 <TextField
                 margin="normal"
-                style = {{width: 140, textAlign: "center",}}
+                style={{ width: 700 }}
                 required
                 size="large"
                 label="Title"
@@ -360,20 +404,49 @@ const PostForm = () => {
                 <TextField
                 id="outlined-multiline-static"
                 label="Write a description of your post"
+                style={{ width: 700 }}
+                required
                 multiline
                 rows={4}
                 onChange={e => setDescription(e.target.value)}
                 />
-                <TextField
-                id="outlined-multiline-static"
-                label="Write a summary of your post"
-                multiline
-                rows={4}
-                onChange={e => setSummary(e.target.value)}
+                <div className = "Tag-input">
+                <Autocomplete
+                  multiple
+                  freeSolo
+                  options={[]}
+                  renderTags={(value, getTagProps) =>
+                    value.map((tag, index) => (
+                      <Chip
+                        sx={{ bgcolor: '#02AEEC', color: 'white' }}
+                        key={tag}
+                        label={tag}
+                        onDelete={() => handleDeleteTag(tag)}
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      style={{ width: 700 }}
+                      label="Tags"
+                      // placeholder="Enter tags"
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                          handleAddTag(event, event.target.value);
+                          event.target.value = '';
+                          event.preventDefault();
+                        }
+                      }}
+                    />
+                  )}
                 />
+                </div>
                 <TextField
                   margin="normal"
-                  style = {{width: 230, textAlign: "center",}}
+                  style = {{width: 300, textAlign: "left",}}
                   select
                   required
                   size="large"
@@ -382,28 +455,25 @@ const PostForm = () => {
                   defaultValue="True"
                   onChange={e => setPostPublic(e.target.value)}
                 >
-                  {trueFalse.map((option) => (
+                  {publicPrivate.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
                     </MenuItem>
                   ))}
                 </TextField>
-                <Button
-                type="submit"
-                size="large"
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                style = {{margin: 30}}
-                >
-                Submit post
-                </Button>
+                </div>
         </Stack>
         </form>
         )}
         <div className="Movement-buttons">
+        {(activeStep == 0 || activeStep == 3) && (
+        <Button
+        hidden></Button>
+        )}
         {(activeStep == 1 || activeStep === 2) && (
         <Button
           size="medium"
+          className = "Back-button"
           hidden = {activeStep == 1}
           variant="outlined"
           sx={{ mt: 3, mb: 2 }}
@@ -414,11 +484,43 @@ const PostForm = () => {
         {(activeStep == 0 || activeStep == 1) && (
           <Button
         size="medium"
+        className = "Next-button"
         variant="contained"
         sx={{ mt: 0, mb: 1 }}
         style = {{margin: 30}}
         onClick = {handleNext}
         >Next</Button>
+      )}
+      {(activeStep == 2) && (
+        <Button
+        type="submit"
+        form="form1"
+        className = "Next-button"
+        size="large"
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+        style = {{margin: 30}}
+        >
+        Send Data
+        </Button>
+      )}
+      {(activeStep == 3) && (
+        <div className = "Submit-button">
+        <ThemeProvider theme={theme}>
+        <Button
+        className = "Next-button"
+        color = "primary"
+        type="submit"
+        form="form2"
+        size="large"
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+        style = {{margin: 30}}
+        >
+        Submit post
+        </Button>
+        </ThemeProvider>
+        </div>
       )}
         </div>
         </React.Fragment>
