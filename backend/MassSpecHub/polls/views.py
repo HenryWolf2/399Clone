@@ -286,8 +286,8 @@ def get_profile(request):
         profile_data['description'] = user.description
         profile_data['first_name'] = user.first_name
         profile_data['last_name'] = user.last_name
-        profile_data['profile_pic'] = user.profile_pic.name
-        profile_data['cover_photo'] = user.cover_photo.name
+        profile_data['profile_pic'] = user.profile_pic.url
+        profile_data['cover_photo'] = user.cover_photo.url
         posts = Post.objects.filter(author__id=user.id)
         profile_data['posts'] = posts.values_list('id', flat=True)
         return Response(profile_data, status=status.HTTP_200_OK)
@@ -417,7 +417,7 @@ def get_group_info(request):
         group_data = {}
         group_data['name'] = group.name
         group_data['description'] = group.description
-        group_data['group_pic'] = group.group_pic
+        group_data['group_pic'] = group.group_pic.url
         group_data['posts'] = group.posts.values_list('id', flat=True)
         group_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster', 'viewer']).count()
         group_data['post_count'] = group.posts.count()
