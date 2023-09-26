@@ -160,3 +160,39 @@ h3 {
     transform: scale(1.15); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
   }
   
+/* Styling elements for the home page */
+
+.landingText {
+    font-size: 16px;
+    color: black;
+    margin-top: 20px;
+}
+
+.landing-desc-box {
+    text-align: justify;
+    padding-left: 60px;
+    padding-right: 60px;
+    padding-bottom: 0%;
+    padding-top: 0%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.landing-title{
+    font-size: 60px;
+    color: black;
+    text-align: center;
+    padding-Bottom:'50px';
+}
+
+.landing-post-container{
+    flex: 1;
+    display: 'flex';
+    flexDirection: 'row';
+    height: '100%';
+    overflow: scroll;
+}
+
+.landing-post-container::-webkit-scrollbar{
+    display: none;
+}
