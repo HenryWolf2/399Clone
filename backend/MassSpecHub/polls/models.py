@@ -13,6 +13,7 @@ from django.core.validators import FileExtensionValidator
 class Group(models.Model):
     name = models.TextField()
     description = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
     group_pic = models.ImageField(upload_to='group_pics')
     group_banner = models.ImageField(upload_to='group_banners', default='default.jpg')
     posts = models.ManyToManyField(to="polls.Post", through="polls.PostGroup")
@@ -40,6 +41,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     profile_pic = models.ImageField(upload_to='profile_pics')
     cover_photo = models.ImageField(upload_to='profile_banners', default='default.jpg')
     description = models.TextField()
+    notepad = models.TextField(default="Click here to enter notes. Text will be converted to markdown when you click out of the text field...")
     groups = models.ManyToManyField(to="Group", through="UserGroup")
     first_name = models.TextField()
     last_name = models.TextField()

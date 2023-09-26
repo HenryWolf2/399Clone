@@ -70,14 +70,8 @@ function ResponsiveAppBar() {
     paddingTop: 10,
   };
 
-  // adding in effect for getting the token from local storage
-  useEffect(() => {
-    if(localStorage.getItem('token') != null){
-      instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
-    }else{
-      navigate("/login")
-    }
-  },[])
+
+
 
   return (
     <AppBar position="static" sx={{backgroundColor:'black'}}>
@@ -163,7 +157,7 @@ function ResponsiveAppBar() {
               </Button>
             </NavLink>
 
-            <NavLink to="/groups" style={{ textDecoration: 'none' }}>
+            <NavLink to="/" style={{ textDecoration: 'none' }}>
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
