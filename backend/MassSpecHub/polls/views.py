@@ -394,6 +394,9 @@ def get_group_by_id(request):
         try:
             group = Group.objects.get(id=group_id)
             serializer = GroupSerializer(group)
+            return_data = serializer.data
+            return_data['post_count'] = group.posts.count()
+            return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster', 'viewer']).count()
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -422,5 +425,19 @@ def get_group_info(request):
         group_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster', 'viewer']).count()
         group_data['post_count'] = group.posts.count()
         group_data['created'] = group.created
+        user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
+        group_data['user_permission'] = user_permission
+        if user_permission == 'admin':
+            group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list('user_id', flat=True)
+
         return Response(group_data, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_profile_info(request):
+    if request.method == 'GET':
+        user = CustomUser.objects.get(id=request.query_params.get('user_id'))
+        user_data = {}
+        user_data['username'] = user.username
+        user_data['profile_pic'] = user.profile_pic.url
 
