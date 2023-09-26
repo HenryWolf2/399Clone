@@ -86,6 +86,20 @@ def edit_profile(request):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def edit_notepad(request):
+    if request.method == 'POST':
+        try:
+            user = CustomUser.objects.get(id=request.user.id)
+            notepad = request.data.get('notepad')
+            if notepad:
+                user.notepad = notepad
+            user.save()
+            return Response({'message': 'Notepad updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -276,6 +290,7 @@ def get_profile(request):
         profile_data['last_name'] = user.last_name
         profile_data['profile_pic'] = user.profile_pic.url
         profile_data['cover_photo'] = user.cover_photo.url
+
         posts = Post.objects.filter(author__id=user.id)
         profile_data['posts'] = posts.values_list('id', flat=True)
         return Response(profile_data, status=status.HTTP_200_OK)

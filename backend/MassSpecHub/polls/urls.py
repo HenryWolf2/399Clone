@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, search_post_by_tag, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_graph_data, get_group_landing_info, get_group_by_id, get_group_info, get_user_profile_info
+from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, search_post_by_tag, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_graph_data, get_group_landing_info, get_group_by_id, get_group_info, get_user_profile_info, edit_notepad
 
 urlpatterns = [
     path('register/', register_user, name='register'),
@@ -19,6 +19,7 @@ urlpatterns = [
     path('post/get_by_id', get_post_by_id, name='get_post_by_id'),
     path('post/get_post_by_tag', search_post_by_tag, name='post_by_tag'),
     path('profile/edit', edit_profile, name='edit_profile'),
+    path('profile/notepad', edit_notepad, name='edit_notepad'),
     path('profile/get', get_profile, name='get_profile'),
     path('post/edit', edit_post, name='edit_post'),
     path('groups/edit', edit_group, name='edit_groups'),

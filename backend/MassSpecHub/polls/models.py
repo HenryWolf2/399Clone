@@ -41,6 +41,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     profile_pic = models.ImageField(upload_to='profile_pics')
     cover_photo = models.ImageField(upload_to='profile_banners', default='default.jpg')
     description = models.TextField()
+    notepad = models.TextField(default="Click here to enter notes. Text will be converted to markdown when you click out of the text field...")
     groups = models.ManyToManyField(to="Group", through="UserGroup")
     first_name = models.TextField()
     last_name = models.TextField()
