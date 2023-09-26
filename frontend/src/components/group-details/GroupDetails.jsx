@@ -161,7 +161,7 @@ function GroupDetails(props) {
 
 
         <div style={overlayStyleMinimized}> 
-        <h1 style={{color: 'white', marginTop: '50px'}}> University of Auckland </h1>
+        <h1 style={{color: 'white', marginTop: '50px'}}>{groupname}</h1>
           <div style={{display: 'flex', marginTop: '-40px', color: 'white', fontSize: '14px'}}>
             <h1 style={{marginRight: '15px'}}>21.08.2023</h1>
           </div>
