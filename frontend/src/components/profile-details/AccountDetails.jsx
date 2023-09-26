@@ -68,9 +68,8 @@ function AccountDetails(props) {
   
     try{
       await instance.post('/profile/notepad', formData, {
-        // url: "/post/create/data",
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json'
         }
       }).then(
         (res) => {
