@@ -29,7 +29,8 @@ function GroupDetails(props) {
       try{ 
         await instance ({
           url: "/group/info",
-          method: "GET",          
+          method: "GET",
+          params: {group_id: props.group_id},       
       }).then((res) => {
         console.log(res)
         setGroupname(res.data.name)
@@ -38,7 +39,7 @@ function GroupDetails(props) {
         setGroupPosts(res.data.posts)
         setMemberCount(res.data.member_count)
         setPostCount(res.data.post_count)
-        setCreationDate(res.data.created)
+        setCreationDate(new Date(res.data.created).toLocaleDateString())
         //Need to define perms
       });
       } catch(e) {
@@ -131,6 +132,7 @@ function GroupDetails(props) {
           display: 'flex',
           flexDirection: 'row',
           backgroundColor: '#35CFFF',
+          overflowY: 'scroll',
           boxShadow: '0px 8px 5px rgba(0, 0, 0, 0.2)',
           justifyContent: 'right',
         }}
@@ -142,7 +144,6 @@ function GroupDetails(props) {
             <h1 style={{color: 'white', marginTop: '50px'}}>{groupname}</h1>
             <div style={{display: 'flex', marginTop: '-40px', color: 'white', fontSize: '14px'}}>
               <h1 style={{marginRight: '15px'}}>{creationDate}</h1>
-              <span style={circleDot}></span>
             </div>
             <hr style={{width:'400px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
             <div style={{display: 'flex', marginTop: '-20px', color: 'white', fontSize: '14px'}}>
