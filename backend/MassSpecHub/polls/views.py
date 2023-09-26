@@ -290,8 +290,8 @@ def get_profile(request):
         profile_data['description'] = user.description
         profile_data['first_name'] = user.first_name
         profile_data['last_name'] = user.last_name
-        profile_data['profile_pic'] = user.profile_pic.name
-        profile_data['cover_photo'] = user.cover_photo.name
+        profile_data['profile_pic'] = user.profile_pic.url
+        profile_data['cover_photo'] = user.cover_photo.url
         posts = Post.objects.filter(author__id=user.id)
         profile_data['posts'] = posts.values_list('id', flat=True)
         return Response(profile_data, status=status.HTTP_200_OK)
@@ -384,11 +384,11 @@ def get_analysis_by_id(request):
 def get_group_landing_info(request):
     if request.method == 'GET':
         user = CustomUser.objects.get(id=request.user.id)
-        groups = user.groups.all()
-        posts = Post.objects.filter(group__in=groups).values_list('id', flat=True).order_by('post_time')
-        all_groups = Group.objects.all().difference(groups)
-        all_groups = all_groups.values_list('id', flat=True)
-        return Response({'posts': posts, 'groups': all_groups}, status=status.HTTP_200_OK)
+        users_groups = user.groups.all()
+        posts = Post.objects.filter(group__in=users_groups).values_list('id', flat=True).order_by('post_time')
+        recommended_groups = Group.objects.all().difference(users_groups)
+        recommended_groups = recommended_groups.values_list('id', flat=True)
+        return Response({'posts': posts, 'users_groups': users_groups.values_list('id', flat=True), 'recommended_groups': recommended_groups}, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -433,3 +433,21 @@ def get_graph_data(request):
         keys = ['m/z', 'normalised_intensity', 'species']
         data_points = [dict(zip(keys, values)) for values in normalised_dataframe]
         return Response({'all_points': data_points}, status=status.HTTP_200_OK)
+
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_group_info(request):
+    if request.method == 'GET':
+        group_id = request.query_params.get('group_id')
+        group = Group.objects.get(id=group_id)
+        group_data = {}
+        group_data['name'] = group.name
+        group_data['description'] = group.description
+        group_data['group_pic'] = group.group_pic.url
+        group_data['posts'] = group.posts.values_list('id', flat=True)
+        group_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster', 'viewer']).count()
+        group_data['post_count'] = group.posts.count()
+        group_data['created'] = group.created
+        return Response(group_data, status=status.HTTP_200_OK)
+

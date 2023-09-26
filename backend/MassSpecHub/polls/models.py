@@ -13,6 +13,7 @@ from django.core.validators import FileExtensionValidator
 class Group(models.Model):
     name = models.TextField()
     description = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
     group_pic = models.ImageField(upload_to='group_pics')
     group_banner = models.ImageField(upload_to='group_banners', default='default.jpg')
     posts = models.ManyToManyField(to="polls.Post", through="polls.PostGroup")
