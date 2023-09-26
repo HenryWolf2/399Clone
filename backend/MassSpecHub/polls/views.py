@@ -290,6 +290,7 @@ def get_profile(request):
         profile_data['last_name'] = user.last_name
         profile_data['profile_pic'] = user.profile_pic.url
         profile_data['cover_photo'] = user.cover_photo.url
+        profile_data['notepad'] = user.notepad
 
         posts = Post.objects.filter(author__id=user.id)
         profile_data['posts'] = posts.values_list('id', flat=True)
