@@ -12,6 +12,8 @@ import IndividualPost from './individual-posts/post';
 import { useState, useEffect } from 'react';
 import instance from './api/api_instance';
 import PostPage from '../pages/postPage';
+import SpecificGroup from '../pages/group-specific';
+import Groups from '../pages/group-landing';
 import CreateGroup from '../pages/create-group';
 
 export default function Root() {
@@ -24,6 +26,7 @@ export default function Root() {
     { path: '/profile', name: 'Profile', Component: Profile, exact: false },
     { path: '/public-data', name: 'PublicPosts', Component: PublicPosts, exact: false },
     { path: '/create-post', name: 'Create Post', Component: CreatePost, exact: false},
+    { path: '/group-specific', name: 'Specific Group', Component: SpecificGroup, exact: false},
     { path: '/create-group', name: 'Create Group', Component: CreateGroup, exact: false},
     { path: '*', name: 'No Match', Component: NotFound, exact: false },
   ];
@@ -63,6 +66,8 @@ export default function Root() {
           <Route exact path="/profile" element={<Profile />} />
           <Route exact path="/public-data" element={<PublicPosts />} />
           <Route exact path="/create-post" element={<CreatePost />} />
+          <Route exact path="/group-specific" element={<SpecificGroup />} />
+          <Route exact path="/groups" element={<Groups />} />
           <Route exact path="/create-group" element={<CreateGroup />} />
           
           {dataRoutes}
