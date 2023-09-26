@@ -38,7 +38,7 @@ const LoginForm = () => {
             //saving the token in local storage
             localStorage.setItem('token', res.data.token)
             //needs to navigate to the profile page once up
-            navigate("/profile");
+            navigate("/");
           });
         } catch(e){
             //display error message (username or password incorrect)
