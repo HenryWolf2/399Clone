@@ -9,9 +9,11 @@ from django.contrib.auth import authenticate, logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup
-from .analysistool.src import binding_site_search
+from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
+import math
+import numpy
 
 
 @api_view(['POST'])
@@ -95,11 +97,19 @@ def create_post(request):
         except ObjectDoesNotExist:
             return Response({'error': 'PostAnalysis not found'}, status=status.HTTP_404_NOT_FOUND)
         data = copy.deepcopy(request.data)
+        del data['tags']
         data['author'] = request.user.id
         data['associated_results'] = analysis.id
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+            post = Post.objects.get(id=serializer.instance.id)
+            for tag_name in request.POST.getlist('tags'):
+                try:
+                    tag = Tag.objects.get(name=tag_name)
+                except ObjectDoesNotExist:
+                    tag = Tag.objects.create(name=tag_name)
+                post.tags.add(tag)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -218,9 +228,11 @@ def add_post_to_group(request):
         if post.publicity == True:
             if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
                 group.posts.add(post)
-                return Response({'message': f'Post {post.title} added to group {group.name}.'}, status=status.HTTP_200_OK)
+                return Response({'message': f'Post {post.title} added to group {group.name}.'},
+                                status=status.HTTP_200_OK)
             else:
-                return Response({'error': 'User does not have permission to add post to group'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'error': 'User does not have permission to add post to group'},
+                                status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -239,17 +251,6 @@ def search_post(request):
         return Response(posts, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_tag(request):
-    if request.method == 'POST':
-        serializer = TagSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def search_post_by_tag(request):
@@ -261,19 +262,6 @@ def search_post_by_tag(request):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-@api_view(['POST'])
-def add_tags_to_post(request):
-    if request.method == 'POST':
-        post_id = request.data.get('post_id')
-        post = Post.objects.get(id=post_id)
-        for tag_name in request.POST.getlist('tags'):
-            try:
-                tag = Tag.objects.get(name=tag_name)
-            except ObjectDoesNotExist:
-                tag = Tag.objects.create(name=tag_name)
-            post.tags.add(tag)
-        return Response({'message': 'Tags added successfully.'}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -403,13 +391,36 @@ def get_group_by_id(request):
 
 
 @api_view(['GET'])
-def get_spectrum_dataframe(request):
+def get_graph_data(request):
     if request.method == 'GET':
-        bounds_file = request.FILES.get('bounds_file')
-        dataframe = pd.read_excel(bounds_file)
-        json_df = dataframe.to_json(orient='split', index=False)
-        json_df = json.loads(json_df)
-        return Response(json_df, status=status.HTTP_200_OK)
+        post_id = request.data.get('post_id')
+        post = Post.objects.get(id=post_id)
+        analysis = post.associated_results
+        linked_analysis = post.associated_results.result_df
+        data_id = analysis.data_input_id
+        data = Data.objects.get(id=data_id)
+        dataframe = pd.read_excel(data.bounds_file)
+        normalised_dataframe = utils.normalise(dataframe)
+        peak_search.peak_find(normalised_dataframe, peak_height=0.01)
+        values = [row[4] for row in linked_analysis['data']]
+        i = 0
+        j = 0
+        species_row = []
+        for point in normalised_dataframe['m/z']:
+            species_row.append('N/A')
+            for val in values:
+                if math.isclose(point, val, abs_tol=10e-15):
+                    if linked_analysis['data'][i][7]:
+                        species_row[j] = linked_analysis['data'][i][0]
+                    i += 1
+            j += 1
+        normalised_dataframe['species'] = species_row
+        normalised_dataframe.drop(normalised_dataframe.columns[[0, 2]], axis=1, inplace=True)
+        normalised_dataframe = normalised_dataframe.to_numpy()
+        keys = ['m/z', 'normalised_intensity', 'species']
+        data_points = [dict(zip(keys, values)) for values in normalised_dataframe]
+        return Response({'all_points': data_points}, status=status.HTTP_200_OK)
+
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
