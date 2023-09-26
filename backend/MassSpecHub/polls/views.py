@@ -73,15 +73,12 @@ def edit_profile(request):
             profile_pic = request.FILES.get('profile_pic')
             description = request.data.get('description')
             cover_photo = request.FILES.get('cover_photo')
-            notepad = request.data.get('notepad')
             if profile_pic:
                 user.profile_pic = profile_pic
             if description:
                 user.description = description
             if cover_photo:
                 user.cover_photo = cover_photo
-            if notepad:
-                user.notepad = notepad
             user.save()
             return Response({'message': 'Profile updated successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
