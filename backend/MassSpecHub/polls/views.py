@@ -283,7 +283,9 @@ def get_post_by_id(request):
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
         serializer = PostSerializer(post)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = serializer.data
+        data['tags'] = post.tags.values_list('name', flat=True)
+        return Response(data, status=status.HTTP_200_OK)
 
 
 @api_view(['PUT'])
