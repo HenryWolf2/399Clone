@@ -41,18 +41,18 @@ export default function Home() {
       
       <div style={{height: '85px',display:'flex'}}>
           <div style={{flex:1, flexDirection: 'row', height: '100%', }}>
-            <h1 style={{textAlign: 'center', color:'black', }}>Infomation</h1>
+            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Infomation</h1>
           </div>
           <div style={{flex:1, flexDirection: 'row', height: '100%',}}>
-            <h1 style={{textAlign: 'center', color:'black', }}>Trending Posts</h1>
+            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Trending Posts</h1>
           </div>
       </div>
 
       
       <div style= {{height: "800px"}}>
       
-        <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
-          <div class= "landing-post-container">
+        <div style={{ display: 'flex', flexDirection: 'row', height: '100%',}}>
+          <div class= "landing-post-container" style={{ borderRight: 'solid', borderColor: "#D9D9D9"}}>
             <Box sx={{ flexGrow: 1,}}>
             <div class= "landing-desc-box">
               <p class= "landingText">
@@ -73,7 +73,7 @@ export default function Home() {
             </div>
             </Box>
           </div>
-          <div class= "landing-post-container" style= {{flex: 1, margin:"20px"}}>
+          <div class= "landing-post-container" style= {{flex: 1, marginTop: "20px", marginBottom:"20px", marginLeft:"60px", marginRight:"60px" }}>
           <PostGrid narrow={true} post_array={PublicPosts} />
           </div>
         </div>
