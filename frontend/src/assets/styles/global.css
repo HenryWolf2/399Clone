@@ -170,8 +170,8 @@ h3 {
 .landing-title{
     font-size: 60px;
     color: black;
-    margin-top: 20px;
     text-align: center;
+    padding-Bottom:'50px';
 }
 
 .landing-post-container{
