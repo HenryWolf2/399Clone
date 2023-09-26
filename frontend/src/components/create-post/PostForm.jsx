@@ -115,14 +115,13 @@ const PostForm = () => {
 
   const handleSubmit2 = async (event) => {
     event.preventDefault();
-    let data = {
-        title: title,
-        description: description,
-        publicity: publicity,
-        analysis_id: analysis_id,
-        tags: tags
-    }
-
+    // let data = {
+    //     title: title,
+    //     description: description,
+    //     publicity: publicity,
+    //     analysis_id: analysis_id,
+    //     tags: tags
+    // }
     const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);
