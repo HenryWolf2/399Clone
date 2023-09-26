@@ -76,8 +76,8 @@ const PostForm = () => {
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const [summary, setSummary] = useState("")
     const [publicity, setPostPublic] = useState("True")
+    const [post_pic, setPostImageFile] = useState("")
 
     const handleSubmit1 = async (event) => {
       event.preventDefault();
@@ -122,11 +122,19 @@ const PostForm = () => {
         analysis_id: analysis_id,
         tags: tags
     }
+
+    const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("publicity", publicity);
+      formData.append("analysis_id", analysis_id);
+      formData.append("tags", tags);
+      formData.append("post_pic", post_pic);
     try{
-    await instance({
-        url: "/post/create",
-        method: "POST",
-        data: data
+    await instance.post('/post/create', formData,{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       }).then((res) => {
         //needs to navigate to the profile page once up
         console.log(res)
@@ -137,7 +145,14 @@ const PostForm = () => {
     }
 }
   const handleNext = () => {
-    setActiveStep(activeStep + 1)
+    if (bounds_file == '' || compounds_file == '' || adducts_file == '') {
+      alert("Please upload all files")
+      return;
+    }
+    else{
+      setActiveStep(activeStep + 1)
+    }
+    
   }
 
   const handleBack = () => {
@@ -222,6 +237,13 @@ const PostForm = () => {
                   autoFocus
                   onChange={e => setBoundSpectrumFile(e.target.files[0])}
                   />
+                  {bounds_file && (
+                    <Chip
+                    sx={{ bgcolor: '#02AEEC', color: 'white', width: 150 }}
+                    key={bounds_file.name}
+                    label={bounds_file.name}
+                  />
+                  )}
                   <p className="form-description">Choose file for compound description and constraints</p>
                   <TextField
                   type="file"
@@ -232,6 +254,13 @@ const PostForm = () => {
                   name="compoundDescriptionFile"
                   onChange={e => setCompoundDescriptionFile(e.target.files[0])}
                   />
+                  {compounds_file && (
+                    <Chip
+                    sx={{ bgcolor: '#02AEEC', color: 'white', width: 150 }}
+                    key={compounds_file.name}
+                    label={compounds_file.name}
+                  />
+                  )}
                   <p className="form-description">Choose file for standard adduct description and constraints (or do not upload and use default)</p>
                   <TextField
                   type="file"
@@ -242,6 +271,13 @@ const PostForm = () => {
                   name="standardAdductsFile"
                   onChange={e => setStandardAdductsFile(e.target.files[0])}
                   />
+                  {adducts_file && (
+                    <Chip
+                    sx={{ bgcolor: '#02AEEC', color: 'white', width: 150 }}
+                    key={adducts_file.name}
+                    label={adducts_file.name}
+                  />
+                  )}
                   </div>
                   </div>
                 )}
@@ -252,12 +288,13 @@ const PostForm = () => {
                 <TextField
                 margin="normal"
                 required
+                autoFocus
                 size="large"
                 label="Mass Tolerance"
                 name="tolerance"
                 type="number"
                 inputProps={{step: "0.1", min: "0"}}
-                defaultValue={3.1}
+                value = {tolerance}
                 onChange={e => setTolerance(e.target.value)}
                 />
                 <TextField
@@ -267,7 +304,7 @@ const PostForm = () => {
                 name="minimumPeakHeight"
                 label="Minimum Peak Height"
                 type="number"
-                defaultValue={0.01}
+                value={peak_height}
                 inputProps={{step: "0.01", min: "0"}}
                 onChange={e => setMinimumPeakHeight(e.target.value)}
                 />
@@ -278,7 +315,7 @@ const PostForm = () => {
                     size="large"
                     label="Re-calibration of mass spectrum"
                     name="spectrumCalibration"
-                    defaultValue="Automatic"
+                    value={calibrate}
                     onChange={e => setSpectrumCalibration(e.target.value)}
                   >
                     {spectrumCalibrationOptions.map((option) => (
@@ -294,7 +331,7 @@ const PostForm = () => {
                   size="large"
                   label="Return all peaks detected"
                   name="returnPeaksDetected"
-                  defaultValue={"True"}
+                  value={only_best}
                   onChange={e => setReturnPeaksDetected(e.target.value)}
                 >
                   {yesNo.map((option) => (
@@ -313,12 +350,13 @@ const PostForm = () => {
                 <TextField
                 margin="normal"
                 required
+                autoFocus
                 size="large"
                 label="Maximum unique standard adducts"
                 name="maximumUnique"
                 type="number"
                 inputProps={{step: "1", min: "0"}}
-                defaultValue={2}
+                value={max_adducts}
                 onChange={e => setMaximumUnique(e.target.value)}
                 />
                 <TextField
@@ -329,7 +367,7 @@ const PostForm = () => {
                 name="coordinationNumber"
                 type="number"
                 inputProps={{step: "1", min: "0"}}
-                defaultValue={4}
+                value={valence}
                 onChange={e => setCoordinationNumber(e.target.value)}
                 />
                 <TextField
@@ -340,7 +378,7 @@ const PostForm = () => {
                 name="minimumProteinNumber"
                 type="number"
                 inputProps={{step: "1", min: "1"}}
-                defaultValue={1}
+                value={min_primaries}
                 onChange={e => setMinimumProteinNumber(e.target.value)}
                 />
                 <TextField
@@ -351,7 +389,7 @@ const PostForm = () => {
                 name="maximumProteinNumber"
                 type="number"
                 inputProps={{step: "1", min: "1"}}
-                defaultValue={1}
+                value={max_primaries}
                 onChange={e => setMaximumProteinNumber(e.target.value)}
                 />
                 </div>
@@ -363,7 +401,7 @@ const PostForm = () => {
                   size="large"
                   label="Set data to public?"
                   name="setDataPublic"
-                  defaultValue="True"
+                  value={data_publicity}
                   onChange={e => setDataPublic(e.target.value)}
                 >
                   {publicPrivate.map((option) => (
@@ -385,21 +423,26 @@ const PostForm = () => {
                 margin="normal"
                 style={{ width: 700 }}
                 required
+                autoFocus
                 size="large"
                 label="Title"
                 name="title"
+                value={title}
                 type="text"
                 onChange={e => setTitle(e.target.value)}
                 />
+                <br />
                 <TextField
                 id="outlined-multiline-static"
                 label="Write a description of your post"
                 style={{ width: 700 }}
                 required
+                value={description}
                 multiline
                 rows={4}
                 onChange={e => setDescription(e.target.value)}
                 />
+                <p className="form-description">Write your tag and press Enter to add</p>
                 <div className = "Tag-input">
                 <Autocomplete
                   multiple
@@ -434,13 +477,26 @@ const PostForm = () => {
                   )}
                 />
                 </div>
+                <p className="form-description"> Choose a post image and set the post publicity</p>
+                <div className="Grid-container2">
+                <TextField
+                  type="file"
+                  inputProps={{accept:".png, .jpg, .jpeg"}}
+                  margin="normal"
+                  required
+                  size="large"
+                  name="postImageFile"
+                  onChange={e => setPostImageFile(e.target.files[0])}
+                  />
                 <TextField
                   margin="normal"
                   style = {{width: 300, textAlign: "left",}}
                   select
+                  className = "Floater"
                   required
                   size="large"
-                  label="Set post to public?"
+                  value={publicity}
+                  label="Publicity"
                   name="setPostPublic"
                   defaultValue="True"
                   onChange={e => setPostPublic(e.target.value)}
@@ -452,15 +508,15 @@ const PostForm = () => {
                   ))}
                 </TextField>
                 </div>
+                </div>
         </Stack>
         </form>
         )}
         <div className="Movement-buttons">
-        {(activeStep == 0 || activeStep == 3) && (
-        <Button
-        hidden></Button>
+        {(activeStep == 0) && (
+        <p></p>
         )}
-        {(activeStep == 1 || activeStep === 2) && (
+        {(activeStep == 1 || activeStep == 2 || activeStep == 3) && (
         <Button
           size="medium"
           className = "Back-button"
