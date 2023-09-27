@@ -61,6 +61,10 @@ class TagPost(models.Model):
     post = models.ForeignKey('polls.Post', on_delete=models.CASCADE)
     tag = models.ForeignKey('polls.Tag', on_delete=models.CASCADE)
 
+    class Meta:
+        db_table = 'TagPost'
+
+
 class Post(models.Model):
     title = models.TextField()
     summary = models.TextField()
@@ -71,6 +75,10 @@ class Post(models.Model):
     tags = models.ManyToManyField(to='Tag', through=TagPost)
     associated_results = models.OneToOneField('PostAnalysis', on_delete=models.CASCADE, null=True)
     post_pic = models.ImageField(upload_to='post_pics', default='default.png')
+
+    class Meta:
+        db_table = 'Post'
+
 
 class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
@@ -95,13 +103,20 @@ class Data(models.Model):
     bounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
                                    default='test.csv', upload_to='bound_spectrum')
 
+    class Meta:
+        db_table = 'Data'
+
 
 class PostAnalysis(models.Model):
     data_input = models.OneToOneField('Data', on_delete=models.CASCADE)
     result_df = JSONField()
 
-
+    class Meta:
+        db_table = 'PostAnalysis'
 
 
 class Tag(models.Model):
     name = models.TextField()
+
+    class Meta:
+        db_table = 'Tag'
