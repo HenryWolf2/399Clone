@@ -442,6 +442,7 @@ def get_group_by_id(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_graph_data(request):
     if request.method == 'GET':
         post_id = request.data.get('post_id')
