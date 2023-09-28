@@ -16,6 +16,7 @@ import math
 from datetime import datetime
 from bibtexparser.bibdatabase import BibDatabase
 import bibtexparser
+import random
 
 @api_view(['POST'])
 def register_user(request):
@@ -519,21 +520,24 @@ def get_citation(request):
             db = BibDatabase()
             year = post.post_time.strftime('%Y')
             citation_dict = [{
-                'ID': 'MSH',
+                'ID': f'{post.author.first_name[0]}{post.author.last_name[0]}{random.randint(10000,99999)}',
                 'ENTRYTYPE': 'misc',
                 'title': post.title,
                 'author': f'{post.author.first_name} {post.author.last_name}',
+                'organization': 'MaSH',
                 'howpublished': '\\url{TODO add url to post here}',
                 'year': f'{year}',
                 'date': f'{post.post_time.strftime("%Y-%m-%d")}',
-                'urldate': f'{current_date.strftime("%Y-%m-%d")}'
+                'urldate': f'{current_date.strftime("%Y-%m-%d")}',
+                'note': ''
             }]
             db.entries = citation_dict
             citation_output = bibtexparser.dumps(db)
         elif citation_type == 'APA7':
             date_posted = post.post_time.strftime("%Y, %B %d")
             date_access = current_date.strftime("%B %d, %Y")
-            citation_output = f"{post.author.first_name} {post.author.last_name}. ({date_posted}). {post.title} [Infographic]. MSH. Retrieved {date_access}, from URL HERE"
+            citation_output = f"{post.author.first_name} {post.author.last_name} [{post.author.username}]. ({date_posted}). {post.title} [Infographic]. MSH. Retrieved {date_access}, from URL HERE"
         else:
             return Response({'error': f'Citation type {citation_type} not found'}, status=status.HTTP_400_BAD_REQUEST)
+        print(citation_output)
         return Response({'citation': citation_output}, status=status.HTTP_200_OK)
