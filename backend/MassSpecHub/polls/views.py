@@ -494,7 +494,12 @@ def get_citation(request):
                 'urldate': f'{current_date.strftime("%Y-%m-%d")}'
             }]
             db.entries = citation_dict
-            print(bibtexparser.dumps(db))
-            citation_output = db.to_string('bibtex')
+            citation_output = bibtexparser.dumps(db)
+        elif citation_type == 'APA7':
+            date_posted = post.post_time.strftime("%Y, %B %d")
+            date_access = current_date.strftime("%B %d, %Y")
+            citation_output = f"{post.author.first_name} {post.author.last_name}. ({date_posted}). {post.title} [Infographic]. Retrieved {date_access}, from URL HERE"
+        else:
+            return Response({'error': f'Citation type {citation_type} not found'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'citation': citation_output}, status=status.HTTP_200_OK)
 
