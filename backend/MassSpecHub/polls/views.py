@@ -539,5 +539,4 @@ def get_citation(request):
             citation_output = f"{post.author.first_name} {post.author.last_name} [{post.author.username}]. ({date_posted}). {post.title} [Infographic]. MSH. Retrieved {date_access}, from URL HERE"
         else:
             return Response({'error': f'Citation type {citation_type} not found'}, status=status.HTTP_400_BAD_REQUEST)
-        print(citation_output)
         return Response({'citation': citation_output}, status=status.HTTP_200_OK)
