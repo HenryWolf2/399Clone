@@ -172,6 +172,35 @@ def get_all_groups(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def get_all_groups_by_id(request):
+    if request.method == 'GET':
+        groups = Group.objects.values_list('id', flat=True).order_by('created')
+        return Response(groups, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_group_perms(request):
+    if request.method == 'PUT':
+        group_id = request.data.get('group_id')
+        user_id = request.data.get('user_id')
+        permissions = request.data.get('permissions')
+        if not permissions:
+            return Response({'message': 'No permissions added'}, status=status.HTTP_400_BAD_REQUEST)
+        if permissions not in ['admin', 'poster', 'viewer', 'requested']:
+            return Response({'message': f'Permission {permissions} is not a valid permission'}, status=status.HTTP_400_BAD_REQUEST)
+        group = Group.objects.get(id=group_id)
+        user = CustomUser.objects.get(id=user_id)
+        try:
+            usergroup = UserGroup.objects.get(user=user.id, group=group.id)
+        except:
+            return Response({'message': f'User {user.username} not in {group.name}'})
+        usergroup.permissions = permissions
+        usergroup.save()
+        return Response({'message': f'Permissions {permissions} added to user {user.username}.'}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_group_by_field(request):
     if request.method == 'GET':
         field_value = request.data.get('field_value')
@@ -277,7 +306,6 @@ def search_post_by_tag(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_profile(request):
@@ -380,7 +408,8 @@ def get_analysis_by_id(request):
                             status=status.HTTP_200_OK)
         except:
             return Response({'message': "Analysis not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_group_landing_info(request):
@@ -390,8 +419,10 @@ def get_group_landing_info(request):
         posts = Post.objects.filter(group__in=users_groups).values_list('id', flat=True).order_by('post_time')
         recommended_groups = Group.objects.all().difference(users_groups)
         recommended_groups = recommended_groups.values_list('id', flat=True)
-        return Response({'posts': posts, 'users_groups': users_groups.values_list('id', flat=True), 'recommended_groups': recommended_groups}, status=status.HTTP_200_OK)
-    
+        return Response({'posts': posts, 'users_groups': users_groups.values_list('id', flat=True),
+                         'recommended_groups': recommended_groups}, status=status.HTTP_200_OK)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_group_by_id(request):
@@ -402,7 +433,8 @@ def get_group_by_id(request):
             serializer = GroupSerializer(group)
             return_data = serializer.data
             return_data['post_count'] = group.posts.count()
-            return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster', 'viewer']).count()
+            return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster',
+                                                                                                    'viewer']).count()
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -439,7 +471,7 @@ def get_graph_data(request):
         data_points = [dict(zip(keys, values)) for values in normalised_dataframe]
         return Response({'all_points': data_points}, status=status.HTTP_200_OK)
 
-    
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_group_info(request):
@@ -451,16 +483,19 @@ def get_group_info(request):
         group_data['description'] = group.description
         group_data['group_pic'] = group.group_pic.url
         group_data['posts'] = group.posts.values_list('id', flat=True)
-        group_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster', 'viewer']).count()
+        group_data['member_count'] = UserGroup.objects.filter(group=group_id,
+                                                              permissions__in=['admin', 'poster', 'viewer']).count()
         group_data['post_count'] = group.posts.count()
         group_data['created'] = group.created
         user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
         group_data['user_permission'] = user_permission
         if user_permission == 'admin':
-            group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list('user_id', flat=True)
+            group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
+                'user_id', flat=True)
 
         return Response(group_data, status=status.HTTP_200_OK)
-    
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_profile_info(request):
@@ -469,4 +504,3 @@ def get_user_profile_info(request):
         user_data = {}
         user_data['username'] = user.username
         user_data['profile_pic'] = user.profile_pic.url
-
