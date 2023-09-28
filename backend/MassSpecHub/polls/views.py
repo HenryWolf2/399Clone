@@ -15,6 +15,7 @@ import json
 import math
 from datetime import datetime
 from bibtexparser.bibdatabase import BibDatabase
+import bibtexparser
 
 @api_view(['POST'])
 def register_user(request):
