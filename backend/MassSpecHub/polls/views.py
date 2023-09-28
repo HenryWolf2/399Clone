@@ -13,8 +13,8 @@ from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
 import math
-import numpy
-
+from datetime import datetime
+from bibtexparser.bibdatabase import BibDatabase
 
 @api_view(['POST'])
 def register_user(request):
@@ -469,4 +469,32 @@ def get_user_profile_info(request):
         user_data = {}
         user_data['username'] = user.username
         user_data['profile_pic'] = user.profile_pic.url
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_citation(request):
+    if request.method == 'GET':
+        post_id = request.data.get('post_id')
+        post = Post.objects.get(id=post_id)
+        user = CustomUser.objects.get(id=post.author)
+        citation_type = request.data.get('citation')
+        current_date = datetime.now()
+        if citation_type == 'BibTeX':
+            db = BibDatabase()
+            date_object = datetime.strptime(post.post_time, '%Y-%m-%d %H:%M:%S.%f%z')
+            year = date_object.strftime('%Y')
+            citation_dict = [{
+                'ID': 'MSH',
+                'ENTRYTYPE': 'misc',
+                'title': post.title,
+                'author': f'{user.first_name} {user.last_name}',
+                'howpublished': '\\url{TODO add url to post here}',
+                'year': f'{year}',
+                'date': f'{post.post_time}',
+                'urldate': f'{current_date.strftime("%Y-%m-%d")}'
+            }]
+            db.entries = citation_dict
+            citation_output = db.to_string('bibtex')
+        return Response({'citation': citation_output}, status=status.HTTP_200_OK)
 
