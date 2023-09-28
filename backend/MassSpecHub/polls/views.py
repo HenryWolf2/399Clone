@@ -477,24 +477,23 @@ def get_citation(request):
     if request.method == 'GET':
         post_id = request.data.get('post_id')
         post = Post.objects.get(id=post_id)
-        user = CustomUser.objects.get(id=post.author)
         citation_type = request.data.get('citation')
         current_date = datetime.now()
         if citation_type == 'BibTeX':
             db = BibDatabase()
-            date_object = datetime.strptime(post.post_time, '%Y-%m-%d %H:%M:%S.%f%z')
-            year = date_object.strftime('%Y')
+            year = post.post_time.strftime('%Y')
             citation_dict = [{
                 'ID': 'MSH',
                 'ENTRYTYPE': 'misc',
                 'title': post.title,
-                'author': f'{user.first_name} {user.last_name}',
+                'author': f'{post.author.first_name} {post.author.last_name}',
                 'howpublished': '\\url{TODO add url to post here}',
                 'year': f'{year}',
-                'date': f'{post.post_time}',
+                'date': f'{post.post_time.strftime("%Y-%m-%d")}',
                 'urldate': f'{current_date.strftime("%Y-%m-%d")}'
             }]
             db.entries = citation_dict
+            print(bibtexparser.dumps(db))
             citation_output = db.to_string('bibtex')
         return Response({'citation': citation_output}, status=status.HTTP_200_OK)
 
