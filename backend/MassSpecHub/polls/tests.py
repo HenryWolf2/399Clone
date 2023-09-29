@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase, APIClient
 import base64
 
-from .models import Data, PostAnalysis
+from .models import Data, PostAnalysis, Group, Post
 
 
 class UserAccountTests(APITestCase):
@@ -29,17 +29,18 @@ class UserAccountTests(APITestCase):
         )
         self.post_analysis = PostAnalysis.objects.create(result_df={'test': 'jsonOBJ'}, data_input=self.data)
         self.testPic = SimpleUploadedFile("testPic.png", base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAUA" + "AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO" + "9TXL0Y4OHwAAAABJRU5ErkJggg=="), content_type="image/png")
+        self.differentTestPic = SimpleUploadedFile("testPic.png", base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAUA" + "AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO" + "9TXL0Y4OHwAAAABJRU5ErkJggg=="), content_type="image/png")
 
     def test_user_login_success(self):
         url = reverse('login')
-        data = {'username': 'testuser@example.com', 'password': 'testpass'}
+        data = {'username': 'testuser', 'password': 'testpass'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('token' in response.data)
 
     def test_user_login_failure(self):
         url = reverse('login')
-        data = {'username': 'testuser@example.com', 'password': 'wrongpass'}
+        data = {'username': 'testuser', 'password': 'wrongpass'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -76,7 +77,7 @@ class UserAccountTests(APITestCase):
             'post_pic': self.testPic,
             'tags': ['tag1', 'tag2']
         }
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_post_failure(self):
@@ -91,13 +92,13 @@ class UserAccountTests(APITestCase):
             'description': 'This is a test group.',
             'group_pic': self.testPic,
             'name': 'Test Group',
-            'group_banner': self.testPic
+            'group_banner': self.differentTestPic
         }
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_group_failure(self):
         url = reverse('create_group')
-        data = {'name': ''}  # name field is empty
+        data = {'name': None}  # name field is empty
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

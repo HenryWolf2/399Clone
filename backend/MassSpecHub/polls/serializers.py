@@ -29,7 +29,8 @@ class GroupSerializer(serializers.ModelSerializer):
         group = Group(
             description=validated_data['description'],
             group_pic=validated_data['group_pic'],
-            name=validated_data['name']
+            name=validated_data['name'],
+            group_banner=validated_data['group_banner']
         )
         group.save()
         return group
