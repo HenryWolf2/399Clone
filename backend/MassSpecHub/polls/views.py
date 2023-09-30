@@ -14,8 +14,9 @@ from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
 import math
-import numpy
-
+from datetime import datetime
+from bibtexparser.bibdatabase import BibDatabase
+import bibtexparser
 
 @api_view(['POST'])
 def register_user(request):
@@ -508,3 +509,37 @@ def get_user_profile_info(request):
         user_data = {}
         user_data['username'] = user.username
         user_data['profile_pic'] = user.profile_pic.url
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_citation(request):
+    if request.method == 'GET':
+        post_id = request.query_params.get('post_id')
+        post = Post.objects.get(id=post_id)
+        citation_type = request.query_params.get('citation')
+        current_date = datetime.now()
+        if citation_type == 'BibTeX':
+            db = BibDatabase()
+            year = post.post_time.strftime('%Y')
+            citation_dict = [{
+                'ID': f'{post.author.last_name}{post.post_time.strftime("%Y%m%d%H%M%S")}',
+                'ENTRYTYPE': 'misc',
+                'title': post.title,
+                'author': f'{post.author.first_name} {post.author.last_name}',
+                'organization': 'MaSH',
+                'howpublished': '\\url{TODO add url to post here}',
+                'year': f'{year}',
+                'date': f'{post.post_time.strftime("%Y-%m-%d")}',
+                'urldate': f'{current_date.strftime("%Y-%m-%d")}',
+                'note': ''
+            }]
+            db.entries = citation_dict
+            citation_output = bibtexparser.dumps(db)
+        elif citation_type == 'APA7':
+            date_posted = post.post_time.strftime("%Y, %B %d")
+            date_access = current_date.strftime("%B %d, %Y")
+            citation_output = f"{post.author.first_name} {post.author.last_name} [@{post.author.username}]. ({date_posted}). {post.title} [Infographic]. MaSH. Retrieved {date_access}, from URL HERE"
+        else:
+            return Response({'error': f'Citation type {citation_type} not found'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'citation': citation_output}, status=status.HTTP_200_OK)
