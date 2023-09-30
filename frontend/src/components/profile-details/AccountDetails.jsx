@@ -41,6 +41,10 @@ function AccountDetails(props) {
         setEmail(res.data.email)
         setDescription(res.data.description)
         setPublicPosts(res.data.posts)
+
+        
+        console.log(res.data)
+        console.log("help he")
       });
       } catch(e) {
         console.error(e)
@@ -259,6 +263,7 @@ function AccountDetails(props) {
                 </Box>
 
               </div>
+              
               <div style={{ display: 'inline', flex: 1, alignContent: 'center', alignItems:'center', overflow: 'scroll'}}>
                           {editing ? (
                     <TextField
@@ -271,6 +276,7 @@ function AccountDetails(props) {
                       onBlur={handleTextFieldBlur}
                       onChange={(e) => setNotepad(e.target.value)}
                     />
+                    
                   ) : (
                     <div style={{marginLeft:'10px', marginTop:'20px'}} onClick={() => setEditing(true)}>
                       <ReactMarkdown components={{
@@ -280,7 +286,7 @@ function AccountDetails(props) {
                       }}>{notepad}</ReactMarkdown>
                     </div>
                   )}
-                </div>
+              </div>
             </div>
         </div>
 

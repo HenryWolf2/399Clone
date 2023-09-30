@@ -7,9 +7,12 @@ import Typography from '@mui/material/Typography';
 import Contributors from './contributors';
 import ProfilePicture from './profile';
 import StockImage from '../../assets/images/stock-image.jpg';
+import PublicIcon from '../../assets/images/public.png';
+import PrivateIcon from '../../assets/images/private.png';
 import instance from '../api/api_instance.js'
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Tags from './tags';
 
 import '../../assets/styles/global.css';
 
@@ -21,6 +24,7 @@ export default function IndividualPost(props) {
   const [description, setDescription] = useState('')
   const [date, setDate] = useState('')
   const [post_id, setPostID] = useState('')
+  const [tags, setTags] = useState([])
   
   useEffect(() => {
     async function GetPostInformation() {
@@ -37,6 +41,7 @@ export default function IndividualPost(props) {
         setDescription(res.data.description)
         setDate(new Date(res.data.post_time).toLocaleDateString())
         setPostID("/post/"+props.post_id)
+        setTags(res.data.tags)
       });
       } catch(e) {
         console.error(e)
@@ -61,7 +66,7 @@ export default function IndividualPost(props) {
           </Grid>
           <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
             <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px"}}>
-              Group name <br></br>{date} ~ { publicity ? "Public":"Private" }
+              Group name <br></br>{date} { publicity ? <img src={PublicIcon} alt="public" width="18" height="18"></img> : <img src={PrivateIcon} alt="private" width="18" height="18"></img> }
             </Typography>
           </Grid>
 
@@ -78,13 +83,7 @@ export default function IndividualPost(props) {
           { description.slice(0,250) }...
         </Typography>
         <img src={ StockImage } className="Post-image" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>
-        <Stack direction="row" spacing={1} sx={{margin: "0px 20px 0px 20px"}}>
-          <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag1" />
-          <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag2" />
-          <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag3" />
-          <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag4" />
-          
-        </Stack>
+        <Tags tagArray={tags}/>
       </Box>
     </Box>
     </Link>

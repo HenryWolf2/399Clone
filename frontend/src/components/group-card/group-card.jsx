@@ -7,12 +7,16 @@ import Typography from '@mui/material/Typography';
 import instance from '../api/api_instance.js'
 import '../../assets/styles/global.css';
 import StockImage from '../../assets/images/stock-image.jpg';
+import { Link } from 'react-router-dom';
 
 export default function GroupCard(props) {
   
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-  const [groupPicture, setGroupPicture] = useState("")
+  const [memberCount, setMemberCount] = useState("")
+  const [postCount, setPostCount] = useState("")
+  let [groupPicture, setGroupPicture] = useState("")
+  const [groupID, setGroupId] = useState("")
   
   useEffect(() => {
     async function GetGroupInformation() {
@@ -26,7 +30,9 @@ export default function GroupCard(props) {
         setName(res.data.name)
         setDescription(res.data.description)
         setGroupPicture(res.data.group_pic)
-        console.log(res.data.group_pic)
+        setMemberCount(res.data.member_count)
+        setPostCount(res.data.post_count)
+        setGroupId("/group/"+props.group_id)
       });
       } catch(e) {
         console.error(e)
@@ -36,24 +42,25 @@ export default function GroupCard(props) {
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   )
-  
+  console.log(groupPicture)
 
   return (
-    <Box sx={{ width: '100%', bgcolor: '#D9D9D9', borderRadius: '10px', padding: "10px 0px 10px 0px" }}>
-      <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
-        <Grid container alignItems="center" >
-          <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
-            <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px"}}>
-              {name}
-            </Typography>
-          </Grid>
-        </Grid>
+    <Link to={groupID} style={{ textDecoration: "none", color: 'black' }}>
+      <Box sx={{ width: '100%', bgcolor: '#D9D9D9', borderRadius: '10px' }}>
+        <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
+          <Grid container alignItems="center" >
+            <Grid item sx={{padding: '10px 10px 6.5px 10px'}}>
+              <img src={ StockImage } className="group-landing-image" alt="logo"/>
+            </Grid>
 
-        <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
-          { description }
-        </Typography>
-        <img src={ StockImage } className="Post-image" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>
+            <Grid item xs>
+              <Typography gutterBottom component="div" sx={{marginBottom: "0px", fontSize: "15px"}}>
+                {name} <br></br> {memberCount} Members | {postCount} Posts
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
       </Box>
-    </Box>
+    </Link>
   );
 }

@@ -15,13 +15,15 @@ const GroupForm = () => {
     formData.append('name', name);
     formData.append('description', description);
     formData.append('group_pic', groupPicture);
+    formData.append('created', groupPicture);
 
     try {
-      const response = await instance.post('/groups/create', formData, {
+      await instance.post('/groups/create', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       }).then((response) => {
+        console.log(response)
         navigate('/')
       });
       
@@ -56,6 +58,7 @@ const GroupForm = () => {
           onChange={(e) => setDescription(e.target.value)}
           required
         />
+        <p className="form-description">Choose file for your group. This will be used as the banner image on the group later on</p>
         <TextField
                 type="file"
                 style = {{width: 400, textAlign: "center"}}

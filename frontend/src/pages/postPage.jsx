@@ -6,6 +6,9 @@ import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import StockImage from '../assets/images/stock-image.jpg';
 import PostTable from '../components/individual-posts/postTable.jsx'
 import PostGraph from '../components/individual-posts/postGraph';
+import PublicIcon from '../assets/images/public.png';
+import PrivateIcon from '../assets/images/private.png';
+import Tags from '../components/individual-posts/tags';
 
 export default function PostPage(props) {
 
@@ -14,9 +17,11 @@ export default function PostPage(props) {
   const [publicity, setPublicity] = useState('')
   const [description, setDescription] = useState('')
   const [date, setDate] = useState('')
-  const [results_id, setResultsID] = useState(1)
+  const [resultsId, setResultsID] = useState('')
+  const [tags, setTags] = useState([])
     
   useEffect(() => {
+    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
     async function GetPostInformation() {
       try{ 
         await instance ({
@@ -30,6 +35,7 @@ export default function PostPage(props) {
         setDescription(res.data.description)
         setResultsID(res.data.associated_results)
         setDate(new Date(res.data.post_time).toLocaleDateString())
+        setTags(res.data.tags)
       });
       } catch(e) {
         console.error(e)
@@ -39,15 +45,6 @@ export default function PostPage(props) {
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   )
-  
-  const [isShown, setIsShown] = useState(false);
-
-  const handleClick = event => {
-
-    setIsShown(current => !current);
-
-  };
-
 
   return (
     <div className="container">
@@ -58,33 +55,21 @@ export default function PostPage(props) {
           <Typography gutterBottom variant="h4" component="div" sx={{margin: "0px 20px 0px 20px"}}>
               { title } <br></br>
           </Typography>
-          <Stack direction="row" spacing={1} sx={{margin: "0px 20px 0px 20px"}}>
-            <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag1" />
-            <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag2" />
-            <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag3" />
-            <Chip sx={{ bgcolor: '#02AEEC', color: 'white' }} label="Tag4" />
-          </Stack>
+          <Tags tagArray={tags}/>
           <Typography variant="h4" component="div" sx={{margin: "0px 20px 0px 20px"}}>
-            { date } ~ { publicity ? "Public":"Private" }
+            { date } { publicity ? <img src={PublicIcon} alt="public" width="30" height="30"></img> : <img src={PrivateIcon} alt="private" width="30" height="30"></img> }
           </Typography>
-          <img src={ StockImage } className="Post-image-page" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>
+          
           <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
             { description }
+            
           </Typography>
 
           
           <Stack sx={{margin: "0px 20px 0px 20px"}}>
-          { isShown ? (
-            <div>
-              <Button sx={{ background: '#02AEEC', color: 'white' }} onClick={handleClick}> Switch to full table </Button>
-              <PostGraph results_id={results_id} />
-            </div>
-          ) : (
-            <div>
-              <Button sx={{ background: '#02AEEC', color: 'white' }} onClick={handleClick}> Switch to data stuff </Button>
-              <PostTable results_id={results_id} />
-            </div>
-          )}
+              <PostGraph post_id={props.post_id} />
+              
+              <PostTable results_id={resultsId} />
           </Stack>
         </Box>
       </Box> 

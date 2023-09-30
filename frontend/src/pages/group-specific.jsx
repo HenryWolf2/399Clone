@@ -6,13 +6,13 @@ import GroupData from '../components/group-details/GroupData';
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-export default function Home() {
+export default function GroupSpecific(props) {
 
   return (
     <div className="container">
       <NavigationBar />
       <div style={{display: 'flex', flexDirection: 'row'}}>
-        <GroupDetails />
+        <GroupDetails group_id={props.group_id}/>
         <GroupData />
       </div>
     </div>
