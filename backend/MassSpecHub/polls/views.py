@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from rest_framework import status
 from rest_framework.response import Response
@@ -441,6 +442,7 @@ def get_group_by_id(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_graph_data(request):
     if request.method == 'GET':
         post_id = request.data.get('post_id')
@@ -451,20 +453,22 @@ def get_graph_data(request):
         data = Data.objects.get(id=data_id)
         dataframe = pd.read_excel(data.bounds_file)
         normalised_dataframe = utils.normalise(dataframe)
-        peak_search.peak_find(normalised_dataframe, peak_height=0.01)
+        peak_search.peak_find(normalised_dataframe, peak_height=0.001)
         values = [row[4] for row in linked_analysis['data']]
+        df = pd.DataFrame({'checkvals': normalised_dataframe['m/z']})
+        vals = np.array(values).reshape(1, -1)
+        df = df.iloc[abs(df.checkvals.to_numpy()[:, None] - vals).argmin(0)]
+        indexes_to_insert_protein = []
+        for i in df.index:
+            if i not in indexes_to_insert_protein:
+                indexes_to_insert_protein.append(i)
         i = 0
-        j = 0
-        species_row = []
-        for point in normalised_dataframe['m/z']:
-            species_row.append('N/A')
-            for val in values:
-                if math.isclose(point, val, abs_tol=10e-15):
-                    if linked_analysis['data'][i][7]:
-                        species_row[j] = linked_analysis['data'][i][0]
-                    i += 1
-            j += 1
-        normalised_dataframe['species'] = species_row
+        normalised_dataframe['species'] = 'N/A'
+        for num in range(len(linked_analysis['data'])):
+            if linked_analysis['data'][num][7]:
+                j = indexes_to_insert_protein[i]
+                normalised_dataframe.loc[j, 'species'] = linked_analysis['data'][i][0]
+                i += 1
         normalised_dataframe.drop(normalised_dataframe.columns[[0, 2]], axis=1, inplace=True)
         normalised_dataframe = normalised_dataframe.to_numpy()
         keys = ['m/z', 'normalised_intensity', 'species']
