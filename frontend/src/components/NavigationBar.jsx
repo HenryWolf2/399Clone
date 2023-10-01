@@ -19,6 +19,7 @@ import { NavLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import instance from './api/api_instance';
 import { Navigate, useNavigate } from 'react-router-dom';
+import Link from '@mui/material/Link';
 
 
 function ResponsiveAppBar() {
@@ -26,6 +27,14 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -154,7 +163,7 @@ function ResponsiveAppBar() {
               </Button>
             </NavLink>
 
-            <NavLink to="/" style={{ textDecoration: 'none' }}>
+            <NavLink to="/groups" style={{ textDecoration: 'none' }}>
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
@@ -209,9 +218,27 @@ function ResponsiveAppBar() {
           </Box>
 
                                 {/* Create Button */}
-                  
-            <Button sx={{margin:2}} href="/create-post" className="custom-button" variant='contained' endIcon={<AddIcon/>} >CREATE</Button>
-
+            <Button sx={{margin:2}} id='create-button' className="custom-button" variant='contained' endIcon={<AddIcon/>} 
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick} >Create</Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'create-button',
+              }}
+            >
+              <NavLink to="/create-post" style={{ textDecoration: 'none'}}>
+                <MenuItem onClick={handleClose}><Typography textAlign={'center'}>Post</Typography></MenuItem>
+              </NavLink>
+              <NavLink to="/create-group" style={{ textDecoration: 'none'}}>
+                <MenuItem onClick={handleClose}><Typography textAlign={'center'}>Group</Typography></MenuItem>
+              </NavLink>
+            </Menu>
                       {/* The Profile Icon Menu */}
 
           <Box sx={{ flexGrow: 0 }}>

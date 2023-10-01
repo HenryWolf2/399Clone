@@ -23,13 +23,14 @@ class UserSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['description', 'group_pic', 'name']
+        fields = ['description', 'group_pic', 'name', 'group_banner']
 
     def create(self, validated_data):
         group = Group(
             description=validated_data['description'],
             group_pic=validated_data['group_pic'],
-            name=validated_data['name']
+            name=validated_data['name'],
+            group_banner=validated_data['group_banner']
         )
         group.save()
         return group
@@ -82,16 +83,16 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['title', 'summary', 'description', 'publicity', 'author', 'associated_results']
+        fields = ['title', 'description', 'publicity', 'author', 'associated_results', 'post_time', 'post_pic']
 
     def create(self, validated_data):
         post = Post(
             title=validated_data['title'],
-            summary=validated_data['summary'],
             description=validated_data['description'],
             publicity=validated_data['publicity'],
             author=validated_data['author'],
-            associated_results=validated_data['associated_results']
+            associated_results=validated_data['associated_results'],
+            post_pic=validated_data['post_pic']
         )
         post.save()
         return post

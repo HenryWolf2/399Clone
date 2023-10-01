@@ -13,7 +13,9 @@ from django.core.validators import FileExtensionValidator
 class Group(models.Model):
     name = models.TextField()
     description = models.TextField()
-    group_pic = models.ImageField()
+    created = models.DateTimeField(auto_now_add=True)
+    group_pic = models.ImageField(upload_to='group_pics')
+    group_banner = models.ImageField(upload_to='group_banners', default='default.jpg')
     posts = models.ManyToManyField(to="polls.Post", through="polls.PostGroup")
 
     class Meta:
@@ -36,9 +38,10 @@ class PostGroup(models.Model):
 
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    profile_pic = models.ImageField()
-    cover_photo = models.ImageField()
-    description = models.TextField()
+    profile_pic = models.ImageField(upload_to='profile_pics')
+    cover_photo = models.ImageField(upload_to='profile_banners', default='default.jpg')
+    description = models.TextField(default="Click edit profile to update your description, profile picture and banner for your profile.")
+    notepad = models.TextField(default="Click here to enter notes. Text will be converted to markdown when you click out of the text field...")
     groups = models.ManyToManyField(to="Group", through="UserGroup")
     first_name = models.TextField()
     last_name = models.TextField()
@@ -59,6 +62,10 @@ class TagPost(models.Model):
     post = models.ForeignKey('polls.Post', on_delete=models.CASCADE)
     tag = models.ForeignKey('polls.Tag', on_delete=models.CASCADE)
 
+    class Meta:
+        db_table = 'TagPost'
+
+
 class Post(models.Model):
     title = models.TextField()
     summary = models.TextField()
@@ -68,6 +75,11 @@ class Post(models.Model):
     post_time = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(to='Tag', through=TagPost)
     associated_results = models.OneToOneField('PostAnalysis', on_delete=models.CASCADE, null=True)
+    post_pic = models.ImageField(upload_to='post_pics', default='default.png')
+
+    class Meta:
+        db_table = 'Post'
+
 
 class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
@@ -86,20 +98,26 @@ class UserGroup(models.Model):
 class Data(models.Model):
     data_publicity = models.BooleanField()
     compounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
-                                      default='test.csv')
+                                      default='test.csv', upload_to='compounds')
     adducts_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
-                                    default='test.csv')
+                                    default='test.csv', upload_to='adducts')
     bounds_file = models.FileField(validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'csv'])],
-                                   default='test.csv')
+                                   default='test.csv', upload_to='bound_spectrum')
+
+    class Meta:
+        db_table = 'Data'
 
 
 class PostAnalysis(models.Model):
     data_input = models.OneToOneField('Data', on_delete=models.CASCADE)
     result_df = JSONField()
 
-
+    class Meta:
+        db_table = 'PostAnalysis'
 
 
 class Tag(models.Model):
     name = models.TextField()
-    posts = models.ManyToManyField(to='Post', through=TagPost)
+
+    class Meta:
+        db_table = 'Tag'
