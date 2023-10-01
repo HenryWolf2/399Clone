@@ -209,8 +209,6 @@
     text-align: justify;
 }
 
-/* == =========================================== == */
-
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -287,4 +285,9 @@ h6 {
 
 .landing-post-container::-webkit-scrollbar{
     display: none;
+}
+
+.group-landing-image {
+    height: 50px;
+    width: 50px;
 }

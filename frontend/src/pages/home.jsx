@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import NavigationBar from '../components/NavigationBar';
 import PublicNavigationBar from '../components/PublicNavigationBar';
 import PostGrid from '../components/individual-posts/postgrid';
 import { useEffect, useState } from 'react';
@@ -37,7 +38,7 @@ export default function Home() {
   ) 
   return (
     <div class="container">
-      <PublicNavigationBar />
+      <NavigationBar />
       
       <div style={{height: '85px',display:'flex'}}>
           <div style={{flex:1, flexDirection: 'row', height: '100%', }}>

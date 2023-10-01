@@ -12,14 +12,14 @@ import instance from '../api/api_instance';
 
 export default function PostTable(props) {
   const [results_df, setResults_df] = useState({})
-
+  let number = props.results_id + 0
   useEffect(() => {
     async function GetAnalysis() {
       try{ 
         await instance ({
           url: "/post/analysis_by_id",
           method: "GET",
-          params: {analysis_id: props.results_id}
+          params: {analysis_id: 20}
       }).then((res) => {
         setResults_df(res.data.analysis);
       });

@@ -2,6 +2,7 @@ import React from 'react';
 import NavigationBar from '../components/NavigationBar';
 import GroupForm from '../components/create-group/group-form';
 import { useState, useEffect } from 'react';
+import LogoTransparent from '../assets/images/LogoMSH_Transparent.png';
 
 export default function CreateGroup() {
   return (
@@ -10,7 +11,8 @@ export default function CreateGroup() {
       <div className="Post">
         <div className='Post-header'>
           <div className='White-rectangle'>
-            <h2 style={{ color: '#000000', width: "700px" }}>Create Group</h2>
+            <img src={LogoTransparent} className="Post-logo" alt="logo" />
+            <h3 className="Post-title">Create Group</h3>
             <GroupForm />
           </div>
         </div>

@@ -32,7 +32,6 @@ function GroupDetails(props) {
           method: "GET",
           params: {group_id: props.group_id},       
       }).then((res) => {
-        console.log(res)
         setGroupname(res.data.name)
         setDescription(res.data.description)
         setBanner(res.data.group_pic)
@@ -163,7 +162,7 @@ function GroupDetails(props) {
         <div style={overlayStyleMinimized}> 
         <h1 style={{color: 'white', marginTop: '50px'}}>{groupname}</h1>
           <div style={{display: 'flex', marginTop: '-40px', color: 'white', fontSize: '14px'}}>
-            <h1 style={{marginRight: '15px'}}>21.08.2023</h1>
+            <h1 style={{marginRight: '15px'}}>{creationDate}</h1>
           </div>
           <hr style={{width:'250px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
 

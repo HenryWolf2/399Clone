@@ -119,6 +119,7 @@ def create_post(request):
         serializer = PostSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+
             post = Post.objects.get(id=serializer.instance.id)
             for tag_name in request.POST.getlist('tags'):
                 try:
@@ -126,6 +127,7 @@ def create_post(request):
                 except ObjectDoesNotExist:
                     tag = Tag.objects.create(name=tag_name)
                 post.tags.add(tag)
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -318,10 +320,11 @@ def get_profile(request):
         profile_data['description'] = user.description
         profile_data['first_name'] = user.first_name
         profile_data['last_name'] = user.last_name
-        profile_data['profile_pic'] = user.profile_pic.url
-        profile_data['cover_photo'] = user.cover_photo.url
+        if user.profile_pic: #TODO REVIEW
+            profile_data['profile_pic'] = user.profile_pic.url
+        if user.cover_photo: #TODO REVIEW
+            profile_data['cover_photo'] = user.cover_photo.url
         profile_data['notepad'] = user.notepad
-
         posts = Post.objects.filter(author__id=user.id)
         profile_data['posts'] = posts.values_list('id', flat=True)
         return Response(profile_data, status=status.HTTP_200_OK)
@@ -435,9 +438,8 @@ def get_group_by_id(request):
             serializer = GroupSerializer(group)
             return_data = serializer.data
             return_data['post_count'] = group.posts.count()
-            return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster',
-                                                                                                    'viewer']).count()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster', 'viewer']).count()
+            return Response(return_data, status=status.HTTP_200_OK)
         except:
             return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -446,7 +448,7 @@ def get_group_by_id(request):
 @permission_classes([IsAuthenticated])
 def get_graph_data(request):
     if request.method == 'GET':
-        post_id = request.data.get('post_id')
+        post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
         analysis = post.associated_results
         linked_analysis = post.associated_results.result_df
