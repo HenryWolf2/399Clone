@@ -45,7 +45,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     groups = models.ManyToManyField(to="Group", through="UserGroup")
     first_name = models.TextField()
     last_name = models.TextField()
-    collaborations = models.ManyToManyField(to="CustomUser", related_name='collaborations', through='CollaboratorUser')
+    collaborations = models.ManyToManyField(to="CustomUser", through='CollaboratorPost')
 
     # Add custom fields here, if needed
 
