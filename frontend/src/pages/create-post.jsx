@@ -12,7 +12,7 @@ export default function CreatePost() {
         <div className='Post-header'>
           <div className='White-rectangle'>
             <img src={LogoTransparent} className="Post-logo" alt="logo" />
-            <h3 className="Post-title">Create your post</h3>
+            <h3 className="Post-title">Create your analysis</h3>
             <PostForm/>
           </div>
         </div>
