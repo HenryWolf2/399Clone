@@ -60,7 +60,16 @@ class PostAnalysisSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         postAnalysis = PostAnalysis(
             result_df=validated_data['result_df'],
-            data_input=validated_data['data_input']
+            data_input=validated_data['data_input'],
+            tolerance=validated_data['tolerance'],
+            peak_height=validated_data['peak_height'],
+            multi_protein=validated_data['multi_protein'],
+            only_best=validated_data['only_best'],
+            calibrate=validated_data['calibrate'],
+            min_primaries=validated_data['min_primaries'],
+            max_primaries=validated_data['max_primaries'],
+            max_adducts=validated_data['max_adducts'],
+            valence=validated_data['valence']
         )
         postAnalysis.save()
         return postAnalysis
