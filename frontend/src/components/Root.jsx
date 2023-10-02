@@ -61,7 +61,7 @@ export default function Root() {
     async function GetAllGroupsIDs() {
       try{ 
         await instance ({
-          url: "/groups/get_all",
+          url: "/groups/get_all_id",
           method: "GET",
       }).then((res) => {
         setAllGroups(res.data)
