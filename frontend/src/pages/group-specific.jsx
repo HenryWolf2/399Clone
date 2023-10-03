@@ -13,7 +13,7 @@ export default function GroupSpecific(props) {
       <NavigationBar />
       <div style={{display: 'flex', flexDirection: 'row'}}>
         <GroupDetails group_id={props.group_id}/>
-        <GroupData />
+        <GroupData group_id={props.group_id}/>
       </div>
     </div>
   );
