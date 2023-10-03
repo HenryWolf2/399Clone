@@ -5,6 +5,8 @@ import Button from '@mui/material/Button';
 import '../../assets/styles/global.css';
 import GroupBar from '../profile-details/GroupBar';
 import instance from '../api/api_instance';
+import PermsCard from './PermsCard';
+import MemberCard from './MemberCard';
 
 function GroupDetails(props) {
   const [minimized, setMinimized] = useState(false);
@@ -183,6 +185,8 @@ function GroupDetails(props) {
         </Button>
       )}
 
+      <MemberCard group_id={props.group_id}/>
+
 
       </div>
 
@@ -198,9 +202,9 @@ function GroupDetails(props) {
           </div>
 
           <h1 style={{color: 'white', marginTop: '10px'}}> Permissions </h1>
-          <div style={{backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
+          <div style={{overflowY: 'scroll', backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
 
-
+            <PermsCard/>
           </div>
           
       </div>

@@ -88,7 +88,7 @@ export default function Root() {
           <Route exact path="/profile" element={<Profile />} />
           <Route exact path="/public-data" element={<PublicPosts />} />
           <Route exact path="/create-post" element={<CreatePost />} />
-          <Route exact path="/group-specific" element={<SpecificGroup />} />
+          <Route exact path="/group-specific/:group_id" element={<SpecificGroup />} />
           <Route exact path="/groups" element={<Groups />} />
           <Route exact path="/create-group" element={<CreateGroup />} />
           

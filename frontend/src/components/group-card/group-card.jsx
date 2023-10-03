@@ -32,7 +32,7 @@ export default function GroupCard(props) {
         setGroupPicture(res.data.group_pic)
         setMemberCount(res.data.member_count)
         setPostCount(res.data.post_count)
-        setGroupId("/group/"+props.group_id)
+        setGroupId("/group-specific/"+props.group_id)
       });
       } catch(e) {
         console.error(e)

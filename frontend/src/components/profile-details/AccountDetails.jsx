@@ -42,9 +42,6 @@ function AccountDetails(props) {
         setDescription(res.data.description)
         setPublicPosts(res.data.posts)
 
-        
-        console.log(res.data)
-        console.log("help he")
       });
       } catch(e) {
         console.error(e)
