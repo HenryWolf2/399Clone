@@ -128,7 +128,7 @@ class PostAnalysis(models.Model):
     max_primaries = models.FloatField(default=3)
     max_adducts = models.FloatField(default=2)
     valence = models.FloatField(default=4)
-
+    manual_calibration = models.FloatField(default=0)
     class Meta:
         db_table = 'PostAnalysis'
 
