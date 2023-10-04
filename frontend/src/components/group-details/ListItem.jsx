@@ -12,6 +12,7 @@ export default function CheckboxListSecondary(props) {
   const [checked, setChecked] = React.useState([1]);
   const [open, setOpen] = React.useState(false);
 
+  const memberObjectList = {};
   const [groupName, setGroupname] = useState('');
   const [memberList, setMemberList] = useState([]);
 
@@ -40,28 +41,35 @@ export default function CheckboxListSecondary(props) {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
 
-  useEffect(() => {
-    async function GetMemberInformation() {
-      try{ 
-        await instance ({
-          url: "/profile/get",
-          method: "GET",          
-      }).then((res) => {
-        console.log(res)
-        setFirstName(res.data.first_name)
-        setLastName(res.data.last_name)
-        setEmail(res.data.email)
+  const GetMemberInformation = async (user_id) => {
+    try{ 
+      await instance ({
+        url: "/profile/get",
+        method: "GET",
+        params: ["user_id"]          
+    }).then((res) => {
+      console.log(res)
 
-      });
-      } catch(e) {
-        console.error(e)
-      }
+      const firstName = res.data.first_name;
+      const lastName = res.data.last_name;
+      const email = res.data.email;
+
+      const memberList = [firstName, lastName, email]
+
+      return memberList
+      
+    });
+    } catch(e) {
+      console.error(e)
     }
-    GetProfileInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
-  ) 
-
+    
+  }
+  useEffect(() => {
+    const memberIdList = memberList;
+    memberIdList.forEach(id => {
+      GetMemberInformation(id);
+    })
+  }, [memberList]);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -76,13 +84,10 @@ export default function CheckboxListSecondary(props) {
     setChecked(newChecked);
   };
 
-  console.log(groupName)
-  console.log(memberList)
-
 
   return (
     <List dense sx={{ width: '100%', maxWidth: 700, bgcolor: 'background.paper' }}>
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => {
+      {[0, 1, 2, 3, 4, 5, 6].map((value) => {
         const labelId = `checkbox-list-secondary-label-${value}`;
         return (
           <ListItem
