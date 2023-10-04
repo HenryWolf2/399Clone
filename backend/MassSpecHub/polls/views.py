@@ -248,6 +248,7 @@ def add_data(request):
             max_primaries = request.data.get('max_primaries')
             max_adducts = request.data.get('max_adducts')
             valence = request.data.get('valence')
+            manual_calibration = request.data.get('manual_calibration')
             analysis_results = binding_site_search.search(bounds_file, compounds_file, adducts_file,
                                                           tolerance=tolerance, peak_height=peak_height,
                                                           multi_protein=multi_protein,
