@@ -45,6 +45,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     groups = models.ManyToManyField(to="Group", through="UserGroup")
     first_name = models.TextField()
     last_name = models.TextField()
+    collaborations = models.ManyToManyField(to="CustomUser", through='CollaboratorPost')
 
     # Add custom fields here, if needed
 
@@ -76,10 +77,17 @@ class Post(models.Model):
     tags = models.ManyToManyField(to='Tag', through=TagPost)
     associated_results = models.OneToOneField('PostAnalysis', on_delete=models.CASCADE, null=True)
     post_pic = models.ImageField(upload_to='post_pics', default='default.png')
+    collaborators = models.ManyToManyField(to='CustomUser', related_name='collaborators', through='CollaboratorPost')
 
     class Meta:
         db_table = 'Post'
 
+class CollaboratorPost(models.Model):
+    post = models.ForeignKey('polls.Post', on_delete=models.CASCADE)
+    collaborator = models.ForeignKey('polls.CustomUser', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'CollaboratorPost'
 
 class UserGroup(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, null=True)
@@ -111,6 +119,15 @@ class Data(models.Model):
 class PostAnalysis(models.Model):
     data_input = models.OneToOneField('Data', on_delete=models.CASCADE)
     result_df = JSONField()
+    tolerance = models.FloatField(default=3.1)
+    peak_height = models.FloatField(default=0.01)
+    multi_protein = models.TextField(default='off')
+    only_best = models.TextField(default='off')
+    calibrate = models.TextField(default='Automatic')
+    min_primaries = models.FloatField(default=1)
+    max_primaries = models.FloatField(default=3)
+    max_adducts = models.FloatField(default=2)
+    valence = models.FloatField(default=4)
 
     class Meta:
         db_table = 'PostAnalysis'
