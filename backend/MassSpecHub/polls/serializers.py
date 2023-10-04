@@ -47,6 +47,7 @@ class DataSerializer(serializers.ModelSerializer):
             compounds_file=validated_data['compounds_file'],
             adducts_file=validated_data['adducts_file'],
             bounds_file=validated_data['bounds_file']
+            
         )
         data.save()
         return data

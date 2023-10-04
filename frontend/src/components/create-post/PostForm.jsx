@@ -104,6 +104,8 @@ const PostForm = () => {
             }
           }).then(
             (res) => {
+              console.log(res.data)
+              console.log("Above here champ")
               setAnalysisID(res.data.analysis_id)
             }
           );
