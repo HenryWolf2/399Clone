@@ -260,7 +260,8 @@ def add_data(request):
             analysis_data = {'result_df': json_df, 'data_input': data.id, 'tolerance': tolerance,
                              'peak_height': peak_height, 'multi_protein': multi_protein, 'only_best': only_best,
                              'min_primaries': min_primaries, 'max_primaries': max_primaries, 'valence': valence,
-                             'calibrate': calibrate, 'max_adducts': max_adducts, 'manual_calibration': manual_calibration}
+                             'calibrate': calibrate, 'max_adducts': max_adducts,
+                             'manual_calibration': manual_calibration}
             analysis_serializer = PostAnalysisSerializer(data=analysis_data)
             if analysis_serializer.is_valid():
                 analysis_serializer.save()
@@ -399,10 +400,19 @@ def edit_group(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_all_posts(request):
+def get_all_post_ids(request):
     if request.method == 'GET':
         posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.all()
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -467,7 +477,9 @@ def get_graph_data(request):
         dataframe = pd.read_excel(data.bounds_file)
         normalised_dataframe = utils.normalise(dataframe)
         if post.associated_results.calibrate == 'Manual':
-            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height, calibrate=post.associated_results.calibrate, manual_calibration=post.associated_results.manual_calibration)
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height,
+                                  calibrate=post.associated_results.calibrate,
+                                  manual_calibration=post.associated_results.manual_calibration)
         else:
             peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height)
         values = [row[4] for row in linked_analysis['data']]
