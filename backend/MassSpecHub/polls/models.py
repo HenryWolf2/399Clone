@@ -119,6 +119,15 @@ class Data(models.Model):
 class PostAnalysis(models.Model):
     data_input = models.OneToOneField('Data', on_delete=models.CASCADE)
     result_df = JSONField()
+    tolerance = models.FloatField(default=3.1)
+    peak_height = models.FloatField(default=0.01)
+    multi_protein = models.TextField(default='off')
+    only_best = models.TextField(default='off')
+    calibrate = models.TextField(default='Automatic')
+    min_primaries = models.FloatField(default=1)
+    max_primaries = models.FloatField(default=3)
+    max_adducts = models.FloatField(default=2)
+    valence = models.FloatField(default=4)
 
     class Meta:
         db_table = 'PostAnalysis'
