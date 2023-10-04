@@ -32,10 +32,6 @@ const spectrumCalibrationOptions = [
     value: 'Manual',
     label: 'Manual',
   },
-  {
-    value: 'None',
-    label: 'None',
-  }
 ];
 
 const publicPrivate = [
@@ -60,10 +56,23 @@ const yesNo = [
   }
 ]
 
+const onOff = [
+  {
+    value: 'on',
+    label: 'On',
+  },
+  {
+    value: 'off',
+    label: 'Off'
+  }
+]
+
 const PostForm = () => {
     const [activeStep, setActiveStep] = useState(0)
 
     const [tags, setTags] = useState([]);
+    const [collaborators, setCollaborators] = useState([]);
+    const [usernames, setUsernames] = useState([]);
 
     const [analysis_id, setAnalysisID] = useState("")
     const navigate = useNavigate();
@@ -80,6 +89,8 @@ const PostForm = () => {
     const [min_primaries, setMinimumProteinNumber] = useState("1")
     const [max_primaries, setMaximumProteinNumber] = useState("1")
     const [data_publicity, setDataPublic] = useState("False")
+    const [multi_protein, setMultiProtein] = useState("off")
+    const [manual_calibration, setManualCalibration] = useState("0")
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
@@ -91,6 +102,8 @@ const PostForm = () => {
     const [post_pic, setPostImageFile] = useState("")
     const [imgSrc, setImgSrc] = useState()
 
+    const [error, setError] = useState(false);
+
     const handleFileUpload = (e) => {
       const post_pic = e.target.files[0]
       const reader = new FileReader();
@@ -100,6 +113,24 @@ const PostForm = () => {
       reader.readAsDataURL(post_pic);
     }
 
+    // useEffect(() => {
+    //   async function GetUsernames() {
+    //     try{ 
+    //       await instance ({
+    //         url: "/post/get_by_id",
+    //         method: "GET",
+            
+    //     }).then((res) => {
+    //       setUsernames(res.data.usernames)
+    //     });
+    //     } catch(e) {
+    //       console.error(e)
+    //     }
+    //   }
+    //   GetUsernames();
+    //   } , // <- function that will run on every dependency update
+    //   [] // <-- empty dependency array
+    // )
 
     const handleSubmit1 = async (event) => {
       event.preventDefault();
@@ -117,6 +148,8 @@ const PostForm = () => {
       formData.append("min_primaries", min_primaries);
       formData.append("max_primaries", max_primaries);
       formData.append("data_publicity", data_publicity);
+      formData.append("multi_protein", multi_protein);
+      formData.append("manual_calibration", manual_calibration);
 
       try{
         await instance.post('/post/create/data', formData, {
@@ -137,13 +170,6 @@ const PostForm = () => {
 
   const handleSubmit2 = async (event) => {
     event.preventDefault();
-    // let data = {
-    //     title: title,
-    //     description: description,
-    //     publicity: publicity,
-    //     analysis_id: analysis_id,
-    //     tags: tags
-    // }
     const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);
@@ -187,6 +213,17 @@ const PostForm = () => {
   };
 
   const handleDeleteTag = (tagToDelete) => {
+    setTags(tags.filter((tag) => tag !== tagToDelete));
+    console.log(tags);
+  };
+
+  const handleAddCollaborator = (event, newTag) => {
+    if (newTag && !tags.includes(newTag)) {
+      setTags([...tags, newTag]);
+    }
+  };
+
+  const handleDeleteCollaborator = (tagToDelete) => {
     setTags(tags.filter((tag) => tag !== tagToDelete));
     console.log(tags);
   };
@@ -346,8 +383,19 @@ const PostForm = () => {
                       </MenuItem>
                     ))}
                   </TextField>
+                  <TextField
+                margin="normal"
+                size="large"
+                name="manualCalibration"
+                label="Manual Calibration (Only if manual chosen)"
+                type="number"
+                inputProps={{step: "0.5", min: "0"}}
+                onChange={e => setManualCalibration(e.target.value)}
+                />
+                </div>
                 <TextField
                   margin="normal"
+                  sx = {{width: '300px'}}
                   select
                   required
                   size="large"
@@ -362,7 +410,6 @@ const PostForm = () => {
                     </MenuItem>
                   ))}
                 </TextField>
-                </div>
                 </div>
                 )}
                 {activeStep == 2 && (
@@ -414,10 +461,24 @@ const PostForm = () => {
                 value={max_primaries}
                 onChange={e => setMaximumProteinNumber(e.target.value)}
                 />
-                </div>
                 <TextField
                   margin="normal"
-                  style={{ width: 300 }}
+                  select
+                  required
+                  size="large"
+                  label="Set for multiple proteins?"
+                  name="multiProtein"
+                  value={multi_protein}
+                  onChange={e => setMultiProtein(e.target.value)}
+                >
+                  {onOff.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  margin="normal"
                   select
                   required
                   size="large"
@@ -432,6 +493,7 @@ const PostForm = () => {
                     </MenuItem>
                   ))}
                 </TextField>
+                </div>
                 </div>
                 )}
         </Stack>
@@ -536,6 +598,33 @@ const PostForm = () => {
                   ))}
                 </TextField>
                 </div>
+                <p className="form-description">Write the usernames of your collaborators and press Enter to add</p>
+                <Autocomplete
+                  className = "Margin-top"
+                  key={error ? 'error' : 'no-error'}
+                  multiple
+                  freeSolo
+                  options={[]}
+                  value={collaborators}
+                  onChange={(event, newValue) => {
+                    const allValuesInList = newValue.every(val => usernames.includes(val));
+                    setError(!allValuesInList);
+                    if (newValue.every(val => usernames.includes(val)))  {
+                      setCollaborators(newValue);
+                      setError(false);
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Enter usernames"
+                      placeholder="Usernames"
+                      error ={error}
+                      helperText={error ? "Username does not exist" : ""}
+                    />
+                  )}
+                />
                 </div>
                 <h6>Preview your analysis here</h6>
                   <Box sx={{ width: '100%', bgcolor: '#D9D9D9', borderRadius: '10px', padding: "10px 0px 10px 0px" }}>
@@ -549,7 +638,7 @@ const PostForm = () => {
                         </Grid>
                         <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
                           <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px", color: 'black', textAlign: 'left'}}>
-                            Group name <br></br>{formattedDate} { publicity ? <img src={PublicIcon} alt="public" width="18" height="18"></img> : <img src={PrivateIcon} alt="private" width="18" height="18"></img> }
+                            Group name <br></br>{formattedDate} { publicity == "True" &&( <img src={PublicIcon} alt="public" width="18" height="18"></img>)} {publicity == "False" && (<img src={PrivateIcon} alt="private" width="18" height="18"></img>)}
                           </Typography>
                         </Grid>
 
