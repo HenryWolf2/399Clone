@@ -172,9 +172,10 @@ const PostForm = () => {
       formData.append("description", description);
       formData.append("publicity", publicity);
       formData.append("analysis_id", analysis_id);
-      formData.append("tags", tags);
+      formData.append("tags", JSON.stringify(tags));
       formData.append("post_pic", post_pic);
-      formData.append("collaborators", collaboratorIDs);
+      formData.append("collaborators", JSON.stringify(collaboratorIDs));
+
     try{
     await instance.post('/post/create', formData,{
         headers: {
