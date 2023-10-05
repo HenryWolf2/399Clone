@@ -13,6 +13,13 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Autocomplete from '@mui/material/Autocomplete';
+import Grid from '@mui/material/Grid';
+import ProfilePicture from '../individual-posts/profile';
+import StockImage from '../../assets/images/stock-image.jpg';
+import PublicIcon from '../../assets/images/public.png';
+import PrivateIcon from '../../assets/images/private.png';
+import Contributors from '../individual-posts/contributors';
+import Tags from '../individual-posts/tags';
 
 const steps = ['Post files', 'Peak search settings', 'Feasible set settings', 'Post description']
 
@@ -25,10 +32,6 @@ const spectrumCalibrationOptions = [
     value: 'Manual',
     label: 'Manual',
   },
-  {
-    value: 'None',
-    label: 'None',
-  }
 ];
 
 const publicPrivate = [
@@ -53,10 +56,23 @@ const yesNo = [
   }
 ]
 
+const onOff = [
+  {
+    value: 'on',
+    label: 'On',
+  },
+  {
+    value: 'off',
+    label: 'Off'
+  }
+]
+
 const PostForm = () => {
     const [activeStep, setActiveStep] = useState(0)
 
     const [tags, setTags] = useState([]);
+    const [collaborators, setCollaborators] = useState([]);
+    const [usernames, setUsernames] = useState([]);
 
     const [analysis_id, setAnalysisID] = useState("")
     const navigate = useNavigate();
@@ -72,12 +88,49 @@ const PostForm = () => {
     const [valence, setCoordinationNumber] = useState("4")
     const [min_primaries, setMinimumProteinNumber] = useState("1")
     const [max_primaries, setMaximumProteinNumber] = useState("1")
-    const [data_publicity, setDataPublic] = useState("True")
+    const [data_publicity, setDataPublic] = useState("False")
+    const [multi_protein, setMultiProtein] = useState("off")
+    const [manual_calibration, setManualCalibration] = useState("0")
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const [publicity, setPostPublic] = useState("True")
+    const [publicity, setPostPublic] = useState("False")
+
+    const [date, setDate] = useState(new Date());
+    const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear().toString().slice(-2)}`;
+
     const [post_pic, setPostImageFile] = useState("")
+    const [imgSrc, setImgSrc] = useState()
+
+    const [error, setError] = useState(false);
+
+    const handleFileUpload = (e) => {
+      const post_pic = e.target.files[0]
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImgSrc(reader.result);
+      };
+      reader.readAsDataURL(post_pic);
+    }
+
+    // useEffect(() => {
+    //   async function GetUsernames() {
+    //     try{ 
+    //       await instance ({
+    //         url: "/post/get_by_id",
+    //         method: "GET",
+            
+    //     }).then((res) => {
+    //       setUsernames(res.data.usernames)
+    //     });
+    //     } catch(e) {
+    //       console.error(e)
+    //     }
+    //   }
+    //   GetUsernames();
+    //   } , // <- function that will run on every dependency update
+    //   [] // <-- empty dependency array
+    // )
 
     const handleSubmit1 = async (event) => {
       event.preventDefault();
@@ -95,6 +148,8 @@ const PostForm = () => {
       formData.append("min_primaries", min_primaries);
       formData.append("max_primaries", max_primaries);
       formData.append("data_publicity", data_publicity);
+      formData.append("multi_protein", multi_protein);
+      formData.append("manual_calibration", manual_calibration);
 
       try{
         await instance.post('/post/create/data', formData, {
@@ -115,13 +170,6 @@ const PostForm = () => {
 
   const handleSubmit2 = async (event) => {
     event.preventDefault();
-    // let data = {
-    //     title: title,
-    //     description: description,
-    //     publicity: publicity,
-    //     analysis_id: analysis_id,
-    //     tags: tags
-    // }
     const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);
@@ -166,6 +214,18 @@ const PostForm = () => {
 
   const handleDeleteTag = (tagToDelete) => {
     setTags(tags.filter((tag) => tag !== tagToDelete));
+    console.log(tags);
+  };
+
+  const handleAddCollaborator = (event, newTag) => {
+    if (newTag && !tags.includes(newTag)) {
+      setTags([...tags, newTag]);
+    }
+  };
+
+  const handleDeleteCollaborator = (tagToDelete) => {
+    setTags(tags.filter((tag) => tag !== tagToDelete));
+    console.log(tags);
   };
 
     return(
@@ -323,8 +383,20 @@ const PostForm = () => {
                       </MenuItem>
                     ))}
                   </TextField>
+                  <TextField
+                  disabled={calibrate === "Automatic"}
+                margin="normal"
+                size="large"
+                name="manualCalibration"
+                label="Manual Calibration (Only if manual chosen)"
+                type="number"
+                inputProps={{step: "0.5", min: "0"}}
+                onChange={e => setManualCalibration(e.target.value)}
+                />
+                </div>
                 <TextField
                   margin="normal"
+                  sx = {{width: '300px'}}
                   select
                   required
                   size="large"
@@ -339,7 +411,6 @@ const PostForm = () => {
                     </MenuItem>
                   ))}
                 </TextField>
-                </div>
                 </div>
                 )}
                 {activeStep == 2 && (
@@ -391,10 +462,24 @@ const PostForm = () => {
                 value={max_primaries}
                 onChange={e => setMaximumProteinNumber(e.target.value)}
                 />
-                </div>
                 <TextField
                   margin="normal"
-                  style={{ width: 300 }}
+                  select
+                  required
+                  size="large"
+                  label="Set for multiple proteins?"
+                  name="multiProtein"
+                  value={multi_protein}
+                  onChange={e => setMultiProtein(e.target.value)}
+                >
+                  {onOff.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  margin="normal"
                   select
                   required
                   size="large"
@@ -410,13 +495,14 @@ const PostForm = () => {
                   ))}
                 </TextField>
                 </div>
+                </div>
                 )}
         </Stack>
         </form>
         {activeStep == 3 && (
         <form id="form2" onSubmit ={handleSubmit2} encType="multipart/form-data">  
         <Stack spacing={2}>          
-                <h6>Describe your post</h6>
+                <h6>Describe your analysis</h6>
                 <div>
                 <TextField
                 margin="normal"
@@ -433,7 +519,7 @@ const PostForm = () => {
                 <br />
                 <TextField
                 id="outlined-multiline-static"
-                label="Write a description of your post"
+                label="Write a description of your analysis"
                 style={{ width: 700 }}
                 required
                 value={description}
@@ -447,13 +533,17 @@ const PostForm = () => {
                   multiple
                   freeSolo
                   options={[]}
+                  onChange={(event, newValue) => {
+                    setTags(newValue);}}
                   renderTags={(value, getTagProps) =>
                     value.map((tag, index) => (
                       <Chip
                         sx={{ bgcolor: '#02AEEC', color: 'white' }}
                         key={tag}
                         label={tag}
-                        onDelete={() => handleDeleteTag(tag)}
+                        onDelete = {() =>{
+                          handleDeleteTag(tag);
+                        }}
                         {...getTagProps({ index })}
                       />
                     ))
@@ -476,7 +566,7 @@ const PostForm = () => {
                   )}
                 />
                 </div>
-                <p className="form-description"> Choose a post image and set the post publicity</p>
+                <p className="form-description"> Choose a cover image and set the analysis publicity</p>
                 <div className="Grid-container2">
                 <TextField
                   type="file"
@@ -485,7 +575,9 @@ const PostForm = () => {
                   required
                   size="large"
                   name="postImageFile"
-                  onChange={e => setPostImageFile(e.target.files[0])}
+                  onChange={e => {
+                    setPostImageFile(e.target.files[0]);
+                    handleFileUpload(e);}}
                   />
                 <TextField
                   margin="normal"
@@ -507,7 +599,70 @@ const PostForm = () => {
                   ))}
                 </TextField>
                 </div>
+                <p className="form-description">Write the usernames of your collaborators and press Enter to add</p>
+                <Autocomplete
+                  className = "Margin-top"
+                  key={error ? 'error' : 'no-error'}
+                  multiple
+                  freeSolo
+                  options={[]}
+                  value={collaborators}
+                  onChange={(event, newValue) => {
+                    const allValuesInList = newValue.every(val => usernames.includes(val));
+                    setError(!allValuesInList);
+                    if (newValue.every(val => usernames.includes(val)))  {
+                      setCollaborators(newValue);
+                      setError(false);
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Enter usernames"
+                      placeholder="Usernames"
+                      error ={error}
+                      helperText={error ? "Username does not exist" : ""}
+                    />
+                  )}
+                />
                 </div>
+                <h6>Preview your analysis here</h6>
+                  <Box sx={{ width: '100%', bgcolor: '#D9D9D9', borderRadius: '10px', padding: "10px 0px 10px 0px" }}>
+                    <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
+                      <Grid container alignItems="center" >
+
+                        {/* Profile picture will need to be reviewed when the backend is linked */}
+
+                        <Grid item sx={{margin: "0px 0px 0px 20px"}}>
+                          <ProfilePicture />
+                        </Grid>
+                        <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
+                          <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px", color: 'black', textAlign: 'left'}}>
+                            Group name <br></br>{formattedDate} { publicity == "True" &&( <img src={PublicIcon} alt="public" width="18" height="18"></img>)} {publicity == "False" && (<img src={PrivateIcon} alt="private" width="18" height="18"></img>)}
+                          </Typography>
+                        </Grid>
+
+                        {/* Contributors pictures will also need to be reviewed when the backend is linked */} 
+
+                        <Grid item sx={{margin: "0px 20px 0px 0px"}}>
+                            <Contributors />
+                        </Grid>
+                      </Grid>
+                      <Typography gutterBottom variant="h4" component="div" sx={{margin: "0px 20px 0px 20px", color: 'black', textAlign: 'left'}}>
+                            { title }
+                      </Typography>
+                      <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px", color: 'black', textAlign: 'left'}}>
+                        { description.slice(0,250) }...
+                      </Typography>
+                      {imgSrc && <img src={ imgSrc } className="Post-image" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>}
+                      <div>
+                        {tags.slice(0, 6).map((item, index) => (
+                        <Chip key={index} label={item} sx={{ bgcolor: '#02AEEC', color: 'white', float: 'left', margin: '5px'}} />
+                        ))}
+                      </div> 
+                    </Box>
+                  </Box>
         </Stack>
         </form>
         )}
