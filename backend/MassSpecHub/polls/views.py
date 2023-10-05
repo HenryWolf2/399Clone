@@ -366,7 +366,7 @@ def edit_post(request):
             summary = request.data.get('summary')
             description = request.data.get('description')
             publicity = request.data.get('publicity')
-            collaborators = request.data.get('collaborators')
+            collaborators = request.POST.getlist('collaborators')
             if title:
                 post.title = title
             if description:
