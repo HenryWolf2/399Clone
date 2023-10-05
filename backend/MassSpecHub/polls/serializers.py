@@ -69,7 +69,7 @@ class PostAnalysisSerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ['name', 'posts']
+        fields = ['name']
 
     def create(self, validated_data):
         tag = Tag(

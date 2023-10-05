@@ -303,11 +303,20 @@ def search_post(request):
 def search_post_by_tag(request):
     if request.method == 'GET':
         query = request.query_params.get('query')
+        print(query)
         if not query:
             return Response({'error': f'Tag {query} not found.'}, status=status.HTTP_404_NOT_FOUND)
         posts = Post.objects.filter(tags__name__contains=query)
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_tags(request):
+    if request.method == 'GET':
+        tags = Tag.objects.order_by('name')
+        tags = TagSerializer(tags, many=True)
+        return Response(tags.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
