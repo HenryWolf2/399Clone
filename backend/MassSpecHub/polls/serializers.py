@@ -55,7 +55,8 @@ class DataSerializer(serializers.ModelSerializer):
 class PostAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostAnalysis
-        fields = ['result_df', 'data_input', 'tolerance', 'peak_height', 'multi_protein', 'only_best', 'calibrate', 'min_primaries', 'max_primaries', 'max_adducts', 'valence']
+        fields = ['result_df', 'data_input', 'tolerance', 'peak_height', 'multi_protein', 'only_best', 'calibrate',
+                  'min_primaries', 'max_primaries', 'max_adducts', 'valence']
 
     def create(self, validated_data):
         postAnalysis = PostAnalysis(
