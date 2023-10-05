@@ -7,7 +7,7 @@ import PostGrid from '../individual-posts/postgrid';
 import Box from '@mui/material/Box';
 import instance from '../api/api_instance';
 
-function GroupData() {
+function GroupData(props) {
 
   {/* API Integration */}
 
@@ -22,7 +22,7 @@ function GroupData() {
         await instance ({
           url: "/group/info",
           method: "GET",
-          params: {"group_id": '1'},       
+          params: {"group_id": props.group_id},       
       }).then((res) => {
         console.log(res)
         setGroupPosts(res.data.posts)

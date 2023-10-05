@@ -38,7 +38,7 @@ class PostGroup(models.Model):
 
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    profile_pic = models.ImageField(upload_to='profile_pics')
+    profile_pic = models.ImageField(upload_to='profile_pics', blank=True)
     cover_photo = models.ImageField(upload_to='profile_banners', default='default.jpg')
     description = models.TextField(default="Click edit profile to update your description, profile picture and banner for your profile.")
     notepad = models.TextField(default="Click here to enter notes. Text will be converted to markdown when you click out of the text field...")
@@ -128,7 +128,7 @@ class PostAnalysis(models.Model):
     max_primaries = models.FloatField(default=3)
     max_adducts = models.FloatField(default=2)
     valence = models.FloatField(default=4)
-
+    manual_calibration = models.FloatField(default=0)
     class Meta:
         db_table = 'PostAnalysis'
 

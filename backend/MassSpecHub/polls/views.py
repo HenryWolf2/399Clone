@@ -231,7 +231,7 @@ def add_data(request):
     if request.method == 'POST':
         data = copy.deepcopy(request.data)
         data_fields = {'compounds_file': data['compounds_file'], 'bounds_file': data['bounds_file'],
-                       'adducts_file': data['adducts_file'], 'data_publicity': True}
+                       'adducts_file': data['adducts_file'], 'data_publicity': data['data_publicity']}
         serializer = DataSerializer(data=data_fields)
         if serializer.is_valid():
             serializer.save()
@@ -248,6 +248,7 @@ def add_data(request):
             max_primaries = request.data.get('max_primaries')
             max_adducts = request.data.get('max_adducts')
             valence = request.data.get('valence')
+            manual_calibration = request.data.get('manual_calibration')
             analysis_results = binding_site_search.search(bounds_file, compounds_file, adducts_file,
                                                           tolerance=tolerance, peak_height=peak_height,
                                                           multi_protein=multi_protein,
@@ -259,7 +260,8 @@ def add_data(request):
             analysis_data = {'result_df': json_df, 'data_input': data.id, 'tolerance': tolerance,
                              'peak_height': peak_height, 'multi_protein': multi_protein, 'only_best': only_best,
                              'min_primaries': min_primaries, 'max_primaries': max_primaries, 'valence': valence,
-                             'calibrate': calibrate, 'max_adducts': max_adducts}
+                             'calibrate': calibrate, 'max_adducts': max_adducts,
+                             'manual_calibration': manual_calibration}
             analysis_serializer = PostAnalysisSerializer(data=analysis_data)
             if analysis_serializer.is_valid():
                 analysis_serializer.save()
@@ -398,9 +400,17 @@ def edit_group(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_all_posts(request):
+def get_all_post_ids(request):
     if request.method == 'GET':
         posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
 
 
@@ -465,7 +475,12 @@ def get_graph_data(request):
         data = Data.objects.get(id=data_id)
         dataframe = pd.read_excel(data.bounds_file)
         normalised_dataframe = utils.normalise(dataframe)
-        peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height)
+        if post.associated_results.calibrate == 'Manual':
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height,
+                                  calibrate=post.associated_results.calibrate,
+                                  manual_calibration=post.associated_results.manual_calibration)
+        else:
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height)
         values = [row[4] for row in linked_analysis['data']]
         df = pd.DataFrame({'checkvals': normalised_dataframe['m/z']})
         vals = np.array(values).reshape(1, -1)
