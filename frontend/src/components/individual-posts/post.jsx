@@ -26,6 +26,7 @@ export default function IndividualPost(props) {
   const [date, setDate] = useState('')
   const [post_id, setPostID] = useState('')
   const [tags, setTags] = useState([])
+  const [collaborators, setCollaborators] = useState([])
   
   useEffect(() => {
     async function GetPostInformation() {
@@ -43,6 +44,7 @@ export default function IndividualPost(props) {
         setDate(new Date(res.data.post_time).toLocaleDateString())
         setPostID("/post/"+props.post_id)
         setTags(res.data.tags)
+        setCollaborators(res.data.collaborators)
         setBanner(res.data.post_pic)
       });
       } catch(e) {
@@ -75,7 +77,7 @@ export default function IndividualPost(props) {
           {/* Contributors pictures will also need to be reviewed when the backend is linked */} 
 
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
-              <Contributors />
+              <Contributors collaborators = {collaborators} />
           </Grid>
         </Grid>
         <Typography gutterBottom variant="h4" component="div" sx={{margin: "0px 20px 0px 20px"}}>
