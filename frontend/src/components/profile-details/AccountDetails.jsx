@@ -32,7 +32,6 @@ function AccountDetails(props) {
           url: "/profile/get",
           method: "GET",          
       }).then((res) => {
-        console.log(res)
         setBannerImage(res.data.cover_photo)
         setProfileImage(res.data.profile_pic)
         setFirstName(res.data.first_name)
@@ -41,10 +40,6 @@ function AccountDetails(props) {
         setEmail(res.data.email)
         setDescription(res.data.description)
         setPublicPosts(res.data.posts)
-
-        
-        console.log(res.data)
-        console.log("help he")
       });
       } catch(e) {
         console.error(e)

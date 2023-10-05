@@ -129,7 +129,13 @@ def create_post(request):
                 except ObjectDoesNotExist:
                     tag = Tag.objects.create(name=tag_name)
                 post.tags.add(tag)
-
+            post.collaborators.clear()
+            for collaborator in request.POST.getlist('collaborators'):
+                try:
+                    user = CustomUser.objects.get(id=collaborator)
+                    post.collaborators.add(user)
+                except:
+                    return Response({'error': f'User {collaborator} not found'}, status=status.HTTP_404_NOT_FOUND)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -362,6 +368,7 @@ def edit_post(request):
             summary = request.data.get('summary')
             description = request.data.get('description')
             publicity = request.data.get('publicity')
+            collaborators = request.POST.getlist('collaborators')
             if title:
                 post.title = title
             if description:
@@ -370,6 +377,14 @@ def edit_post(request):
                 post.publicity = publicity
             if summary:
                 post.summary = summary
+            if collaborators:
+                post.collaborators.clear()
+                for collaborator in collaborators:
+                    try:
+                        user = CustomUser.objects.get(id=collaborator)
+                        post.collaborators.add(user)
+                    except:
+                        return Response({'error': f'User {collaborator} not found'}, status=status.HTTP_404_NOT_FOUND)
             post.save()
             return Response({'message': 'Post updated successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
