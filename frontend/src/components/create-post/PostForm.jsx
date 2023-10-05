@@ -72,7 +72,7 @@ const PostForm = () => {
 
     const [tags, setTags] = useState([]);
     const [collaborators, setCollaborators] = useState([]);
-    const [usernames, setUsernames] = useState([]);
+    const [collaboratorIDs, setCollaboratorIDs] = useState([]);
 
     const [analysis_id, setAnalysisID] = useState("")
     const navigate = useNavigate();
@@ -113,25 +113,6 @@ const PostForm = () => {
       reader.readAsDataURL(post_pic);
     }
 
-    // useEffect(() => {
-    //   async function GetUsernames() {
-    //     try{ 
-    //       await instance ({
-    //         url: "/post/get_by_id",
-    //         method: "GET",
-            
-    //     }).then((res) => {
-    //       setUsernames(res.data.usernames)
-    //     });
-    //     } catch(e) {
-    //       console.error(e)
-    //     }
-    //   }
-    //   GetUsernames();
-    //   } , // <- function that will run on every dependency update
-    //   [] // <-- empty dependency array
-    // )
-
     const handleSubmit1 = async (event) => {
       event.preventDefault();
       setActiveStep(3)
@@ -170,6 +151,22 @@ const PostForm = () => {
 
   const handleSubmit2 = async (event) => {
     event.preventDefault();
+
+    for (let i = 0; i < collaborators.length; i++){
+      instance.get('/user/check_username', {
+        params: {
+          username: collaborators[i]
+        }
+      })
+      .then(function (response) {
+        let reply = Object.values(response.data)[0];
+        collaboratorIDs.push(reply)
+      })
+      .catch(function(error) {
+        console.error(error)
+      })
+    }
+
     const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);
@@ -177,6 +174,7 @@ const PostForm = () => {
       formData.append("analysis_id", analysis_id);
       formData.append("tags", tags);
       formData.append("post_pic", post_pic);
+      formData.append("collaborators", collaboratorIDs);
     try{
     await instance.post('/post/create', formData,{
         headers: {
@@ -185,7 +183,7 @@ const PostForm = () => {
       }).then((res) => {
         //needs to navigate to the profile page once up
         console.log(res)
-        navigate("/");
+        navigate("/profile");
       });
     } catch(e){
         console.error(e)
@@ -217,16 +215,26 @@ const PostForm = () => {
     console.log(tags);
   };
 
-  const handleAddCollaborator = (event, newTag) => {
-    if (newTag && !tags.includes(newTag)) {
-      setTags([...tags, newTag]);
+  const checkCollaborators = (newValue) => {
+    instance.get('/user/check_username', {
+      params: {
+        username: newValue[newValue.length - 1]
+      }
+    })
+    .then(function (response) {
+      let reply = Object.values(response.data)[0];
+    if (reply != -1 || newValue.length == 0){
+      setCollaborators(newValue)
+      setError(false)
     }
-  };
-
-  const handleDeleteCollaborator = (tagToDelete) => {
-    setTags(tags.filter((tag) => tag !== tagToDelete));
-    console.log(tags);
-  };
+    else {
+      setError(true)
+    }
+    })
+    .catch(function(error) {
+      console.error(error)
+    })
+  }
 
     return(
         <React.Fragment>
@@ -608,12 +616,7 @@ const PostForm = () => {
                   options={[]}
                   value={collaborators}
                   onChange={(event, newValue) => {
-                    const allValuesInList = newValue.every(val => usernames.includes(val));
-                    setError(!allValuesInList);
-                    if (newValue.every(val => usernames.includes(val)))  {
-                      setCollaborators(newValue);
-                      setError(false);
-                    }
+                    checkCollaborators(newValue)
                   }}
                   renderInput={(params) => (
                     <TextField
