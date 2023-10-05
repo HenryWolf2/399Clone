@@ -32,8 +32,8 @@ export default function PostGraph(props) {
       if (data.species !== 'N/A') {
         return (
           <div className="custom-tooltip" style={{background: "white", padding: "10px"}}>
-            <p>{`Species: ${data.species}hi`}</p>
-            <p>{`Intensity: ${data.normalised_intensity}`}</p>
+            <p>Species: <span dangerouslySetInnerHTML={{ __html: data.species.replace(/(\d+)/g, '<sub>$1</sub>') }} /></p>
+            <p>Intensity: {data.normalised_intensity}</p>
           </div>
         );
       }

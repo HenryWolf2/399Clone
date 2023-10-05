@@ -1,18 +1,24 @@
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
+import UserDetails from './userDetails';
 
 
 // Will need to be redone once we have data
 
-export default function Contributors() {
+export default function Contributors(collaborators) {
+  let collaboratorsArray = collaborators.collaborators
+  let IndividualArray = []
+  let collaboratorsAvatarsV2 = [];
+  
+  for (let i = 0; i < collaboratorsArray.length; i++) {
+    IndividualArray = UserDetails(collaboratorsArray[i]);
+    collaboratorsAvatarsV2.push(<Avatar id={collaboratorsArray[i]} alt={IndividualArray[0]} src={IndividualArray[1]} />);
+  }
+
   return (
     <AvatarGroup max={4}>
-      <Avatar alt="Remy Sharp" />
-      <Avatar alt="Travis Howard" />
-      <Avatar alt="Cindy Baker" />
-      <Avatar alt="Agnes Walker" />
-      <Avatar alt="Trevor Henderson" />
+      {collaboratorsAvatarsV2}
     </AvatarGroup>
   );
 }
