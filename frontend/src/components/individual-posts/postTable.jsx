@@ -11,7 +11,8 @@ import instance from '../api/api_instance';
 
 
 export default function PostTable(props) {
-  const [results_df, setResults_df] = useState({})
+  const [results_df, setResults_df] = useState({}) 
+  
   useEffect(() => {
     async function GetAnalysis() {
       try{ 
@@ -27,7 +28,7 @@ export default function PostTable(props) {
       }
     }
     GetAnalysis();
-  }, [])
+  }, [props.results_id])
 
   const finaldf = results_df.result_df
 
@@ -36,6 +37,7 @@ export default function PostTable(props) {
     <Table stickyHeader sx={{ minWidth: 650, maxHeight: 500 }} aria-label="simple table">
     <TableHead>
       <TableRow>
+        
         {finaldf?.columns?.map((column, index) => (
           <TableCell key={index}>{column}</TableCell>
         ))}

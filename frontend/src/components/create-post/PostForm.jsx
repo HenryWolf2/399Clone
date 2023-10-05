@@ -646,7 +646,7 @@ const PostForm = () => {
                         {/* Contributors pictures will also need to be reviewed when the backend is linked */} 
 
                         <Grid item sx={{margin: "0px 20px 0px 0px"}}>
-                            <Contributors />
+                            {/* <Contributors /> */}
                         </Grid>
                       </Grid>
                       <Typography gutterBottom variant="h4" component="div" sx={{margin: "0px 20px 0px 20px", color: 'black', textAlign: 'left'}}>

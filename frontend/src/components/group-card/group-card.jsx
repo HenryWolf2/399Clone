@@ -41,8 +41,8 @@ export default function GroupCard(props) {
     GetGroupInformation();
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
-  )
-  console.log(groupPicture)
+  )  
+  const groupPictureURL = `${instance.defaults.baseURL.replace("/api", "")}${groupPicture}`;
 
   return (
     <Link to={groupID} style={{ textDecoration: "none", color: 'black' }}>
@@ -50,7 +50,7 @@ export default function GroupCard(props) {
         <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
           <Grid container alignItems="center" >
             <Grid item sx={{padding: '10px 10px 6.5px 10px'}}>
-              <img src={ StockImage } className="group-landing-image" alt="logo"/>
+              <img src={ groupPictureURL } className="group-landing-image" alt="logo"/>
             </Grid>
 
             <Grid item xs>
