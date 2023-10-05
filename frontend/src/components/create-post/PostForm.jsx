@@ -71,7 +71,7 @@ const PostForm = () => {
     const [activeStep, setActiveStep] = useState(0)
 
     const [tags, setTags] = useState([]);
-    const [collaborators, setCollaborators] = useState([]);
+    const [collaboratorsList, setCollaborators] = useState([]);
     const [collaboratorIDs, setCollaboratorIDs] = useState([]);
 
     const [analysis_id, setAnalysisID] = useState("")
@@ -151,21 +151,20 @@ const PostForm = () => {
 
   const handleSubmit2 = async (event) => {
     event.preventDefault();
-
-    for (let i = 0; i < collaborators.length; i++){
+    await Promise.all(collaboratorsList.map(username => 
       instance.get('/user/check_username', {
-        params: {
-          username: collaborators[i]
-        }
+          params: {
+              username: username
+          }
       })
-      .then(function (response) {
-        let reply = Object.values(response.data)[0];
-        collaboratorIDs.push(reply)
+      .then(response => {
+          let reply = Object.values(response.data)[0];
+          collaboratorIDs.push(reply);
       })
-      .catch(function(error) {
-        console.error(error)
+      .catch(error => {
+          console.error(error);
       })
-    }
+  ));
 
     const formData = new FormData();
       formData.append("title", title);
@@ -615,7 +614,7 @@ const PostForm = () => {
                   multiple
                   freeSolo
                   options={[]}
-                  value={collaborators}
+                  value={collaboratorsList}
                   onChange={(event, newValue) => {
                     checkCollaborators(newValue)
                   }}

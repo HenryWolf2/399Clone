@@ -123,14 +123,15 @@ def create_post(request):
             serializer.save()
 
             post = Post.objects.get(id=serializer.instance.id)
-            for tag_name in request.POST.getlist('tags'):
+            for tag_name in json.loads(request.data.get('tags')):
                 try:
                     tag = Tag.objects.get(name=tag_name)
                 except ObjectDoesNotExist:
                     tag = Tag.objects.create(name=tag_name)
                 post.tags.add(tag)
             post.collaborators.clear()
-            for collaborator in request.POST.getlist('collaborators'):
+            print(request.data.get('collaborators'))
+            for collaborator in json.loads(request.data.get('collaborators')):
                 try:
                     user = CustomUser.objects.get(id=collaborator)
                     post.collaborators.add(user)
