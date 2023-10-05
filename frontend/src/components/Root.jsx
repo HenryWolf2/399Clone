@@ -40,7 +40,7 @@ export default function Root() {
       try{ 
         await instance ({
           // Set URL to get all posts by ID
-          url: "/post/get_all",
+          url: "/post/get_all_objects",
           method: "GET",
       }).then((res) => {
         setAllPosts(res.data)

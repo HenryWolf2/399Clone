@@ -410,9 +410,8 @@ def get_all_post_ids(request):
 @permission_classes([IsAuthenticated])
 def get_all_posts(request):
     if request.method == 'GET':
-        posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        posts = Post.objects.values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

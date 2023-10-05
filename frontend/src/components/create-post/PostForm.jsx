@@ -384,6 +384,7 @@ const PostForm = () => {
                     ))}
                   </TextField>
                   <TextField
+                  disabled={calibrate === "Automatic"}
                 margin="normal"
                 size="large"
                 name="manualCalibration"
