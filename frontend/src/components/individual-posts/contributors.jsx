@@ -12,13 +12,7 @@ export default function Contributors(collaborators) {
   let collaboratorsAvatarsV2 = [];
   
   for (let i = 0; i < collaboratorsArray.length; i++) {
-    console.log(collaboratorsArray[i]);
-    console.log("here dog")
     IndividualArray = UserDetails(collaboratorsArray[i]);
-    console.log(IndividualArray);
-    console.log("helllllooooo");
-    
-
     collaboratorsAvatarsV2.push(<Avatar id={collaboratorsArray[i]} alt={IndividualArray[0]} src={IndividualArray[1]} />);
   }
 

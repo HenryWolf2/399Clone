@@ -516,8 +516,7 @@ def get_group_info(request):
 @permission_classes([IsAuthenticated])
 def get_user_profile_info(request):
     if request.method == 'GET':
-        user_id = request.query_params.get('user_id')
-        user = CustomUser.objects.get(id=user_id)
+        user = CustomUser.objects.get(id=request.query_params.get('user_id'))
         user_data = {}
         user_data['username'] = user.username
         user_data['profile_pic'] = user.profile_pic.url
