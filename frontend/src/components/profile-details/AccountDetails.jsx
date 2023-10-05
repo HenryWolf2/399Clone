@@ -121,7 +121,7 @@ function AccountDetails(props) {
     height: '200px',
     display: 'flex',
     flexDirection: 'column',
-    backgroundImage:`url(${Image2})`,
+    backgroundImage:`url(${instance.defaults.baseURL.replace("/api", "") + bannerImage})`,
     borderBottom: '3px solid white',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'top left',
@@ -216,7 +216,7 @@ function AccountDetails(props) {
 
         <div style={overlayStyle}>
           <Avatar
-            src={require('./template-banner.jpg').default}
+            src={instance.defaults.baseURL.replace("/api", "") + profileImage}
             sx={{
               width: '225px',
               height: '225px',

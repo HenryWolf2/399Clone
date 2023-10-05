@@ -19,6 +19,7 @@ import '../../assets/styles/global.css';
 export default function IndividualPost(props) {
   
   const [title, setTitle] = useState('')
+  const [banner, setBanner] = useState('')
   const [summary, setSummary] = useState('')
   const [publicity, setPublicity] = useState('')
   const [description, setDescription] = useState('')
@@ -42,6 +43,7 @@ export default function IndividualPost(props) {
         setDate(new Date(res.data.post_time).toLocaleDateString())
         setPostID("/post/"+props.post_id)
         setTags(res.data.tags)
+        setBanner(res.data.post_pic)
       });
       } catch(e) {
         console.error(e)
@@ -82,7 +84,7 @@ export default function IndividualPost(props) {
         <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
           { description.slice(0,250) }...
         </Typography>
-        <img src={ StockImage } className="Post-image" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>
+        <img src={instance.defaults.baseURL.replace("/api", "") + banner} className="Post-image" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>
         <Tags tagArray={tags}/>
       </Box>
     </Box>
