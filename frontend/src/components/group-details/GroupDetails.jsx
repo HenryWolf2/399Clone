@@ -39,9 +39,10 @@ function GroupDetails(props) {
         setBanner(res.data.group_pic)
         setGroupPosts(res.data.posts)
         setMemberCount(res.data.member_count)
-        setPostCount(res.data.post_count)
+        setPostCount(res.data.posts)
         setCreationDate(new Date(res.data.created).toLocaleDateString())
         //Need to define perms
+
       });
       } catch(e) {
         console.error(e)
@@ -148,7 +149,7 @@ function GroupDetails(props) {
             </div>
             <hr style={{width:'400px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
             <div style={{display: 'flex', marginTop: '-20px', color: 'white', fontSize: '14px'}}>
-              <h1 style={{marginRight: '15px'}}>{memberCount} Members</h1>
+              <h1 style={{marginRight: '15px'}}>{memberCount} <MemberCard group_id={props.group_id}/></h1>
               <span style={circleDot}></span>
               <h1>{postCount} Posts</h1>
             </div>
@@ -185,7 +186,6 @@ function GroupDetails(props) {
         </Button>
       )}
 
-      <MemberCard group_id={props.group_id}/>
 
 
       </div>

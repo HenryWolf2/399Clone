@@ -94,14 +94,6 @@ export default function CheckboxListSecondary(props) {
         return (
           <ListItem
             key={value}
-            secondaryAction={
-              <Button
-              className="custom-button"
-              variant="contained"
-              >
-                Change Permissions
-              </Button>
-            }
             disablePadding
           >
             <ListItemButton>

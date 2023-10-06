@@ -40,7 +40,6 @@ export default function EditModal(props) {
   return (
     <div>
       <Button
-        sx={{ margin: 3.5, top: '250px', left: '25px' }}
         className="custom-button"
         variant="contained"
         onClick={handleOpen} // Use onClick here to open the modal
