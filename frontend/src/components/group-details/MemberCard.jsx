@@ -61,7 +61,7 @@ export default function EditModal(props) {
 
           </div>
 
-          <div style={{height:'250px', overflowY: 'scroll'}}>
+          <div style={{height:'250px', overflowY: 'scroll', border:'2px solid #02AEEC'}}>
             <ListItem group_id={props.group_id}></ListItem>
           </div>
 
