@@ -4,8 +4,11 @@ import NavigationBar from '../components/NavigationBar';
 import LoginForm from '../components/login/loginForm';
 import RestrictedNavigationBar from '../components/restrictedNavigationBar'
 import LoginLanding from '../components/login/loginLanding';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { Typography } from '@mui/material';
 
 import '../assets/styles/global.css';
+import { Button } from '@mui/material';
 
 export default function Login() {
   return (
@@ -19,7 +22,15 @@ export default function Login() {
               <LoginForm/>
             </div>
             <div style={{position: "absolute", bottom: "3vh",alignSelf:'center'}}>
-              <p className="landingText">Scroll for more</p>
+              <button className = "scroll-Button" onClick={() => {
+                window.scrollTo({top: window.innerHeight + window.innerHeight / 20, left: 0, behavior: 'smooth'});
+                }}
+              >
+              <Typography color="text" variant="body1">
+                Click Here for more Infomation
+              </Typography>
+              <ArrowDownwardIcon></ArrowDownwardIcon>
+            </button>
             </div>
   
           </div>
