@@ -123,14 +123,15 @@ def create_post(request):
             serializer.save()
 
             post = Post.objects.get(id=serializer.instance.id)
-            for tag_name in request.POST.getlist('tags'):
+            for tag_name in json.loads(request.data.get('tags')):
                 try:
                     tag = Tag.objects.get(name=tag_name)
                 except ObjectDoesNotExist:
                     tag = Tag.objects.create(name=tag_name)
                 post.tags.add(tag)
             post.collaborators.clear()
-            for collaborator in request.POST.getlist('collaborators'):
+            print(request.data.get('collaborators'))
+            for collaborator in json.loads(request.data.get('collaborators')):
                 try:
                     user = CustomUser.objects.get(id=collaborator)
                     post.collaborators.add(user)
@@ -656,3 +657,15 @@ def get_config(request):
         config_data['max_adducts'] = analysis.max_adducts
         config_data['valence'] = analysis.valence
         return Response(config_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_username(request):
+    if request.method == 'GET':
+        username = request.query_params.get('username')
+        try:
+            user = CustomUser.objects.get(username=username)
+            return Response({'user_id': user.id}, status=status.HTTP_200_OK)
+        except:
+            return Response({'user_id': -1}, status=status.HTTP_200_OK)
