@@ -16,8 +16,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import ProfilePicture from '../individual-posts/profile';
 import StockImage from '../../assets/images/stock-image.jpg';
-import PublicIcon from '../../assets/images/public.png';
-import PrivateIcon from '../../assets/images/private.png';
+import PublicIcon from '@mui/icons-material/Public';
+import LockIcon from '@mui/icons-material/Lock';
 import Contributors from '../individual-posts/contributors';
 import Tags from '../individual-posts/tags';
 
@@ -642,7 +642,7 @@ const PostForm = () => {
                         </Grid>
                         <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
                           <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px", color: 'black', textAlign: 'left'}}>
-                            Group name <br></br>{formattedDate} { publicity == "True" &&( <img src={PublicIcon} alt="public" width="18" height="18"></img>)} {publicity == "False" && (<img src={PrivateIcon} alt="private" width="18" height="18"></img>)}
+                            Group name <br></br>{formattedDate} { publicity == "True" &&( <PublicIcon />)} {publicity == "False" && (<LockIcon />)}
                           </Typography>
                         </Grid>
 

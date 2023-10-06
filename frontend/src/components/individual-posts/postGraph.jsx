@@ -32,7 +32,7 @@ export default function PostGraph(props) {
       if (data.species !== 'N/A') {
         return (
           <div className="custom-tooltip" style={{background: "white", padding: "10px"}}>
-            <p>Species: <span dangerouslySetInnerHTML={{ __html: data.species.replace(/(\d+)/g, '<sub>$1</sub>') }} /></p>
+            <p>Identity: <span dangerouslySetInnerHTML={{ __html: data.species.replace(/(\d+)/g, '<sub>$1</sub>') }} /></p>
             <p>Intensity: {data.normalised_intensity}</p>
           </div>
         );
@@ -60,11 +60,11 @@ export default function PostGraph(props) {
 
   return (
     
-    <ResponsiveContainer width="100%" height={400}>
-      <LineChart data={results_df}>
+    <ResponsiveContainer width="100%" height={400} >
+      <LineChart data={results_df} margin={{left: -40, top: 10}}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="m/z" label={"Atomic Mass"} height={80} tickFormatter={customXAxisTickFormatter}/>
-        <YAxis label={{value:'Relative Abundance', angle:'-90'}} width={100}/>
+        <YAxis label={{ value: 'Relative Abundance', angle: '-90' }} width={100} ticks={[0, 0.2, 0.4, 0.6, 0.8, 1.0]} />
         <Tooltip content={<CustomTooltip />} />
         <Legend />
         <Line
