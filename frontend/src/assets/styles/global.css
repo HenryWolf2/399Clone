@@ -294,3 +294,11 @@ h6 {
     height: 50px;
     width: 50px;
 }
+
+.circle-container{
+    height: 70vh;
+    margin: 11vh;
+    vertical-align: middle;
+    display: flex;
+    flex-direction: column;
+}
