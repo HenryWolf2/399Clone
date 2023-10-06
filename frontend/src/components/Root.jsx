@@ -39,7 +39,7 @@ export default function Root() {
       try{ 
         await instance ({
           // Set URL to get all posts by ID
-          url: "/post/get_all",
+          url: "/post/get_all_objects",
           method: "GET",
       }).then((res) => {
         setAllPosts(res.data)
@@ -60,7 +60,7 @@ export default function Root() {
     async function GetAllGroupsIDs() {
       try{ 
         await instance ({
-          url: "/groups/get_all",
+          url: "/groups/get_all_id",
           method: "GET",
       }).then((res) => {
         setAllGroups(res.data)

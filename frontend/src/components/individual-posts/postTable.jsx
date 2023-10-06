@@ -11,15 +11,15 @@ import instance from '../api/api_instance';
 
 
 export default function PostTable(props) {
-  const [results_df, setResults_df] = useState({})
-  let number = props.results_id + 0
+  const [results_df, setResults_df] = useState({}) 
+  
   useEffect(() => {
     async function GetAnalysis() {
       try{ 
         await instance ({
           url: "/post/analysis_by_id",
           method: "GET",
-          params: {analysis_id: 20}
+          params: {analysis_id: props.results_id}
       }).then((res) => {
         setResults_df(res.data.analysis);
       });
@@ -28,7 +28,7 @@ export default function PostTable(props) {
       }
     }
     GetAnalysis();
-  }, [])
+  }, [props.results_id])
 
   const finaldf = results_df.result_df
 
@@ -37,6 +37,7 @@ export default function PostTable(props) {
     <Table stickyHeader sx={{ minWidth: 650, maxHeight: 500 }} aria-label="simple table">
     <TableHead>
       <TableRow>
+        
         {finaldf?.columns?.map((column, index) => (
           <TableCell key={index}>{column}</TableCell>
         ))}

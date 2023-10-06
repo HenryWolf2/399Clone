@@ -19,12 +19,14 @@ import '../../assets/styles/global.css';
 export default function IndividualPost(props) {
   
   const [title, setTitle] = useState('')
+  const [banner, setBanner] = useState('')
   const [summary, setSummary] = useState('')
   const [publicity, setPublicity] = useState('')
   const [description, setDescription] = useState('')
   const [date, setDate] = useState('')
   const [post_id, setPostID] = useState('')
   const [tags, setTags] = useState([])
+  const [collaborators, setCollaborators] = useState([])
   
   useEffect(() => {
     async function GetPostInformation() {
@@ -42,6 +44,8 @@ export default function IndividualPost(props) {
         setDate(new Date(res.data.post_time).toLocaleDateString())
         setPostID("/post/"+props.post_id)
         setTags(res.data.tags)
+        setCollaborators(res.data.collaborators)
+        setBanner(res.data.post_pic)
       });
       } catch(e) {
         console.error(e)
@@ -73,7 +77,7 @@ export default function IndividualPost(props) {
           {/* Contributors pictures will also need to be reviewed when the backend is linked */} 
 
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
-              <Contributors />
+              <Contributors collaborators = {collaborators} />
           </Grid>
         </Grid>
         <Typography gutterBottom variant="h4" component="div" sx={{margin: "0px 20px 0px 20px"}}>
@@ -82,7 +86,7 @@ export default function IndividualPost(props) {
         <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
           { description.slice(0,250) }...
         </Typography>
-        <img src={ StockImage } className="Post-image" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>
+        <img src={instance.defaults.baseURL.replace("/api", "") + banner} className="Post-image" alt="logo" style={{padding: '10px 0px 10px 0px'}}/>
         <Tags tagArray={tags}/>
       </Box>
     </Box>

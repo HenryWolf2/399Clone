@@ -64,7 +64,7 @@ function GroupDetails(props) {
     height: '250px',
     display: 'flex',
     flexDirection: 'column',
-    backgroundImage: `url(${Banner})`,
+    backgroundImage: `url(${instance.defaults.baseURL.replace("/api", "") + banner})`,
     borderBottom: '3px solid white',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
