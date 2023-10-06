@@ -46,6 +46,11 @@ export default function PostPage(props) {
     [] // <-- empty dependency array
   )
 
+  let CheckedResultsId = resultsId
+  if (resultsId === "") {
+    CheckedResultsId = 1
+  }
+  
   return (
     <div className="container">
       <NavigationBar />
@@ -69,7 +74,7 @@ export default function PostPage(props) {
           <Stack sx={{margin: "0px 20px 0px 20px"}}>
               <PostGraph post_id={props.post_id} />
               
-              <PostTable results_id={resultsId} />
+              <PostTable results_id={CheckedResultsId} />
           </Stack>
         </Box>
       </Box> 

@@ -15,8 +15,8 @@ import copy
 import json
 import math
 from datetime import datetime
-from bibtexparser.bibdatabase import BibDatabase
-import bibtexparser
+
+
 
 @api_view(['POST'])
 def register_user(request):
@@ -88,6 +88,7 @@ def edit_profile(request):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def edit_notepad(request):
@@ -121,13 +122,20 @@ def create_post(request):
             serializer.save()
 
             post = Post.objects.get(id=serializer.instance.id)
-            for tag_name in request.POST.getlist('tags'):
+            for tag_name in json.loads(request.data.get('tags')):
                 try:
                     tag = Tag.objects.get(name=tag_name)
                 except ObjectDoesNotExist:
                     tag = Tag.objects.create(name=tag_name)
                 post.tags.add(tag)
-            
+            post.collaborators.clear()
+            print(request.data.get('collaborators'))
+            for collaborator in json.loads(request.data.get('collaborators')):
+                try:
+                    user = CustomUser.objects.get(id=collaborator)
+                    post.collaborators.add(user)
+                except:
+                    return Response({'error': f'User {collaborator} not found'}, status=status.HTTP_404_NOT_FOUND)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -181,6 +189,7 @@ def get_all_groups_by_id(request):
         groups = Group.objects.values_list('id', flat=True).order_by('created')
         return Response(groups, status=status.HTTP_200_OK)
 
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def update_group_perms(request):
@@ -191,7 +200,8 @@ def update_group_perms(request):
         if not permissions:
             return Response({'message': 'No permissions added'}, status=status.HTTP_400_BAD_REQUEST)
         if permissions not in ['admin', 'poster', 'viewer', 'requested']:
-            return Response({'message': f'Permission {permissions} is not a valid permission'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': f'Permission {permissions} is not a valid permission'},
+                            status=status.HTTP_400_BAD_REQUEST)
         group = Group.objects.get(id=group_id)
         user = CustomUser.objects.get(id=user_id)
         try:
@@ -200,7 +210,8 @@ def update_group_perms(request):
             return Response({'message': f'User {user.username} not in {group.name}'})
         usergroup.permissions = permissions
         usergroup.save()
-        return Response({'message': f'Permissions {permissions} added to user {user.username}.'}, status=status.HTTP_200_OK)
+        return Response({'message': f'Permissions {permissions} added to user {user.username}.'},
+                        status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -226,7 +237,7 @@ def add_data(request):
     if request.method == 'POST':
         data = copy.deepcopy(request.data)
         data_fields = {'compounds_file': data['compounds_file'], 'bounds_file': data['bounds_file'],
-                       'adducts_file': data['adducts_file'], 'data_publicity': True}
+                       'adducts_file': data['adducts_file'], 'data_publicity': data['data_publicity']}
         serializer = DataSerializer(data=data_fields)
         if serializer.is_valid():
             serializer.save()
@@ -243,6 +254,7 @@ def add_data(request):
             max_primaries = request.data.get('max_primaries')
             max_adducts = request.data.get('max_adducts')
             valence = request.data.get('valence')
+            manual_calibration = request.data.get('manual_calibration')
             analysis_results = binding_site_search.search(bounds_file, compounds_file, adducts_file,
                                                           tolerance=tolerance, peak_height=peak_height,
                                                           multi_protein=multi_protein,
@@ -251,7 +263,11 @@ def add_data(request):
                                                           calibrate=calibrate)
             json_df = analysis_results.to_json(orient='split', index=False)
             json_df = json.loads(json_df)
-            analysis_data = {'result_df': json_df, 'data_input': data.id}
+            analysis_data = {'result_df': json_df, 'data_input': data.id, 'tolerance': tolerance,
+                             'peak_height': peak_height, 'multi_protein': multi_protein, 'only_best': only_best,
+                             'min_primaries': min_primaries, 'max_primaries': max_primaries, 'valence': valence,
+                             'calibrate': calibrate, 'max_adducts': max_adducts,
+                             'manual_calibration': manual_calibration}
             analysis_serializer = PostAnalysisSerializer(data=analysis_data)
             if analysis_serializer.is_valid():
                 analysis_serializer.save()
@@ -329,9 +345,9 @@ def get_profile(request):
         profile_data['description'] = user.description
         profile_data['first_name'] = user.first_name
         profile_data['last_name'] = user.last_name
-        if user.profile_pic: #TODO REVIEW
+        if user.profile_pic:  # TODO REVIEW
             profile_data['profile_pic'] = user.profile_pic.url
-        if user.cover_photo: #TODO REVIEW
+        if user.cover_photo:  # TODO REVIEW
             profile_data['cover_photo'] = user.cover_photo.url
         profile_data['notepad'] = user.notepad
         posts = Post.objects.filter(author__id=user.id)
@@ -361,6 +377,7 @@ def edit_post(request):
             summary = request.data.get('summary')
             description = request.data.get('description')
             publicity = request.data.get('publicity')
+            collaborators = request.POST.getlist('collaborators')
             if title:
                 post.title = title
             if description:
@@ -369,6 +386,14 @@ def edit_post(request):
                 post.publicity = publicity
             if summary:
                 post.summary = summary
+            if collaborators:
+                post.collaborators.clear()
+                for collaborator in collaborators:
+                    try:
+                        user = CustomUser.objects.get(id=collaborator)
+                        post.collaborators.add(user)
+                    except:
+                        return Response({'error': f'User {collaborator} not found'}, status=status.HTTP_404_NOT_FOUND)
             post.save()
             return Response({'message': 'Post updated successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
@@ -399,9 +424,17 @@ def edit_group(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_all_posts(request):
+def get_all_post_ids(request):
     if request.method == 'GET':
         posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
 
 
@@ -447,7 +480,8 @@ def get_group_by_id(request):
             serializer = GroupSerializer(group)
             return_data = serializer.data
             return_data['post_count'] = group.posts.count()
-            return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster', 'viewer']).count()
+            return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster',
+                                                                                                    'viewer']).count()
             return Response(return_data, status=status.HTTP_200_OK)
         except:
             return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -465,7 +499,12 @@ def get_graph_data(request):
         data = Data.objects.get(id=data_id)
         dataframe = pd.read_excel(data.bounds_file)
         normalised_dataframe = utils.normalise(dataframe)
-        peak_search.peak_find(normalised_dataframe, peak_height=0.001)
+        if post.associated_results.calibrate == 'Manual':
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height,
+                                  calibrate=post.associated_results.calibrate,
+                                  manual_calibration=post.associated_results.manual_calibration)
+        else:
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height)
         values = [row[4] for row in linked_analysis['data']]
         df = pd.DataFrame({'checkvals': normalised_dataframe['m/z']})
         vals = np.array(values).reshape(1, -1)
@@ -499,14 +538,14 @@ def get_group_info(request):
         group_data['description'] = group.description
         group_data['group_pic'] = group.group_pic.url
         group_data['posts'] = group.posts.values_list('id', flat=True)
-        group_data['member_count'] = UserGroup.objects.filter(group=group_id,
-                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('id', flat=True)
+        group_data['members'] = UserGroup.objects.filter(group=group_id,
+                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('user', flat=True)
         group_data['created'] = group.created
         user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
         group_data['user_permission'] = user_permission
         if user_permission == 'admin':
             group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
-                'user_id', flat=True)
+                'user', flat=True)
 
         return Response(group_data, status=status.HTTP_200_OK)
 
@@ -519,6 +558,8 @@ def get_user_profile_info(request):
         user_data = {}
         user_data['username'] = user.username
         user_data['profile_pic'] = user.profile_pic.url
+
+    return Response(user_data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -553,3 +594,87 @@ def get_citation(request):
         else:
             return Response({'error': f'Citation type {citation_type} not found'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'citation': citation_output}, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_analysis(request):
+    if request.method == 'PUT':
+        try:
+            analysis_id = request.data.get('analysis_id')
+            analysis = PostAnalysis.objects.get(id=analysis_id)
+            data = Data.objects.get(id=analysis.data_input_id)
+            tolerance = request.data.get('tolerance')
+            peak_height = request.data.get('peak_height')
+            multi_protein = request.data.get('multi_protein')
+            only_best = request.data.get('only_best')
+            calibrate = request.data.get('calibrate')
+            min_primaries = request.data.get('min_primaries')
+            max_primaries = request.data.get('max_primaries')
+            max_adducts = request.data.get('max_adducts')
+            valence = request.data.get('valence')
+            if tolerance:
+                analysis.tolerance = tolerance
+            if peak_height:
+                analysis.peak_height = peak_height
+            if multi_protein:
+                analysis.multi_protein = multi_protein
+            if only_best:
+                analysis.only_best = only_best
+            if calibrate:
+                analysis.calibrate = calibrate
+            if min_primaries:
+                analysis.min_primaries = min_primaries
+            if max_adducts:
+                analysis.max_adducts = max_adducts
+            if valence:
+                analysis.valence = valence
+            if max_primaries:
+                analysis.max_primaries = max_primaries
+            analysis_results = binding_site_search.search(data.bounds_file, data.compounds_file, data.adducts_file,
+                                                          tolerance=analysis.tolerance,
+                                                          peak_height=analysis.peak_height,
+                                                          multi_protein=analysis.multi_protein,
+                                                          min_primaries=analysis.min_primaries,
+                                                          max_primaries=analysis.max_primaries,
+                                                          max_adducts=analysis.max_adducts, valence=analysis.valence,
+                                                          only_best=analysis.only_best,
+                                                          calibrate=analysis.calibrate)
+            json_df = analysis_results.to_json(orient='split', index=False)
+            json_df = json.loads(json_df)
+            analysis.result_df = json_df
+            analysis.save()
+            return Response({'message': 'Analysis config updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_config(request):
+    if request.method == 'GET':
+        analysis_id = request.query_params.get('analysis_id')
+        analysis = PostAnalysis.objects.get(id=analysis_id)
+        config_data = {}
+        config_data['tolerance'] = analysis.tolerance
+        config_data['peak_height'] = analysis.peak_height
+        config_data['multi_protein'] = analysis.multi_protein
+        config_data['only_best'] = analysis.only_best
+        config_data['calibrate'] = analysis.calibrate
+        config_data['min_primaries'] = analysis.min_primaries
+        config_data['max_primaries'] = analysis.max_primaries
+        config_data['max_adducts'] = analysis.max_adducts
+        config_data['valence'] = analysis.valence
+        return Response(config_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_username(request):
+    if request.method == 'GET':
+        username = request.query_params.get('username')
+        try:
+            user = CustomUser.objects.get(username=username)
+            return Response({'user_id': user.id}, status=status.HTTP_200_OK)
+        except:
+            return Response({'user_id': -1}, status=status.HTTP_200_OK)

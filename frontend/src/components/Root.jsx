@@ -12,7 +12,7 @@ import IndividualPost from './individual-posts/post';
 import { useState, useEffect } from 'react';
 import instance from './api/api_instance';
 import PostPage from '../pages/postPage';
-import SpecificGroup from '../pages/group-specific';
+import GroupSpecific from '../pages/group-specific';
 import Groups from '../pages/group-landing';
 import CreateGroup from '../pages/create-group';
 import GroupDetails from './group-details/GroupDetails';
@@ -27,7 +27,6 @@ export default function Root() {
     { path: '/profile', name: 'Profile', Component: Profile, exact: false },
     { path: '/public-data', name: 'PublicPosts', Component: PublicPosts, exact: false },
     { path: '/create-post', name: 'Create Post', Component: CreatePost, exact: false},
-    { path: '/group-specific', name: 'Specific Group', Component: SpecificGroup, exact: false},
     { path: '/create-group', name: 'Create Group', Component: CreateGroup, exact: false},
     { path: '*', name: 'No Match', Component: NotFound, exact: false },
   ];
@@ -40,7 +39,7 @@ export default function Root() {
       try{ 
         await instance ({
           // Set URL to get all posts by ID
-          url: "/post/get_all",
+          url: "/post/get_all_objects",
           method: "GET",
       }).then((res) => {
         setAllPosts(res.data)
@@ -61,7 +60,7 @@ export default function Root() {
     async function GetAllGroupsIDs() {
       try{ 
         await instance ({
-          url: "/groups/get_all",
+          url: "/groups/get_all_id",
           method: "GET",
       }).then((res) => {
         setAllGroups(res.data)
@@ -76,7 +75,7 @@ export default function Root() {
   ) 
 
   let postRoutes = AllPosts.map((post_id) => <Route key={post_id} path={`/post/${post_id}`} element = {<PostPage post_id={post_id} />} />);
-  let groupRoutes = AllGroups.map((group_id) => <Route key={group_id} path={`/group/${group_id}`} element = {<SpecificGroup group_id={group_id} />} />);
+  let groupRoutes = AllGroups.map((group_id) => <Route key={group_id} path={`/group/${group_id}`} element = {<GroupSpecific group_id={group_id} />} />);
 
   return (
     <Router>
@@ -88,7 +87,6 @@ export default function Root() {
           <Route exact path="/profile" element={<Profile />} />
           <Route exact path="/public-data" element={<PublicPosts />} />
           <Route exact path="/create-post" element={<CreatePost />} />
-          <Route exact path="/group-specific" element={<SpecificGroup />} />
           <Route exact path="/groups" element={<Groups />} />
           <Route exact path="/create-group" element={<CreateGroup />} />
           

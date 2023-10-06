@@ -1,7 +1,7 @@
 from django.urls import path
 
 
-from .views import register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, search_post_by_tag, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_graph_data, get_group_landing_info, get_group_by_id, get_group_info, get_user_profile_info, edit_notepad, get_citation, get_all_groups_by_id, update_group_perms,get_all_tags
+from .views import check_username, register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, search_post_by_tag, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_graph_data, get_group_landing_info, get_group_by_id, get_group_info, get_user_profile_info, edit_notepad, get_citation, get_all_groups_by_id, update_group_perms, get_config, edit_analysis, get_all_post_ids,get_all_tags
 
 urlpatterns = [
     path('register/', register_user, name='register'),
@@ -16,7 +16,8 @@ urlpatterns = [
     path('users/assign_groups', assign_user_to_group, name='assign_user_to_group'),
     path('post/search', search_post, name='search_post'),
     path('post/get', search_post, name='post_by_id'),
-    path('post/get_all', get_all_posts, name='get_all_posts'),
+    path('post/get_all', get_all_post_ids, name='get_all_post_ids'),
+    path('post/get_all_objects', get_all_posts, name='get_all_posts'),
     path('post/get_by_id', get_post_by_id, name='get_post_by_id'),
     path('post/get_post_by_tag', search_post_by_tag, name='post_by_tag'),
     path('profile/edit', edit_profile, name='edit_profile'),
@@ -33,5 +34,8 @@ urlpatterns = [
     path('post/citation', get_citation, name='get_citation'),
     path('groups/update_perms', update_group_perms, name='update_group_perms'),
     path('groups/get_all_id', get_all_groups_by_id, name='get_all_groups_by_id'),
-    path('post/tags', get_all_tags, name='get_all_tags')
+    path('post/tags', get_all_tags, name='get_all_tags'),
+    path('post/get/config', get_config, name='edit_analysis'),
+    path('post/edit/config', edit_analysis, name='get_config'),
+    path('user/check_username', check_username, name='check_username')
 ]

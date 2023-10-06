@@ -32,7 +32,6 @@ function AccountDetails(props) {
           url: "/profile/get",
           method: "GET",          
       }).then((res) => {
-        console.log(res)
         setBannerImage(res.data.cover_photo)
         setProfileImage(res.data.profile_pic)
         setFirstName(res.data.first_name)
@@ -41,10 +40,6 @@ function AccountDetails(props) {
         setEmail(res.data.email)
         setDescription(res.data.description)
         setPublicPosts(res.data.posts)
-
-        
-        console.log(res.data)
-        console.log("help he")
       });
       } catch(e) {
         console.error(e)
@@ -121,7 +116,7 @@ function AccountDetails(props) {
     height: '200px',
     display: 'flex',
     flexDirection: 'column',
-    backgroundImage:`url(${Image2})`,
+    backgroundImage:`url(${instance.defaults.baseURL.replace("/api", "") + bannerImage})`,
     borderBottom: '3px solid white',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'top left',
@@ -216,7 +211,7 @@ function AccountDetails(props) {
 
         <div style={overlayStyle}>
           <Avatar
-            src={require('./template-banner.jpg').default}
+            src={instance.defaults.baseURL.replace("/api", "") + profileImage}
             sx={{
               width: '225px',
               height: '225px',
