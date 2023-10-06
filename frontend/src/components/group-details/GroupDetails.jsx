@@ -204,7 +204,7 @@ function GroupDetails(props) {
           <h1 style={{color: 'white', marginTop: '10px'}}> Permissions </h1>
           <div style={{overflowY: 'scroll', backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
 
-            <PermsCard/>
+            <PermsCard group_id={props.group_id}/>
           </div>
           
       </div>

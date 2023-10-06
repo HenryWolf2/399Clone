@@ -24,7 +24,6 @@ function GroupData(props) {
           method: "GET",
           params: {group_id: props.group_id}    
       }).then((res) => {
-        console.log(res)
         setGroupPosts(res.data.posts)
         //Need to define perms
       });

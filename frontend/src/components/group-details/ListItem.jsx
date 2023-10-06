@@ -7,14 +7,16 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Checkbox from '@mui/material/Checkbox';
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 
 export default function CheckboxListSecondary(props) {
   const [checked, setChecked] = React.useState([1]);
   const [open, setOpen] = React.useState(false);
 
-  const memberObjectList = {};
+  const memberObjectList = [];
   const [groupName, setGroupname] = useState('');
   const [memberList, setMemberList] = useState([]);
+  const [nameList, setNameList] = useState([]);
 
   useEffect(() => {
     async function GetGroupInformation() {
@@ -37,39 +39,38 @@ export default function CheckboxListSecondary(props) {
     [] // <-- empty dependency array
   ) 
 
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-
-  const GetMemberInformation = async (user_id) => {
-    try{ 
-      await instance ({
-        url: "/profile/get",
+  const GetMemberInformation = async (id) => {
+    try {
+      return await instance({
+        url: "/user/info",
         method: "GET",
-        params: ["user_id"]          
-    }).then((res) => {
-      console.log(res)
+        params: {user_id: id},      
+      }).then((res) => {
+        const username = res.data.username
+        const memberList = [username]
 
-      const firstName = res.data.first_name;
-      const lastName = res.data.last_name;
-      const email = res.data.email;
-
-      const memberList = [firstName, lastName, email]
-
-      return memberList
-      
-    });
+        return memberList
+      });
     } catch(e) {
-      console.error(e)
+      console.error(e);
     }
-    
-  }
+  };
+  
+
   useEffect(() => {
-    const memberIdList = memberList;
-    memberIdList.forEach(id => {
-      GetMemberInformation(id);
-    })
+    const fetchMemberInformation = async () => {
+      const memberIdList = memberList;
+      const memberObjectList = [];
+      for (const id of memberIdList) {
+        const memberInfo = await GetMemberInformation(id);
+        memberObjectList.push(memberInfo);
+      }
+      setNameList(memberObjectList.map(memberInfo => memberInfo[0]));
+    };
+  
+    fetchMemberInformation();
   }, [memberList]);
+
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -86,19 +87,20 @@ export default function CheckboxListSecondary(props) {
 
 
   return (
+    
     <List dense sx={{ width: '100%', maxWidth: 700, bgcolor: 'background.paper' }}>
-      {[0, 1, 2, 3, 4, 5, 6].map((value) => {
-        const labelId = `checkbox-list-secondary-label-${value}`;
+      {nameList.map((value) => {
+        const labelId = `${value}`;
         return (
           <ListItem
             key={value}
             secondaryAction={
-              <Checkbox
-                edge="end"
-                onChange={handleToggle(value)}
-                checked={checked.indexOf(value) !== -1}
-                inputProps={{ 'aria-labelledby': labelId }}
-              />
+              <Button
+              className="custom-button"
+              variant="contained"
+              >
+                Change Permissions
+              </Button>
             }
             disablePadding
           >
@@ -109,7 +111,7 @@ export default function CheckboxListSecondary(props) {
                   src={`/static/images/avatar/${value + 1}.jpg`}
                 />
               </ListItemAvatar>
-              <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
+              <ListItemText id={labelId} primary={`${value}`} />
             </ListItemButton>
           </ListItem>
         );
