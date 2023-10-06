@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import GroupDetails from '../components/group-details/GroupDetails';
 import GroupData from '../components/group-details/GroupData';
@@ -12,8 +12,8 @@ export default function GroupSpecific(props) {
     <div className="container">
       <NavigationBar />
       <div style={{display: 'flex', flexDirection: 'row'}}>
-        <GroupDetails group_id={props.group_id}/>
-        <GroupData group_id={props.group_id}/>
+        <GroupDetails group_id={props.group_id} />
+        <GroupData group_id={props.group_id} />
       </div>
     </div>
   );

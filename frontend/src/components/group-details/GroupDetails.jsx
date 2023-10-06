@@ -5,6 +5,8 @@ import Button from '@mui/material/Button';
 import '../../assets/styles/global.css';
 import GroupBar from '../profile-details/GroupBar';
 import instance from '../api/api_instance';
+import PermsCard from './PermsCard';
+import MemberCard from './MemberCard';
 
 function GroupDetails(props) {
   const [minimized, setMinimized] = useState(false);
@@ -37,9 +39,10 @@ function GroupDetails(props) {
         setBanner(res.data.group_pic)
         setGroupPosts(res.data.posts)
         setMemberCount(res.data.member_count)
-        setPostCount(res.data.post_count)
+        setPostCount(res.data.posts)
         setCreationDate(new Date(res.data.created).toLocaleDateString())
         //Need to define perms
+
       });
       } catch(e) {
         console.error(e)
@@ -146,7 +149,7 @@ function GroupDetails(props) {
             </div>
             <hr style={{width:'400px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
             <div style={{display: 'flex', marginTop: '-20px', color: 'white', fontSize: '14px'}}>
-              <h1 style={{marginRight: '15px'}}>{memberCount} Members</h1>
+              <h1 style={{marginRight: '15px'}}>{memberCount} <MemberCard group_id={props.group_id}/></h1>
               <span style={circleDot}></span>
               <h1>{postCount} Posts</h1>
             </div>
@@ -184,6 +187,7 @@ function GroupDetails(props) {
       )}
 
 
+
       </div>
 
       <div style={{
@@ -198,9 +202,9 @@ function GroupDetails(props) {
           </div>
 
           <h1 style={{color: 'white', marginTop: '10px'}}> Permissions </h1>
-          <div style={{backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
+          <div style={{overflowY: 'scroll', backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
 
-
+            <PermsCard group_id={props.group_id}/>
           </div>
           
       </div>

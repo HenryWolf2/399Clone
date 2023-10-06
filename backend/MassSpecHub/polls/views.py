@@ -15,8 +15,7 @@ import copy
 import json
 import math
 from datetime import datetime
-from bibtexparser.bibdatabase import BibDatabase
-import bibtexparser
+
 
 
 @api_view(['POST'])
@@ -530,15 +529,14 @@ def get_group_info(request):
         group_data['description'] = group.description
         group_data['group_pic'] = group.group_pic.url
         group_data['posts'] = group.posts.values_list('id', flat=True)
-        group_data['member_count'] = UserGroup.objects.filter(group=group_id,
-                                                              permissions__in=['admin', 'poster',
-                                                                               'viewer']).values_list('id', flat=True)
+        group_data['members'] = UserGroup.objects.filter(group=group_id,
+                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('user', flat=True)
         group_data['created'] = group.created
         user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
         group_data['user_permission'] = user_permission
         if user_permission == 'admin':
             group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
-                'user_id', flat=True)
+                'user', flat=True)
 
         return Response(group_data, status=status.HTTP_200_OK)
 
@@ -551,6 +549,8 @@ def get_user_profile_info(request):
         user_data = {}
         user_data['username'] = user.username
         user_data['profile_pic'] = user.profile_pic.url
+
+    return Response(user_data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

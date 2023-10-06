@@ -22,9 +22,8 @@ function GroupData(props) {
         await instance ({
           url: "/group/info",
           method: "GET",
-          params: {"group_id": props.group_id},       
+          params: {group_id: props.group_id}    
       }).then((res) => {
-        console.log(res)
         setGroupPosts(res.data.posts)
         //Need to define perms
       });
