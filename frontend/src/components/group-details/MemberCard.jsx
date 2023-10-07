@@ -44,7 +44,7 @@ export default function EditModal(props) {
         variant="contained"
         onClick={handleOpen} // Use onClick here to open the modal
       >
-        Members
+        {props.member_count} Members
       </Button>
       <Modal
         open={open}
