@@ -38,8 +38,8 @@ function GroupDetails(props) {
         setDescription(res.data.description)
         setBanner(res.data.group_pic)
         setGroupPosts(res.data.posts)
-        setMemberCount(res.data.members)
-        setPostCount(res.data.posts)
+        setMemberCount(res.data.members.length)
+        setPostCount(res.data.posts.length)
         setCreationDate(new Date(res.data.created).toLocaleDateString())
         //Need to define perms
 
