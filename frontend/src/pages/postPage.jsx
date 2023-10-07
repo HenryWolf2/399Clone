@@ -55,7 +55,7 @@ export default function PostPage(props) {
   if (resultsId === "") {
     CheckedResultsId = 1
   }
-
+  console.log(collaborators)
   return (
     <div className="container">
       <NavigationBar />
