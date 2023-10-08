@@ -73,6 +73,8 @@ const PostForm = () => {
     const [tags, setTags] = useState([]);
     const [collaboratorsList, setCollaborators] = useState([]);
     const [collaboratorIDs, setCollaboratorIDs] = useState([]);
+    const [collaboratorsChecked, setCollaboratorsChecked] = useState(false);
+    const [newCollaboratorIDs, setNewCollaboratorIDs] = useState([]);
 
     const [analysis_id, setAnalysisID] = useState("")
     const navigate = useNavigate();
@@ -151,20 +153,6 @@ const PostForm = () => {
 
   const handleSubmit2 = async (event) => {
     event.preventDefault();
-    await Promise.all(collaboratorsList.map(username => 
-      instance.get('/user/check_username', {
-          params: {
-              username: username
-          }
-      })
-      .then(response => {
-          let reply = Object.values(response.data)[0];
-          collaboratorIDs.push(reply);
-      })
-      .catch(error => {
-          console.error(error);
-      })
-  ));
 
     const formData = new FormData();
       formData.append("title", title);
@@ -223,18 +211,48 @@ const PostForm = () => {
     })
     .then(function (response) {
       let reply = Object.values(response.data)[0];
-    if (reply != -1 || newValue.length == 0){
-      setCollaborators(newValue)
-      setError(false)
-    }
-    else {
-      setError(true)
-    }
+      if (reply != -1 || newValue.length == 0){
+        setCollaborators(newValue)
+        setError(false)
+      }
+      else {
+        setError(true)
+      }
     })
     .catch(function(error) {
       console.error(error)
     })
+  
+    let newCollaboratorIDs = [];
+    let requests = [];
+    for (let i = 0; i < collaboratorsList.length; i++) {
+      let request = instance.get('/user/check_username', {
+          params: {
+              username: collaboratorsList[i]
+          }
+      })
+      .then(response => {
+          let reply = Object.values(response.data)[0];
+          if (!newCollaboratorIDs.includes(reply)){
+            newCollaboratorIDs.push(reply);
+          }
+      })
+      .catch(error => {
+          console.error(error);
+      })
+      requests.push(request);
+    };
+  
+    Promise.all(requests).then(() => {
+      setCollaboratorIDs(newCollaboratorIDs);
+    });
   }
+
+  useEffect(() => {
+    if (collaboratorsChecked) {
+      setCollaboratorIDs(newCollaboratorIDs);
+    }
+  }, [collaboratorsChecked]);
 
     return(
         <React.Fragment>
@@ -649,7 +667,7 @@ const PostForm = () => {
                         {/* Contributors pictures will also need to be reviewed when the backend is linked */} 
 
                         <Grid item sx={{margin: "0px 20px 0px 0px"}}>
-                            {/* <Contributors /> */}
+                            {<Contributors collaborators = {collaboratorIDs}/>}
                         </Grid>
                       </Grid>
                       <Typography gutterBottom variant="h4" component="div" sx={{margin: "0px 20px 0px 20px", color: 'black', textAlign: 'left'}}>
