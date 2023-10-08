@@ -51,13 +51,15 @@ export default function Post() {
     
     console.log(selectedTags);
     try{
+      const queryString = selectedTags.map(tag => `query=${encodeURIComponent(tag)}`).join('&');
+    
     await instance({
-        url: "post/get_post_by_tag",
+        url: `post/get_post_by_tag?${queryString}`,
         method: "GET",
         params: {query: selectedTags}
     }).then((res) => {
         setPublicPosts(res.data);
-        console.log(res)
+        console.log(res.data)
         
     });
     } catch(e){
@@ -93,14 +95,11 @@ export default function Post() {
       }).then((res) => {
         let newList = [];
         for(let i = 0; i < res.data.length; i++){
-          let names = res.data[i].name.split(",");
-          for(let j = 0; j < names.length; j++){
-            if(newList.includes(names[j]) === false){
-              newList.push(names[j]);
-            }
+          let names = res.data[i].name;
+          newList.push(names);
 
           }
-        }
+        
 
 
         setAllTags(newList)
