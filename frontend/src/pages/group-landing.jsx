@@ -10,7 +10,7 @@ import './/../assets/styles/global.css';
 import Link from '@mui/material';
 
 export default function Groups() {
-    const [postIDs, setPostIDs] = useState([9])
+    const [postIDs, setPostIDs] = useState([])
     const [userGroups, setUserGroups] = useState([])
     const [recommendGroups, setRecommendGroups] = useState([])
     

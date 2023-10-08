@@ -57,7 +57,7 @@ function ResponsiveAppBar() {
           url: "/logout/",
           method: "POST",
         }).then((res) => {
-          console.log(res)
+          
         });
       } catch(e){
           console.error(e)

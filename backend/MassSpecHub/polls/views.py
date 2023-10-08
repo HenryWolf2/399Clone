@@ -549,6 +549,7 @@ def get_user_profile_info(request):
         user_data = {}
         user_data['username'] = user.username
         user_data['profile_pic'] = user.profile_pic.url
+        return Response(user_data, status=status.HTTP_200_OK)
 
     return Response(user_data, status=status.HTTP_200_OK)
 
