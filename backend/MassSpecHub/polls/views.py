@@ -565,7 +565,10 @@ def get_user_profile_info(request):
         user = CustomUser.objects.get(id=request.query_params.get('user_id'))
         user_data = {}
         user_data['username'] = user.username
-        user_data['profile_pic'] = user.profile_pic.url
+        if(user.profile_pic):
+            user_data['profile_pic'] = user.profile_pic.url
+        else:
+            user_data['profile_pic'] = None
         return Response(user_data, status=status.HTTP_200_OK)
 
     return Response(user_data, status=status.HTTP_200_OK)

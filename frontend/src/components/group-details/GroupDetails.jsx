@@ -95,7 +95,8 @@ function GroupDetails(props) {
     position: 'relative',
     alignItems: 'center',
     width: '500px',
-    marginRight: '20px',
+    marginRight: '0px',
+    marginLeft: '20px',
     height: '400px',
     display: minimized ? 'none' : 'inline',
   }
@@ -105,7 +106,6 @@ function GroupDetails(props) {
     display: 'flex',
     alignItems: 'right',
     width: '56%',
-    marginRight: '40px',
     height: 'auto',
     display: minimized ? 'inline' : 'none',
   }
