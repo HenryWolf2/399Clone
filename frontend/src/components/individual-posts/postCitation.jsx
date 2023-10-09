@@ -11,86 +11,137 @@ import Snackbar from '@mui/material/Snackbar';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Tab from '@mui/material/Tab';
+import InputAdornment from '@mui/material/InputAdornment'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import '../../assets/styles/global.css';
 
+const TabPanel = (props) => {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography component="div">{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+};
 
 
 
-export default function PostCitation(props) {
-    const [open, setOpen] = useState(false)
-    const [citationType, setCitationType] = useState('BibTeX')
+export default function PostCitation({ openCitation, handleCloseCitation, post_id }) {
     const [citation, setCitation] = useState('')
-    const [buttonClicked, setButtonClicked] = useState(false)
+    const [value, setValue] = useState(0);
+    const[bibTeXCitation, setBibTeXCitation] = useState('')
+    const[aPA7Citation, setAPA7Citation] = useState('')
 
-    const openCitation = () => {
-        setButtonClicked(!buttonClicked)
-        setCitationType("BibTeX")
-      
-    }
+
     const copyToClipBoard = () => {
-        setOpen(true)
         navigator.clipboard.writeText(citation)
       }
     
     const handleAPA7 = () =>{
-        setCitationType('APA7')
+        setCitation(aPA7Citation)
+        setValue(1);
     }
     const handleBibTeX = () =>{
-        setCitationType('BibTeX')
+        setCitation(bibTeXCitation)
+        setValue(0);
     }
    
 
-  
 
 
     useEffect(() => {
-        async function GetCitation() {
+        async function GetBibTeXCitation() {
           try{ 
             await instance ({
                 url: "post/citation",
                 method: "GET",
-                params: {post_id: props.post_id, citation: citationType}
+                params: {post_id: post_id, citation: 'BibTeX'}
           }).then((res) => {
+            setBibTeXCitation(res.data.citation)
             setCitation(res.data.citation)
-            console.log(res)
+            
           });
           } catch(e) {
             console.error(e)
           }
         }
-        GetCitation();
+        GetBibTeXCitation();
         } , // <- function that will run on every dependency update
-        [citationType] // <-- empty dependency array
+        [] // <-- empty dependency array
       ) 
+      useEffect(() => {
+        async function GetAPA7Citation() {
+          try{ 
+            await instance ({
+                url: "post/citation",
+                method: "GET",
+                params: {post_id: post_id, citation: 'APA7'}
+          }).then((res) => {
+            setAPA7Citation(res.data.citation)
+            
+          });
+          } catch(e) {
+            console.error(e)
+          }
+        }
+        GetAPA7Citation();
+        } , // <- function that will run on every dependency update
+        [] // <-- empty dependency array
+      ) 
+      
     
 
 
     return(
-        <Container maxWidth= "sm" sx={{margin: "0px 20px 0px 20px"}}>
-
-
-        <Button onClick={openCitation}>Citation</Button>
-          <Snackbar
-            open={open}
-            onClose={() => setOpen(false)}
-            autoHideDuration={2000}
-            message="Copied to clipboard"
-          />
-
-          {buttonClicked? (
-            <Box>
-                <Button onClick= {handleBibTeX}>BibTeX Citation</Button>
-                <Button onClick= {handleAPA7}>APA 7 Citation</Button>
-                <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
-                    { citation }
-                </Typography>
-                <Button onClick={copyToClipBoard}>Copy to Clipboard</Button>
-            </Box>
-          
-          ) : null}
+        
 
         
-          </Container>
+  <Dialog open={openCitation} onClose={handleCloseCitation} maxWidth="md" fullWidth>
+        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+          <Box sx={{ width: 150, backgroundColor: '#f0f0f0' }}>
+            <Tab label="BibTeX" onClick={() => handleBibTeX()} sx={{ borderBottom: 1, borderColor: 'divider', width: 150, alignItems: "flex-start" }} />
+            <Tab label="APA 7" onClick={() => handleAPA7()} sx={{ borderBottom: 1, borderColor: 'divider', width: 150, alignItems: "flex-start" }} />
+          </Box>
+  
+          <Box sx={{ flex: 1 }}>
+            <TabPanel value={value} index={0}>
+              <h3>BibTeX Citation</h3>
+              <div>
+              <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
+                    { citation }
+                </Typography>
+                <Button onClick={copyToClipBoard}>Copy to Clipboard &nbsp;<ContentCopyIcon fontSize='inherit'/></Button>
+                
+
+              </div>
+            </TabPanel>
+
+
+            <TabPanel value={value} index={1}>
+              <h3>APA 7 Citation</h3>
+              <div>
+              <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
+                    { citation }
+                </Typography>
+                <Button onClick={copyToClipBoard}>Copy to Clipboard &nbsp;<ContentCopyIcon fontSize='inherit'/></Button>
+
+              </div>
+            </TabPanel>
+          </Box>
+        </Box>
+      </Dialog>
+         
     )
 }

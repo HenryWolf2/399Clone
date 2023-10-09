@@ -24,6 +24,15 @@ export default function PostPage(props) {
   const [resultsId, setResultsID] = useState('')
   const [tags, setTags] = useState([])
   const [collaborators, setCollaborators] = useState([])
+  const [openCitation, setOpenCitation] = useState(false);
+
+  const handleOpenCitation = () => {
+    setOpenCitation(true);
+  };
+
+  const handleCloseCitation = () => {
+    setOpenCitation(false);
+  };
     
   useEffect(() => {
     window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
@@ -56,7 +65,7 @@ export default function PostPage(props) {
   if (resultsId === "") {
     CheckedResultsId = 1
   }
-  console.log(collaborators)
+  
   return (
     <div className="container">
       <NavigationBar />
@@ -82,6 +91,14 @@ export default function PostPage(props) {
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
               <Contributors collaborators = {collaborators} />
           </Grid>
+          <Grid item sx={{margin: "0px 20px 0px 0px"}}>
+            <Button variant="contained" onClick={handleOpenCitation}>
+              Cite
+            </Button>
+            
+            <PostCitation openCitation={openCitation} handleCloseCitation={handleCloseCitation}post_id={props.post_id}/>
+          </Grid>
+        
         </Grid>
 
           <Tags tagArray={tags}/>
@@ -95,7 +112,7 @@ export default function PostPage(props) {
             { description }
             
           </Typography>
-          <PostCitation sx={{margin: "0px 20px 0px 20px"}} post_id={props.post_id}/>
+          
 
           
           <Stack sx={{margin: "0px 20px 0px 20px"}}>
