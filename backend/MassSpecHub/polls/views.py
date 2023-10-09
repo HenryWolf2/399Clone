@@ -15,6 +15,8 @@ import copy
 import json
 import math
 from datetime import datetime
+import bibtexparser
+from bibtexparser.bibdatabase import BibDatabase
 
 
 

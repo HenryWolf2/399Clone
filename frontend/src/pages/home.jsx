@@ -9,6 +9,7 @@ import instance from '../components/api/api_instance';
 import Box from '@mui/material/Box';
 
 
+
 import '../assets/styles/global.css';
 
 export default function Home() {
@@ -42,7 +43,7 @@ export default function Home() {
       
       <div style={{height: '85px',display:'flex'}}>
           <div style={{flex:1, flexDirection: 'row', height: '100%', }}>
-            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Infomation</h1>
+            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Information</h1>
           </div>
           <div style={{flex:1, flexDirection: 'row', height: '100%',}}>
             <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Trending Posts</h1>

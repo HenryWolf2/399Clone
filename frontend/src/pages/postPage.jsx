@@ -9,6 +9,7 @@ import PostGraph from '../components/individual-posts/postGraph';
 import PublicIcon from '../assets/images/public.png';
 import PrivateIcon from '../assets/images/private.png';
 import Tags from '../components/individual-posts/tags';
+import PostCitation from '../components/individual-posts/postCitation';
 
 export default function PostPage(props) {
 
@@ -19,6 +20,7 @@ export default function PostPage(props) {
   const [date, setDate] = useState('')
   const [resultsId, setResultsID] = useState('')
   const [tags, setTags] = useState([])
+  
     
   useEffect(() => {
     window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
@@ -69,6 +71,7 @@ export default function PostPage(props) {
             { description }
             
           </Typography>
+          <PostCitation sx={{margin: "0px 20px 0px 20px"}} post_id={props.post_id}/>
 
           
           <Stack sx={{margin: "0px 20px 0px 20px"}}>
