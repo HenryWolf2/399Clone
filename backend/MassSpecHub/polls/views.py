@@ -320,12 +320,29 @@ def search_post(request):
 @permission_classes([IsAuthenticated])
 def search_post_by_tag(request):
     if request.method == 'GET':
-        query = request.query_params.get('query')
-        if not query:
-            return Response({'error': f'Tag {query} not found.'}, status=status.HTTP_404_NOT_FOUND)
-        posts = Post.objects.filter(tags__name__contains=query)
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        tags = request.query_params.getlist('query')
+        if not tags:
+            posts = Post.objects.order_by('post_time')
+            posts = posts.values_list('id', flat=True).order_by('post_time')
+            return Response(posts, status=status.HTTP_200_OK)
+
+        posts = Post.objects.none()
+        for tag in tags:
+            posts |= Post.objects.filter(tags__name__exact=tag)
+
+        if not posts:
+            return Response({'error': 'No posts found for the provided tags.'}, status=status.HTTP_404_NOT_FOUND)
+
+        posts = posts.values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_tags(request):
+    if request.method == 'GET':
+        tags = Tag.objects.order_by('name')
+        tags = TagSerializer(tags, many=True)
+        return Response(tags.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -551,6 +568,7 @@ def get_user_profile_info(request):
         user_data = {}
         user_data['username'] = user.username
         user_data['profile_pic'] = user.profile_pic.url
+        return Response(user_data, status=status.HTTP_200_OK)
 
     return Response(user_data, status=status.HTTP_200_OK)
 

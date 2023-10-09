@@ -7,8 +7,8 @@ import Typography from '@mui/material/Typography';
 import Contributors from './contributors';
 import ProfilePicture from './profile';
 import StockImage from '../../assets/images/stock-image.jpg';
-import PublicIcon from '../../assets/images/public.png';
-import PrivateIcon from '../../assets/images/private.png';
+import PublicIcon from '@mui/icons-material/Public';
+import LockIcon from '@mui/icons-material/Lock';
 import instance from '../api/api_instance.js'
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -70,7 +70,7 @@ export default function IndividualPost(props) {
           </Grid>
           <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
             <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px"}}>
-              Group name <br></br>{date} { publicity ? <img src={PublicIcon} alt="public" width="18" height="18"></img> : <img src={PrivateIcon} alt="private" width="18" height="18"></img> }
+              Group name <br></br>{date} { publicity ? <PublicIcon /> : <LockIcon /> }
             </Typography>
           </Grid>
 

@@ -10,10 +10,13 @@ export default function Contributors(collaborators) {
   let collaboratorsArray = collaborators.collaborators
   let IndividualArray = []
   let collaboratorsAvatarsV2 = [];
+  let thisId = 0
   
   for (let i = 0; i < collaboratorsArray.length; i++) {
-    IndividualArray = UserDetails(collaboratorsArray[i]);
-    collaboratorsAvatarsV2.push(<Avatar id={collaboratorsArray[i]} alt={IndividualArray[0]} src={IndividualArray[1]} />);
+    thisId = collaboratorsArray[i]
+    IndividualArray = UserDetails(thisId);
+    thisId = collaboratorsArray[i] + i
+    collaboratorsAvatarsV2.push(<Avatar id={thisId} alt={IndividualArray[0]} src={IndividualArray[1]} />);
   }
 
   return (

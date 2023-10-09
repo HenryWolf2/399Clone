@@ -5,11 +5,10 @@ import { Stack, Chip } from '@mui/material';
 
 export default function Tags(props) { 
   let newArray = []
-  if (props.tagArray[0] != null ) {
-    let oldArray = props.tagArray[0].split(",")
-    
-    for (var i = 0; i < oldArray.length; i++) {
-      newArray.push(<Chip key={ i }sx={{ bgcolor: '#02AEEC', color: 'white' }} label={oldArray[i]} />)
+  
+  if (props.tagArray != null ) {    
+    for (var i = 0; i < props.tagArray.length; i++) {
+      newArray.push(<Chip key={ i }sx={{ bgcolor: '#02AEEC', color: 'white', p:1 }} label={props.tagArray[i]} />)
     }
   
   }
