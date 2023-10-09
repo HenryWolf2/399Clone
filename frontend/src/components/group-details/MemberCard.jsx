@@ -44,7 +44,7 @@ export default function EditModal(props) {
         variant="contained"
         onClick={handleOpen} // Use onClick here to open the modal
       >
-        Members
+        {props.member_count} Members
       </Button>
       <Modal
         open={open}
@@ -61,7 +61,7 @@ export default function EditModal(props) {
 
           </div>
 
-          <div style={{height:'250px', overflowY: 'scroll'}}>
+          <div style={{height:'250px', overflowY: 'scroll', border:'2px solid #02AEEC'}}>
             <ListItem group_id={props.group_id}></ListItem>
           </div>
 
