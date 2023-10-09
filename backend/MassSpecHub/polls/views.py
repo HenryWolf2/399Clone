@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup
+from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup, PostGroup
 from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
@@ -687,3 +687,16 @@ def check_username(request):
             return Response({'user_id': user.id}, status=status.HTTP_200_OK)
         except:
             return Response({'user_id': -1}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_post_group(request):
+    if request.method == 'GET':
+        post_id = request.query_params.get('post_id')
+        group_id = request.query_params.get('group_id')
+        try:
+            post_group = PostGroup.objects.get(post=post_id, group=group_id)
+            if post_group:
+                return Response({'in_group': True}, status=status.HTTP_200_OK)
+        except:
+            return Response({'in_group': False}, status=status.HTTP_200_OK)
