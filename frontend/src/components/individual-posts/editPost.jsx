@@ -103,8 +103,6 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   };
 
   const handleGroupChanges = async (event) => {
-    event.preventDefault();
-    console.log(checkboxStates)
     for (let id in checkboxStates) {
       if (id !== "") {
         if (checkboxStates[id] === true) {
@@ -122,7 +120,6 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                 console.error(e)
             }
         } else {
-          console.log(checkboxStates[id], id, allData.id)
           try{
             await instance.delete('/groups/post/delete', {
               data: {
@@ -131,7 +128,6 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
               },
               headers: {
                 'Content-Type': 'application/json',
-                // Add any other headers if needed (e.g., authentication headers)
               },
             });
             } catch(e){
