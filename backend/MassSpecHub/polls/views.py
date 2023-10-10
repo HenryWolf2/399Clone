@@ -550,7 +550,10 @@ def get_group_info(request):
             group_data['members'] = UserGroup.objects.filter(group=group_id,
                                                               permissions__in=['admin', 'poster', 'viewer']).values_list('user', 'permissions')
             group_data['created'] = group.created
-            user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
+            try:
+                user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
+            except:
+                user_permission = 'N/A'
             group_data['user_permission'] = user_permission
             if user_permission == 'admin':
                 group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
