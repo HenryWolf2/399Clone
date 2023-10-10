@@ -537,6 +537,46 @@ def get_graph_data(request):
         return Response({'all_points': data_points}, status=status.HTTP_200_OK)
 
 
+
+@api_view(['GET'])
+def get_graph_data_home(request):
+    if request.method == 'GET':
+        post_id = request.query_params.get('post_id')
+        post = Post.objects.get(id=post_id)
+        analysis = post.associated_results
+        linked_analysis = post.associated_results.result_df
+        data_id = analysis.data_input_id
+        data = Data.objects.get(id=data_id)
+        dataframe = pd.read_excel(data.bounds_file)
+        normalised_dataframe = utils.normalise(dataframe)
+        if post.associated_results.calibrate == 'Manual':
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height,
+                                  calibrate=post.associated_results.calibrate,
+                                  manual_calibration=post.associated_results.manual_calibration)
+        else:
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height)
+        values = [row[4] for row in linked_analysis['data']]
+        df = pd.DataFrame({'checkvals': normalised_dataframe['m/z']})
+        vals = np.array(values).reshape(1, -1)
+        df = df.iloc[abs(df.checkvals.to_numpy()[:, None] - vals).argmin(0)]
+        indexes_to_insert_protein = []
+        for i in df.index:
+            if i not in indexes_to_insert_protein:
+                indexes_to_insert_protein.append(i)
+        i = 0
+        normalised_dataframe['species'] = 'N/A'
+        for num in range(len(linked_analysis['data'])):
+            if linked_analysis['data'][num][7]:
+                j = indexes_to_insert_protein[i]
+                normalised_dataframe.loc[j, 'species'] = linked_analysis['data'][i][0]
+                i += 1
+        normalised_dataframe.drop(normalised_dataframe.columns[[0, 2]], axis=1, inplace=True)
+        normalised_dataframe = normalised_dataframe.to_numpy()
+        keys = ['m/z', 'normalised_intensity', 'species']
+        data_points = [dict(zip(keys, values)) for values in normalised_dataframe]
+        return Response({'all_points': data_points}, status=status.HTTP_200_OK)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_group_info(request):

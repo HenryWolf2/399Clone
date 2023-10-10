@@ -92,7 +92,7 @@ export default function PostPage(props) {
               <Contributors collaborators = {collaborators} />
           </Grid>
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
-            <Button variant="contained" onClick={handleOpenCitation}>
+            <Button variant="contained" onClick={handleOpenCitation} style={{ backgroundColor: '#02AEEC' }}>
               Cite
             </Button>
             

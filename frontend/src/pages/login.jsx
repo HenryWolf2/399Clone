@@ -22,14 +22,14 @@ export default function Login() {
               <LoginForm/>
             </div>
             <div style={{position: "absolute", bottom: "3vh",alignSelf:'center'}}>
-              <button className = "scroll-Button" onClick={() => {
+              <button className = "scroll-Button" color="white" onClick={() => {
                 window.scrollTo({top: window.innerHeight + window.innerHeight / 20, left: 0, behavior: 'smooth'});
                 }}
               >
-              <Typography color="text" variant="body1">
+              <Typography color="white" variant="body1">
                 Click Here for more Infomation
               </Typography>
-              <ArrowDownwardIcon></ArrowDownwardIcon>
+              <ArrowDownwardIcon style={{ color: 'white' }} />
             </button>
             </div>
   

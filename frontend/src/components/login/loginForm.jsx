@@ -11,6 +11,7 @@ import{Box, Container} from '@mui/material';
 import '../../assets/styles/global.css';
 
 
+
 const LoginForm = () => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -54,11 +55,11 @@ const LoginForm = () => {
     }
 
     return(
+        
         <Container maxWidth= "sm">
         <React.Fragment>
         {errorMessage ? <Alert severity="error" fullWidth> {errorMessage} — <strong>Please try again!</strong> </Alert> : null}
-        <form onSubmit ={handleSubmit}>  
-                 
+        <form onSubmit ={handleSubmit}>   
                 <TextField
                 margin="normal"
                 required
@@ -85,6 +86,7 @@ const LoginForm = () => {
                 type="submit"
                 variant="contained"
                 size = "large"
+                style={{ backgroundColor: '#02AEEC' }}
                 >
                 Login
                 </Button>

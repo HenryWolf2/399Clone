@@ -1,5 +1,7 @@
+import { size } from "@floating-ui/core";
+import HomeGraph from "../home/homeGraph";
 import PostGraph from "../individual-posts/postGraph";
-import { Stack } from "@mui/material";
+import { Stack, Box} from "@mui/material";
 
 const LoginLanding = () => {
     
@@ -13,10 +15,15 @@ const LoginLanding = () => {
               Our platform takes mass spectrometry to the next level by providing an innovative environment for storing, sharing, and analyzing mass spectrometry data. Through advanced data analysis tools, researchers can perform various analytical techniques, and visualise data results with the use of interactive elements such as the example graph below.              
               </p>
               <br></br>
-              <Stack sx={{margin: "0px 20px 0px 20px"}}>
-              <PostGraph post_id={1} />
               
-              </Stack> 
+              <div style={{fontSize:'16px'}}>
+              <Stack sx={{margin: "0px 20px 0px 20px"}}>
+              <HomeGraph/>
+              
+              </Stack>
+              </div>
+              
+              
               
               <p class= "landingText">
               Collaboration and data sharing are at the heart of our platform. By creating profiles, researchers can connect with like-minded individuals, form research groups, and share their analyzed data securely.               
