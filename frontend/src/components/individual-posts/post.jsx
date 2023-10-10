@@ -59,7 +59,7 @@ export default function IndividualPost(props) {
 
   return (
     <Link to={post_id} style={{ textDecoration: "none", color: 'black' }}>
-    <Box sx={{ width: '100%', bgcolor: '#FFFFFF', borderRadius: '10px', padding: "10px 0px 10px 0px", boxShadow: 5 }}>
+    <Box sx={{ width: '100%', bgcolor: '#FFFFFF', borderRadius: '10px', padding: "10px 0px 10px 0px", boxShadow: 5, "&:hover": {bgcolor: '#F8F8F8', boxShadow: 8} }}>
       <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
         <Grid container alignItems="center" >
 
