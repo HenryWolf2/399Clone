@@ -12,6 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Tags from '../components/individual-posts/tags';
 import ProfilePicture from '../components/individual-posts/profile';
 import Contributors from '../components/individual-posts/contributors';
+import EditPopup from '../components/individual-posts/editPost';
 
 export default function PostPage(props) {
 
@@ -23,6 +24,7 @@ export default function PostPage(props) {
   const [resultsId, setResultsID] = useState('')
   const [tags, setTags] = useState([])
   const [collaborators, setCollaborators] = useState([])
+  const [allData, setAllData] = useState([])
     
   useEffect(() => {
     window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
@@ -41,6 +43,7 @@ export default function PostPage(props) {
         setDate(new Date(res.data.post_time).toLocaleDateString())
         setCollaborators(res.data.collaborators)
         setTags(res.data.tags)
+        setAllData(res.data) 
       });
       } catch(e) {
         console.error(e)
@@ -55,7 +58,17 @@ export default function PostPage(props) {
   if (resultsId === "") {
     CheckedResultsId = 1
   }
-  console.log(collaborators)
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <div className="container">
       <NavigationBar />
@@ -80,6 +93,13 @@ export default function PostPage(props) {
 
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
               <Contributors collaborators = {collaborators} />
+          </Grid>
+
+          <Grid item sx={{margin: "0px 20px 0px 0px"}}>
+            <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={handleOpen}>
+              Edit Post
+            </Button>
+            <EditPopup open={open} setOpen={setOpen} handleClose={handleClose} allData={allData}/>
           </Grid>
         </Grid>
 

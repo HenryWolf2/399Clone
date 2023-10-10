@@ -719,6 +719,8 @@ def check_post_group(request):
             post_group = PostGroup.objects.get(post=post_id, group=group_id)
             if post_group:
                 return Response({'in_group': True}, status=status.HTTP_200_OK)
+            else:
+                return Response({'in_group': False}, status=status.HTTP_200_OK)
         except:
             return Response({'in_group': False}, status=status.HTTP_200_OK)
 
