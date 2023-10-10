@@ -166,6 +166,7 @@ const RegisterForm = () => {
                 type="submit"
                 size = "large"
                 variant="contained"
+                style={{ backgroundColor: '#02AEEC' }}
                 >
                 Create Account
                 </Button>
