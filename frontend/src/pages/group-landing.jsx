@@ -48,8 +48,8 @@ export default function Groups() {
           <GroupGrid group_array={userGroups} />
         </Box>
 
-        <Box sx={{width: "53%", height: "100vh", padding: "0% 1%", backgroundColor: "white"}}>
-            <h1 style={{textAlign: 'center'}}>Posts from the groups you've joined</h1>
+        <Box sx={{width: "53%", height: "100vh", padding: "0% 1%", backgroundColor: "white", overflow:'scroll'}}>
+            <h1 style={{textAlign: 'center'}}>Data from the groups you've joined</h1>
           <PostGrid narrow={true} post_array={postIDs} />    
         </Box>
 

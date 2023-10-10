@@ -52,11 +52,12 @@ function AccountDetails(props) {
     [] // <-- empty dependency array
   ) 
 
-  
   useEffect(() => {
     function checkZeroPosts() {
-      if (PublicPosts.length == 0) {
+      if (PublicPosts.length !== 0) {
         setZeroPosts(true);
+      } else {
+        setZeroPosts(false);
       }
     }
     checkZeroPosts();
@@ -129,6 +130,7 @@ function AccountDetails(props) {
     backgroundImage:`url(${instance.defaults.baseURL.replace("/api", "") + bannerImage})`,
     borderBottom: '3px solid white',
     backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
     backgroundPosition: 'top left',
     boxShadow: '0px 5px 5px rgba(0, 0, 0, 0.2)',
   };
@@ -177,8 +179,6 @@ function AccountDetails(props) {
     zIndex: 1,
   }
   */
-
-  console.log(zeroPosts);
 
   return (
     <div>
@@ -264,7 +264,7 @@ function AccountDetails(props) {
               <div style={{ flex: 1,borderRight: '1px solid grey', display: 'flex', overflow: 'auto'}}>
                 {/* Content for the left div */}
 
-                {zeroPosts ? (
+                {!zeroPosts ? (
                     <Box sx={{
                       display: 'flex', 
                       flexDirection: 'column', 
