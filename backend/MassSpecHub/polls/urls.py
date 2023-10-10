@@ -39,6 +39,6 @@ urlpatterns = [
     path('user/check_username', check_username, name='check_username'),
     path('post/check_group', check_post_group, name='check_post_group'),
     path('user/get_groups_for_post', get_groups_to_add_to_post, name='get_groups_to_add_to_post'),
-    path('groups/post/delete', remove_post_from_group, name='remove_post_from_group')
-    path('home/graph', get_graph_data_home, name='get_graph_data_home')
+    path('groups/post/delete', remove_post_from_group, name='remove_post_from_group'),
+    path('home/graph', get_graph_data_home, name='get_graph_data_home'),
 ]
