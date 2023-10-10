@@ -13,10 +13,10 @@ export default function CheckboxListSecondary(props) {
   const [checked, setChecked] = React.useState([1]);
   const [open, setOpen] = React.useState(false);
 
-  const memberObjectList = [];
+
   const [groupName, setGroupname] = useState('');
   const [memberList, setMemberList] = useState([]);
-  const [nameList, setNameList] = useState([]);
+  const [memberObjectList, setMemberObjectList] = useState([]);
 
   useEffect(() => {
     async function GetGroupInformation() {
@@ -47,7 +47,8 @@ export default function CheckboxListSecondary(props) {
         params: {user_id: id},      
       }).then((res) => {
         const username = res.data.username
-        const memberList = [username]
+        const profilePic = res.data.profile_pic
+        const memberList = [username, profilePic]
 
         return memberList
       });
@@ -65,7 +66,7 @@ export default function CheckboxListSecondary(props) {
         const memberInfo = await GetMemberInformation(id);
         memberObjectList.push(memberInfo);
       }
-      setNameList(memberObjectList.map(memberInfo => memberInfo[0]));
+      setMemberObjectList(memberObjectList.map(memberInfo => memberInfo));
     };
   
     fetchMemberInformation();
@@ -75,7 +76,6 @@ export default function CheckboxListSecondary(props) {
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
-
     if (currentIndex === -1) {
       newChecked.push(value);
     } else {
@@ -89,21 +89,21 @@ export default function CheckboxListSecondary(props) {
   return (
     
     <List dense sx={{ width: '100%', maxWidth: 700, bgcolor: 'background.paper' }}>
-      {nameList.map((value) => {
+      {memberObjectList.map((value) => {
         const labelId = `${value}`;
         return (
           <ListItem
-            key={value}
+            key={value[0]}
             disablePadding
           >
             <ListItemButton>
               <ListItemAvatar>
                 <Avatar
                   alt={`Avatar n°${value + 1}`}
-                  src={`/static/images/avatar/${value + 1}.jpg`}
+                  src={instance.defaults.baseURL.replace('/api', "") + value[1]}
                 />
               </ListItemAvatar>
-              <ListItemText id={labelId} primary={`${value}`} />
+              <ListItemText id={labelId} primary={`${value[0]}`} />
             </ListItemButton>
           </ListItem>
         );
