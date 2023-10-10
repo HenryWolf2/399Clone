@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import instance from '../components/api/api_instance';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 
 
@@ -18,6 +20,25 @@ export default function Home() {
   //   navigate("/profile");;
   // },[])
   const [PublicPosts, setPublicPosts] = useState([])
+  const BibTeX = `
+@article{Long2023adducthunter,
+title = {AdductHunter: Identifying Protein-Metal Complex Adducts in Mass Spectra},
+author = {Derek Long and Liam Eade and Katharina Dost and Samuel M Meier-Menches and David C Goldstone and Matthew P Sullivan and Christian Hartinger and J\\"{o}rg Wicker and Katerina Taskova},
+url = {https://adducthunter.wickerlab.org},
+doi = {10.21203/rs.3.rs-3322854/v1},
+year  = {2023},
+date = {2023-05-29},
+urldate = {2023-05-29},
+abstract = {Mass spectrometry (MS) is an analytical technique for molecule identification that can be used for investigating protein-metal complex interactions. Once the MS data is collected, the mass spectra are usually interpreted manually to identify the adducts formed which arise from the interactions between proteins and metal-based species. However, with increasing resolution, dataset size, and species complexity, the time required to identify adducts and the error-prone nature of manual assignment have become limiting factors in MS analysis. AdductHunter is an analysis tool to automate the peak identification process using constraint integer optimization to find feasible combinations of protein and fragments, and dynamic time warping to calculate the dissimilarity between the theoretical isotope pattern of a species and its experimental isotope peak distribution. Our results show fast and accurate identification of protein adducts to aid mass spectrometry analysis.},
+keywords = {cheminformatics, computational sustainability, data mining, dynamic time warping, machine learning, mass spectrometry},
+pubstate = {forthcoming},
+tppubtype = {article}
+}`;
+  const APA7 = "Derek Long, Liam Eade, Matthew P Sullivan et al. AdductHunter: Identifying Protein-Metal Complex Adducts in Mass Spectra, 05 September 2023, PREPRINT (Version 1) available at Research Square [https://doi.org/10.21203/rs.3.rs-3322854/v1]"
+  
+  const copyToClipBoard = () => {
+    navigator.clipboard.writeText("citation")
+  }
 
   useEffect(() => {
     async function GetPublicPostsIDs() {
@@ -46,7 +67,7 @@ export default function Home() {
             <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Information</h1>
           </div>
           <div style={{flex:1, flexDirection: 'row', height: '100%',}}>
-            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Trending Posts</h1>
+            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Public Posts</h1>
           </div>
       </div>
 
@@ -70,6 +91,58 @@ export default function Home() {
                 <p className= "landingText">
                   Don't miss out on this opportunity to join a vibrant community of mass spectrometry researchers. Register now and unlock the endless possibilities for collaboration, data sharing, and analysis on our platform. Together, let's push the boundaries of mass spectrometry research and make groundbreaking discoveries! 
                 </p>
+              </div>
+              <h1 style={{textAlign: 'center', color:'black'}}>BibTeX</h1>
+              <div className= "landing-desc-box">
+              <pre id = "BibTexPre" style= {{whiteSpace: 'pre-line'}}>
+                {`
+                @article{Long2023adducthunter,
+                  title = {AdductHunter: Identifying Protein-Metal Complex Adducts in Mass Spectra},
+                  author = {Derek Long and Liam Eade and Katharina Dost and Samuel M Meier-Menches 
+                  and David C Goldstone and Matthew P Sullivan and Christian Hartinger and Jörg Wicker and Katerina Taskova},
+                  url = {https://adducthunter.wickerlab.org},
+                  doi = {10.21203/rs.3.rs-3322854/v1},
+                  year  = {2023},
+                  date = {2023-05-29},
+                  urldate = {2023-05-29},
+                  abstract = {Mass spectrometry (MS) is an analytical technique for molecule identification that can be used for investigating protein-metal complex interactions. Once the MS data is collected, the mass spectra are usually interpreted manually to identify the adducts formed which arise from the interactions between proteins and metal-based species. However, with increasing resolution, dataset size, and
+                  species complexity, the time required to identify adducts and the error-prone nature of manual assignment have become limiting factors in MS analysis. AdductHunter is an analysis tool to automate the peak identification process using constraint integer optimization to find feasible combinations of protein and fragments, and dynamic time warping to calculate the dissimilarity between the theoretical isotope pattern of a species and its experimental isotope peak distribution. Our results show fast and accurate identification of protein adducts to aid mass spectrometry analysis.},
+                  keywords = {cheminformatics, computational sustainability, data mining, dynamic time warping, machine learning, mass spectrometry},
+                  pubstate = {forthcoming},
+                  tppubtype = {article}
+                }
+                `}
+              </pre>
+              <Button onClick={() => navigator.clipboard.writeText(BibTeX)}
+              sx={{ 
+                fontSize: '0.75rem', 
+                bgcolor: 'transparent', 
+                marginLeft: '-10px',
+                '&:hover': { 
+                  bgcolor: 'rgba(0, 0, 0, 0.04)', 
+                },
+              }}>Copy to Clipboard &nbsp;<ContentCopyIcon fontSize='inherit'/></Button>
+              
+
+              </div>
+
+              <h1 style={{textAlign: 'center', color:'black'}}>APA 7</h1>
+              
+              <div className= "landing-desc-box">
+              <pre style= {{whiteSpace: 'pre-line'}}>
+              {`
+              Derek Long, Liam Eade, Matthew P Sullivan et al. AdductHunter: Identifying Protein-Metal Complex Adducts in Mass Spectra, 05 September 2023, PREPRINT (Version 1) available at Research Square [https://doi.org/10.21203/rs.3.rs-3322854/v1]
+              `}  
+              </pre>
+              <Button onClick={() => navigator.clipboard.writeText(APA7)}
+              sx={{ 
+                fontSize: '0.75rem', 
+                bgcolor: 'transparent', 
+                marginLeft: '-10px',
+                '&:hover': { 
+                  bgcolor: 'rgba(0, 0, 0, 0.04)', 
+                },
+              }}>Copy to Clipboard &nbsp;<ContentCopyIcon fontSize='inherit'/></Button>
               </div>
             </Box>
           </div>
