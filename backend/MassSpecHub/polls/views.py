@@ -333,7 +333,7 @@ def search_post(request):
         posts = Post.objects.filter(title__contains=query) | Post.objects.filter(
             summary__contains=query) | Post.objects.filter(description__contains=query) | Post.objects.filter(
             author__username__contains=query)
-        posts = posts.values_list('id', flat=True).order_by('post_time')
+        posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
 
 
@@ -344,7 +344,7 @@ def search_post_by_tag(request):
         tags = request.query_params.getlist('query')
         if not tags:
             posts = Post.objects.order_by('post_time')
-            posts = posts.values_list('id', flat=True).order_by('post_time')
+            posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
             return Response(posts, status=status.HTTP_200_OK)
 
         posts = Post.objects.none()
