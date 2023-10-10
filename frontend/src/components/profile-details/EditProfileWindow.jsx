@@ -106,6 +106,7 @@ const handleProfileUpdate = async () => {
     <div>
       <Button
         sx={{ margin: 3.5, top: '250px', left: '25px' }}
+        style = {{backgroundColor: '#02AEEC' }}
         className="custom-button"
         variant="contained"
         onClick={handleOpen} // Use onClick here to open the modal
