@@ -278,6 +278,7 @@ def add_data(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_post_to_group(request):
     if request.method == 'POST':
         group_id = request.data.get('group_id')
@@ -298,6 +299,26 @@ def add_post_to_group(request):
                                 status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def remove_post_from_group(request):
+    if request.method == 'DELETE':
+        group_id = request.data.get('group_id')
+        post_id = request.data.get('post_id')
+        user = CustomUser.objects.get(id=request.user.id)
+        try:
+            group = Group.objects.get(id=group_id)
+            post = Post.objects.get(id=post_id)
+        except ObjectDoesNotExist:
+            return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
+            group.posts.remove(post)
+            return Response({'message': f'Post {post.title} removed from group {group.name}.'},
+                            status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'User does not have permission to remove post from group'},
+                            status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['GET'])
