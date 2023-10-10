@@ -146,7 +146,7 @@ tppubtype = {article}
               </div>
             </Box>
           </div>
-          <div className= "landing-post-container" style= {{flex: 1, marginTop: "20px", marginBottom:"20px", marginLeft:"60px", marginRight:"60px" }}>
+          <div className= "landing-post-container" style= {{flex: 1, marginTop: "20px", marginBottom:"20px", marginLeft:"60px", marginRight:"60px", padding: "10px"}}>
             <PostGrid narrow={true} post_array={PublicPosts} />
           </div>
         </div>

@@ -631,7 +631,7 @@ const PostForm = () => {
                 />
                 </div>
                 <h6>Preview your analysis here</h6>
-                  <Box sx={{ width: '100%', bgcolor: '#D9D9D9', borderRadius: '10px', padding: "10px 0px 10px 0px" }}>
+                  <Box sx={{ width: '100%', bgcolor: '#FFFFFF', borderRadius: '10px', padding: "10px 0px 10px 0px", boxShadow: 5 }}>
                     <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
                       <Grid container alignItems="center" >
 
