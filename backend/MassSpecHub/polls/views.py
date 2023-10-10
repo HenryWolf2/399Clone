@@ -540,20 +540,23 @@ def get_graph_data(request):
 def get_group_info(request):
     if request.method == 'GET':
         group_id = request.query_params.get('group_id')
-        group = Group.objects.get(id=group_id)
-        group_data = {}
-        group_data['name'] = group.name
-        group_data['description'] = group.description
-        group_data['group_pic'] = group.group_pic.url
-        group_data['posts'] = group.posts.values_list('id', flat=True)
-        group_data['members'] = UserGroup.objects.filter(group=group_id,
+        try:
+            group = Group.objects.get(id=group_id)
+            group_data = {}
+            group_data['name'] = group.name
+            group_data['description'] = group.description
+            group_data['group_pic'] = group.group_pic.url
+            group_data['posts'] = group.posts.values_list('id', flat=True)
+            group_data['members'] = UserGroup.objects.filter(group=group_id,
                                                               permissions__in=['admin', 'poster', 'viewer']).values_list('user', 'permissions')
-        group_data['created'] = group.created
-        user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
-        group_data['user_permission'] = user_permission
-        if user_permission == 'admin':
-            group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
-                'user', flat=True)
+            group_data['created'] = group.created
+            user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
+            group_data['user_permission'] = user_permission
+            if user_permission == 'admin':
+                group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
+                    'user', flat=True)
+        except:
+            return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(group_data, status=status.HTTP_200_OK)
 
