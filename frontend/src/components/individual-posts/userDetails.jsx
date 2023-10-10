@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 
 export default function UserDetails(user_id) {
   const [user, setUser] = useState([])
-  console.log(user_id)
   useEffect(() => {
     async function GetIndividualInformation() {
       try{ 

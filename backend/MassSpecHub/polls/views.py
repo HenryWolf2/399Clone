@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup
+from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup, PostGroup
 from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
@@ -280,6 +280,7 @@ def add_data(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_post_to_group(request):
     if request.method == 'POST':
         group_id = request.data.get('group_id')
@@ -300,6 +301,26 @@ def add_post_to_group(request):
                                 status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def remove_post_from_group(request):
+    if request.method == 'DELETE':
+        group_id = request.data.get('group_id')
+        post_id = request.data.get('post_id')
+        user = CustomUser.objects.get(id=request.user.id)
+        try:
+            group = Group.objects.get(id=group_id)
+            post = Post.objects.get(id=post_id)
+        except ObjectDoesNotExist:
+            return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
+            group.posts.remove(post)
+            return Response({'message': f'Post {post.title} removed from group {group.name}.'},
+                            status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'User does not have permission to remove post from group'},
+                            status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['GET'])
@@ -729,3 +750,27 @@ def check_username(request):
             return Response({'user_id': user.id}, status=status.HTTP_200_OK)
         except:
             return Response({'user_id': -1}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_post_group(request):
+    if request.method == 'GET':
+        post_id = request.query_params.get('post_id')
+        group_id = request.query_params.get('group_id')
+        try:
+            post_group = PostGroup.objects.get(post=post_id, group=group_id)
+            if post_group:
+                return Response({'in_group': True}, status=status.HTTP_200_OK)
+            else:
+                return Response({'in_group': False}, status=status.HTTP_200_OK)
+        except:
+            return Response({'in_group': False}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_groups_to_add_to_post(request):
+    if request.method == 'GET':
+        user = CustomUser.objects.get(id=request.user.id)
+        groups = user.groups.filter(permissions__in=['admin', 'poster'])
+        groups = groups.values_list('id', flat=True)
+        return Response(groups, status=status.HTTP_200_OK)
