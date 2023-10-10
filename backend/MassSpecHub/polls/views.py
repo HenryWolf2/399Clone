@@ -543,6 +543,7 @@ def get_group_info(request):
         try:
             group = Group.objects.get(id=group_id)
             group_data = {}
+            group_data['current_user_id'] = request.user.id
             group_data['name'] = group.name
             group_data['description'] = group.description
             group_data['group_pic'] = group.group_pic.url

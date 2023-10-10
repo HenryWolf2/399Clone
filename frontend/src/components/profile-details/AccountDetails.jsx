@@ -10,6 +10,8 @@ import Box from '@mui/material/Box';
 import Image from './template-banner.jpg';
 import TextField from '@mui/material/TextField';
 import ReactMarkdown from 'react-markdown';
+import { Typography } from '@mui/material';
+import { NavLink } from 'react-router-dom';
 
 function AccountDetails(props) {
 
@@ -23,8 +25,8 @@ function AccountDetails(props) {
   const [bannerImage, setBannerImage] = useState('');
   const [notepad, setNotepad] = useState('');
   const [profileImage, setProfileImage] = useState('');
+  const [zeroPosts, setZeroPosts] = useState(false);
   
-
   useEffect(() => {
     async function GetProfileInformation() {
       try{ 
@@ -49,6 +51,16 @@ function AccountDetails(props) {
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   ) 
+
+  
+  useEffect(() => {
+    function checkZeroPosts() {
+      if (PublicPosts.length == 0) {
+        setZeroPosts(true);
+      }
+    }
+    checkZeroPosts();
+  })
 
   {/* Handle Notepad Functionality */}
 
@@ -166,6 +178,7 @@ function AccountDetails(props) {
   }
   */
 
+  console.log(zeroPosts);
 
   return (
     <div>
@@ -251,9 +264,29 @@ function AccountDetails(props) {
               <div style={{ flex: 1,borderRight: '1px solid grey', display: 'flex', overflow: 'auto'}}>
                 {/* Content for the left div */}
 
-                <Box sx={{ flexGrow: 1, width: "48.5%", padding: "5%" }}>
+                {zeroPosts ? (
+                    <Box sx={{
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      justifyContent: 'center', 
+                      alignItems: 'center', 
+                      flexGrow: 1, 
+                      width: "48.5%", 
+                      padding: "5%", 
+                      backgroundColor:'#35CFFF'
+                    }}>
+                      <Typography id="modal-modal-title" variant="h6" component="h2" sx={{textAlign: 'center', fontWeight: 'bold', fontSize: '30px', color: 'white'}}>
+                  You have no posts yet
+                </Typography>   
+                <NavLink to="/create-post" style={{ textDecoration: 'none'}}>
+                <Button variant="contained">Create Post</Button>
+                </NavLink>
+                  </Box>
+                ) : (
+                  <Box sx={{ flexGrow: 1, width: "48.5%", padding: "5%" }}>
                   <PostGrid narrow={true} post_array={PublicPosts} />    
                 </Box>
+                )}
 
               </div>
               

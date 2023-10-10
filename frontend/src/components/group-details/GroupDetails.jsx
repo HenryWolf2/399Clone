@@ -7,6 +7,7 @@ import GroupBar from '../profile-details/GroupBar';
 import instance from '../api/api_instance';
 import PermsCard from './PermsCard';
 import MemberCard from './MemberCard';
+import { Typography } from '@mui/material';
 
 function GroupDetails(props) {
   const [minimized, setMinimized] = useState(false);
@@ -25,7 +26,20 @@ function GroupDetails(props) {
   const [postCount, setPostCount] = useState('')
   const [creationDate, setCreationDate] = useState('')
   const [userPermission, setUserPermission] = useState('')
+  const [memberInGroup, setMemberinGroup] = React.useState(false);
+  const [inGroupText, setInGroupText] = useState('Request Group Membership');
+  const [loggedInId, setLoggedInId] = useState('');
   // Still need to organize user perms
+
+  useEffect(() => {
+    function updatePermissionView() {
+      if(userPermission == "admin" || userPermission == "viewer" || userPermission == "poster") {
+        setMemberinGroup(true)
+        setInGroupText("Permissions")
+      }
+    }
+    updatePermissionView();
+  })
 
   useEffect(() => {
     async function GetGroupInformation() {
@@ -35,6 +49,7 @@ function GroupDetails(props) {
           method: "GET",
           params: {group_id: props.group_id},       
       }).then((res) => {
+        setLoggedInId(res.data.current_user_id)
         setGroupname(res.data.name)
         setDescription(res.data.description)
         setBanner(res.data.group_pic)
@@ -54,6 +69,26 @@ function GroupDetails(props) {
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   ) 
+
+  const registerUser = async (userId, groupId, permission) => {
+    const data = {
+      user_id: userId,
+      group_id: groupId,
+      permissions: permission,
+    };
+  
+    try {
+      await instance.post('users/assign_groups', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Include your authentication tokens in the headers if needed
+        },
+      });
+      console.log('User Registered successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
 
   const divStyle = {
@@ -121,6 +156,7 @@ function GroupDetails(props) {
     marginRight: '15px',
   }
 
+  console.log(userPermission);
 
 
   return (
@@ -203,10 +239,15 @@ function GroupDetails(props) {
           <p style={{fontSize: '15px', color: 'white', fontWeight: 'bold', textAlign:'left', marginLeft:'5px', marginTop: '5px'}}>Status: {userPermission}</p>
           </div>
 
-          <h1 style={{color: 'white', marginTop: '10px'}}> Permissions </h1>
+          <h1 style={{color: 'white', marginTop: '10px'}}> {inGroupText} </h1>
           <div style={{overflowY: 'scroll', backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
 
+          {!memberInGroup ? ( 
+            <Button variant='contained' sx={{width: '100%', height:'100%'}} onClick={() => registerUser(loggedInId, props.group_id, "viewer")}>Request Access</Button>
+          ) : ( 
             <PermsCard group_id={props.group_id}/>
+          )}
+            
           </div>
           
       </div>
