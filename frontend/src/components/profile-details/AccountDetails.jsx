@@ -63,8 +63,6 @@ function AccountDetails(props) {
     const formData = new FormData();
     formData.append('notepad', notepad);
   
-    console.log(formData);
-  
     try{
       await instance.post('/profile/notepad', formData, {
         headers: {

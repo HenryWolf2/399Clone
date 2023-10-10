@@ -24,6 +24,7 @@ function GroupDetails(props) {
   const [memberCount, setMemberCount] = useState('')
   const [postCount, setPostCount] = useState('')
   const [creationDate, setCreationDate] = useState('')
+  const [userPermission, setUserPermission] = useState('')
   // Still need to organize user perms
 
   useEffect(() => {
@@ -41,6 +42,7 @@ function GroupDetails(props) {
         setMemberCount(res.data.members.length)
         setPostCount(res.data.posts.length)
         setCreationDate(new Date(res.data.created).toLocaleDateString())
+        setUserPermission(res.data.user_permission)
         //Need to define perms
 
       });
@@ -167,7 +169,7 @@ function GroupDetails(props) {
           <div style={{display: 'flex', marginTop: '-40px', color: 'white', fontSize: '14px'}}>
             <h1 style={{marginRight: '15px'}}>{creationDate}</h1>
           </div>
-          <hr style={{width:'250px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
+          <hr style={{width:'200px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
 
         </div>
 
@@ -198,7 +200,7 @@ function GroupDetails(props) {
           alignItems: 'center',
         }}>
           <div style={{width: '100%', marginBottom: '-15px'}}>
-          <p style={{fontSize: '15px', color: 'white', fontWeight: 'bold', textAlign:'left', marginLeft:'5px', marginTop: '5px'}}>Status: ADMIN</p>
+          <p style={{fontSize: '15px', color: 'white', fontWeight: 'bold', textAlign:'left', marginLeft:'5px', marginTop: '5px'}}>Status: {userPermission}</p>
           </div>
 
           <h1 style={{color: 'white', marginTop: '10px'}}> Permissions </h1>
