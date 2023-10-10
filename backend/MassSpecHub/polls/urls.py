@@ -1,7 +1,7 @@
 from django.urls import path
 
 
-from .views import check_post_group, check_username, register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, search_post_by_tag, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_graph_data, get_group_landing_info, get_group_by_id, get_group_info, get_user_profile_info, edit_notepad, get_citation, get_all_groups_by_id, update_group_perms, get_config, edit_analysis, get_all_post_ids,get_all_tags
+from .views import get_groups_to_add_to_post,check_post_group, check_username, register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, search_post_by_tag, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_graph_data, get_group_landing_info, get_group_by_id, get_group_info, get_user_profile_info, edit_notepad, get_citation, get_all_groups_by_id, update_group_perms, get_config, edit_analysis, get_all_post_ids,get_all_tags
 
 urlpatterns = [
     path('register/', register_user, name='register'),
@@ -38,5 +38,6 @@ urlpatterns = [
     path('post/get/config', get_config, name='edit_analysis'),
     path('post/edit/config', edit_analysis, name='get_config'),
     path('user/check_username', check_username, name='check_username'),
-    path('post/check_group', check_post_group, name='check_post_group')
+    path('post/check_group', check_post_group, name='check_post_group'),
+    path('user/get_groups_for_post', get_groups_to_add_to_post, name='get_groups_to_add_to_post')
 ]

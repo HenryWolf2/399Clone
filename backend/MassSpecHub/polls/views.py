@@ -700,3 +700,12 @@ def check_post_group(request):
                 return Response({'in_group': True}, status=status.HTTP_200_OK)
         except:
             return Response({'in_group': False}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_groups_to_add_to_post(request):
+    if request.method == 'GET':
+        user = CustomUser.objects.get(id=request.user.id)
+        groups = user.groups.filter(permissions__in=['admin', 'poster'])
+        groups = groups.values_list('id', flat=True)
+        return Response(groups, status=status.HTTP_200_OK)
