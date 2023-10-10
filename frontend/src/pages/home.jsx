@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
-import PublicNavigationBar from '../components/PublicNavigationBar';
 import PostGrid from '../components/individual-posts/postgrid';
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
