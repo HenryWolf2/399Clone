@@ -112,7 +112,7 @@ export default function PostPage(props) {
             <EditPopup open={open} setOpen={setOpen} handleClose={handleClose} allData={allData}/>
           </Grid>
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
-            <Button variant="contained" onClick={handleOpenCitation}>
+            <Button variant="contained" onClick={handleOpenCitation} style={{ backgroundColor: '#02AEEC' }}>
               Cite
             </Button>
             
