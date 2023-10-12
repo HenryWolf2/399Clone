@@ -793,5 +793,5 @@ def get_groups_to_add_to_post(request):
 @permission_classes([IsAuthenticated])
 def get_trending_posts(request):
     if request.method == 'GET':
-        posts = Post.objects.order_by('-interactions').values_list('id', flat=True)
+        posts = Post.objects.filter(publicity=True).order_by('-interactions').values_list('id', flat=True)
         return Response(posts, status=status.HTTP_200_OK)
