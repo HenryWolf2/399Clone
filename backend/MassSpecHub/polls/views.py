@@ -391,6 +391,8 @@ def get_post_by_id(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
+        post.interactions += 1
+        post.save()
         serializer = PostSerializer(post)
         data = serializer.data
         data['tags'] = post.tags.values_list('name', flat=True)
@@ -650,6 +652,8 @@ def get_citation(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
+        post.interactions += 5
+        post.save()
         citation_type = request.query_params.get('citation')
         current_date = datetime.now()
         if citation_type == 'BibTeX':
@@ -784,3 +788,10 @@ def get_groups_to_add_to_post(request):
         groups = user.groups.filter(permissions__in=['admin', 'poster'])
         groups = groups.values_list('id', flat=True)
         return Response(groups, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_trending_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.filter(publicity=True).order_by('-interactions').values_list('id', flat=True)
+        return Response(posts, status=status.HTTP_200_OK)
