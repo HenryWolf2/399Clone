@@ -78,6 +78,7 @@ class Post(models.Model):
     associated_results = models.OneToOneField('PostAnalysis', on_delete=models.CASCADE, null=True)
     post_pic = models.ImageField(upload_to='post_pics', default='default.png')
     collaborators = models.ManyToManyField(to='CustomUser', related_name='collaborators', through='CollaboratorPost')
+    interactions = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'Post'
