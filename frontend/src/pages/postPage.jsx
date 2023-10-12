@@ -83,7 +83,7 @@ export default function PostPage(props) {
     <div className="container">
       <NavigationBar />
 
-      <Box sx={{ width: '80%', bgcolor: '#D9D9D9', borderRadius: '10px', padding: "10px 0px 10px 0px", marginLeft: "10%", marginTop: "2%" }}>
+      <Box sx={{ width: '80%', bgcolor: '#FFFFFF', borderRadius: '10px', padding: "10px 0px 10px 0px", marginLeft: "10%", marginTop: "2%", boxShadow: 5, marginBottom: '2%' }}>
         <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
 
         <Grid container alignItems="center" >
