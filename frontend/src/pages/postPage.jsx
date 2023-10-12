@@ -113,7 +113,7 @@ export default function PostPage(props) {
           </Grid>
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
             <Button variant="contained" onClick={handleOpenCitation} style={{ backgroundColor: '#02AEEC' }}>
-              Cite
+              Cite Post
             </Button>
             
             <PostCitation openCitation={openCitation} handleCloseCitation={handleCloseCitation}post_id={props.post_id}/>
