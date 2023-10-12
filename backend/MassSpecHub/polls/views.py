@@ -391,8 +391,6 @@ def get_post_by_id(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
-        post.interactions += 1
-        post.save()
         serializer = PostSerializer(post)
         data = serializer.data
         data['tags'] = post.tags.values_list('name', flat=True)
@@ -526,6 +524,8 @@ def get_graph_data(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
+        post.interactions += 1
+        post.save()
         analysis = post.associated_results
         linked_analysis = post.associated_results.result_df
         data_id = analysis.data_input_id
