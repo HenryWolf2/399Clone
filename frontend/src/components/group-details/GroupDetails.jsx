@@ -8,6 +8,7 @@ import instance from '../api/api_instance';
 import PermsCard from './PermsCard';
 import MemberCard from './MemberCard';
 import { Typography } from '@mui/material';
+import EditGroupWindow from './EditGroupWindow';
 
 function GroupDetails(props) {
   const [minimized, setMinimized] = useState(false);
@@ -29,7 +30,18 @@ function GroupDetails(props) {
   const [memberInGroup, setMemberinGroup] = React.useState(false);
   const [inGroupText, setInGroupText] = useState('Request Group Membership');
   const [loggedInId, setLoggedInId] = useState('');
+
+  const [isAdmin, setIsAdmin] = React.useState(false);
   // Still need to organize user perms
+
+  function checkAdmin() {
+    console.log(userPermission);
+    if(userPermission == 'admin') {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }
 
   useEffect(() => {
     function updatePermissionView() {
@@ -58,7 +70,10 @@ function GroupDetails(props) {
         setPostCount(res.data.posts.length)
         setCreationDate(new Date(res.data.created).toLocaleDateString())
         setUserPermission(res.data.user_permission)
-        //Need to define perms
+        const currentUserPerm = res.data.user_permission
+        if (currentUserPerm == 'admin') {
+          setIsAdmin(true)
+        }
 
       });
       } catch(e) {
@@ -69,6 +84,7 @@ function GroupDetails(props) {
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   ) 
+
 
   const registerUser = async (userId, groupId, permission) => {
     const data = {
@@ -115,8 +131,8 @@ function GroupDetails(props) {
     fontSize: '40px',
     marginRight:'10px',
     textAlign: 'right',
-    width: '50px',
-    height: '60px',
+    width: '10%',
+    height: '15%',
   }
 
   const expandButton = {
@@ -156,7 +172,6 @@ function GroupDetails(props) {
     marginRight: '15px',
   }
 
-  console.log(userPermission);
 
 
   return (
@@ -181,6 +196,12 @@ function GroupDetails(props) {
       
 
           <div style={overlayStyleExpanded}>
+
+          {!isAdmin ? ( 
+              <div></div>
+          ) : ( 
+            <EditGroupWindow group_id={props.group_id}></EditGroupWindow>
+          )}
             <h1 style={{color: 'white', marginTop: '50px'}}>{groupname}</h1>
             <div style={{display: 'flex', marginTop: '-40px', color: 'white', fontSize: '14px'}}>
               <h1 style={{marginRight: '15px'}}>{creationDate}</h1>
