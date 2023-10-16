@@ -5,16 +5,16 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 
 
-export default function PostGraph(props) {
+export default function HomeGraph() {
   const [results_df, setResults_df] = useState({})
 
   useEffect(() => {
     async function GetAnalysis() {
       try{ 
         await instance ({
-          url: "post/get/graph_data",
+          url: "home/graph",
           method: "GET",
-          params: {post_id: props.post_id}
+          params: {post_id: 1}
       }).then((res) => {
         setResults_df(res.data.all_points);
       });

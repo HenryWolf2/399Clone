@@ -10,7 +10,7 @@ import './/../assets/styles/global.css';
 import Link from '@mui/material';
 
 export default function Groups() {
-    const [postIDs, setPostIDs] = useState([9])
+    const [postIDs, setPostIDs] = useState([])
     const [userGroups, setUserGroups] = useState([])
     const [recommendGroups, setRecommendGroups] = useState([])
     
@@ -44,17 +44,17 @@ export default function Groups() {
       <NavigationBar />
       <Box sx={{width: '100%', display: 'flex' }}>
         <Box sx={{width: "22%", height: "100vh", padding: "0% 1%", backgroundColor: "#09A9EC"}}>
-          <h1 style={{textAlign: 'center'}}>Your Groups</h1>
+          <h1 style={{textAlign: 'center', color:'white'}}>Your Groups</h1>
           <GroupGrid group_array={userGroups} />
         </Box>
 
-        <Box sx={{width: "53%", height: "100vh", padding: "0% 1%", backgroundColor: "white"}}>
-          <h1 style={{textAlign: 'center'}}>Posts from the groups you've joined</h1>
+        <Box sx={{width: "53%", height: "100vh", padding: "0% 1%", backgroundColor: "white", overflow:'scroll'}}>
+            <h1 style={{textAlign: 'center'}}>Data from the groups you've joined</h1>
           <PostGrid narrow={true} post_array={postIDs} />    
         </Box>
 
         <Box sx={{width: "22%", height: "100vh", padding: "0% 1%", backgroundColor: "#09A9EC"}}>
-          <h1 style={{textAlign: 'center'}}>Suggested Groups</h1> 
+          <h1 style={{textAlign: 'center', color:'white'}}>Suggested Groups</h1> 
           <GroupGrid group_array={recommendGroups} />
         </Box>
       </Box>

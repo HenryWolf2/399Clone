@@ -148,6 +148,10 @@
     color: #02AEEC;
 }
 
+.Margin-top{
+    margin-top: 10px;
+}
+
 .Grid-container{
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -278,7 +282,6 @@ h6 {
 .landing-post-container{
     flex: 1;
     display: 'flex';
-    flexDirection: 'row';
     height: '100%';
     overflow: scroll;
 }
@@ -290,4 +293,16 @@ h6 {
 .group-landing-image {
     height: 50px;
     width: 50px;
+}
+
+.circle-container{
+    height: 70vh;
+    margin: 11vh;
+    vertical-align: middle;
+    display: flex;
+    flex-direction: column;
+}
+.scroll-Button{
+    background: none;
+    border: none;
 }

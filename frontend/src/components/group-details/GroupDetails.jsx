@@ -5,6 +5,9 @@ import Button from '@mui/material/Button';
 import '../../assets/styles/global.css';
 import GroupBar from '../profile-details/GroupBar';
 import instance from '../api/api_instance';
+import PermsCard from './PermsCard';
+import MemberCard from './MemberCard';
+import { Typography } from '@mui/material';
 
 function GroupDetails(props) {
   const [minimized, setMinimized] = useState(false);
@@ -22,7 +25,21 @@ function GroupDetails(props) {
   const [memberCount, setMemberCount] = useState('')
   const [postCount, setPostCount] = useState('')
   const [creationDate, setCreationDate] = useState('')
+  const [userPermission, setUserPermission] = useState('')
+  const [memberInGroup, setMemberinGroup] = React.useState(false);
+  const [inGroupText, setInGroupText] = useState('Request Group Membership');
+  const [loggedInId, setLoggedInId] = useState('');
   // Still need to organize user perms
+
+  useEffect(() => {
+    function updatePermissionView() {
+      if(userPermission == "admin" || userPermission == "viewer" || userPermission == "poster") {
+        setMemberinGroup(true)
+        setInGroupText("Permissions")
+      }
+    }
+    updatePermissionView();
+  })
 
   useEffect(() => {
     async function GetGroupInformation() {
@@ -32,14 +49,17 @@ function GroupDetails(props) {
           method: "GET",
           params: {group_id: props.group_id},       
       }).then((res) => {
+        setLoggedInId(res.data.current_user_id)
         setGroupname(res.data.name)
         setDescription(res.data.description)
         setBanner(res.data.group_pic)
         setGroupPosts(res.data.posts)
-        setMemberCount(res.data.member_count)
-        setPostCount(res.data.post_count)
+        setMemberCount(res.data.members.length)
+        setPostCount(res.data.posts.length)
         setCreationDate(new Date(res.data.created).toLocaleDateString())
+        setUserPermission(res.data.user_permission)
         //Need to define perms
+
       });
       } catch(e) {
         console.error(e)
@@ -49,6 +69,26 @@ function GroupDetails(props) {
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   ) 
+
+  const registerUser = async (userId, groupId, permission) => {
+    const data = {
+      user_id: userId,
+      group_id: groupId,
+      permissions: permission,
+    };
+  
+    try {
+      await instance.post('users/assign_groups', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Include your authentication tokens in the headers if needed
+        },
+      });
+      console.log('User Registered successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
 
   const divStyle = {
@@ -61,7 +101,7 @@ function GroupDetails(props) {
     height: '250px',
     display: 'flex',
     flexDirection: 'column',
-    backgroundImage: `url(${Banner})`,
+    backgroundImage: `url(${instance.defaults.baseURL.replace("/api", "") + banner})`,
     borderBottom: '3px solid white',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
@@ -92,7 +132,8 @@ function GroupDetails(props) {
     position: 'relative',
     alignItems: 'center',
     width: '500px',
-    marginRight: '20px',
+    marginRight: '0px',
+    marginLeft: '20px',
     height: '400px',
     display: minimized ? 'none' : 'inline',
   }
@@ -102,7 +143,6 @@ function GroupDetails(props) {
     display: 'flex',
     alignItems: 'right',
     width: '56%',
-    marginRight: '40px',
     height: 'auto',
     display: minimized ? 'inline' : 'none',
   }
@@ -116,6 +156,7 @@ function GroupDetails(props) {
     marginRight: '15px',
   }
 
+  console.log(userPermission);
 
 
   return (
@@ -146,7 +187,7 @@ function GroupDetails(props) {
             </div>
             <hr style={{width:'400px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
             <div style={{display: 'flex', marginTop: '-20px', color: 'white', fontSize: '14px'}}>
-              <h1 style={{marginRight: '15px'}}>{memberCount} Members</h1>
+              <h1 style={{marginRight: '15px'}}><MemberCard group_id={props.group_id} member_count={memberCount}/></h1>
               <span style={circleDot}></span>
               <h1>{postCount} Posts</h1>
             </div>
@@ -164,7 +205,7 @@ function GroupDetails(props) {
           <div style={{display: 'flex', marginTop: '-40px', color: 'white', fontSize: '14px'}}>
             <h1 style={{marginRight: '15px'}}>{creationDate}</h1>
           </div>
-          <hr style={{width:'250px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
+          <hr style={{width:'200px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
 
         </div>
 
@@ -184,6 +225,7 @@ function GroupDetails(props) {
       )}
 
 
+
       </div>
 
       <div style={{
@@ -194,13 +236,18 @@ function GroupDetails(props) {
           alignItems: 'center',
         }}>
           <div style={{width: '100%', marginBottom: '-15px'}}>
-          <p style={{fontSize: '15px', color: 'white', fontWeight: 'bold', textAlign:'left', marginLeft:'5px', marginTop: '5px'}}>Status: ADMIN</p>
+          <p style={{fontSize: '15px', color: 'white', fontWeight: 'bold', textAlign:'left', marginLeft:'5px', marginTop: '5px'}}>Status: {userPermission}</p>
           </div>
 
-          <h1 style={{color: 'white', marginTop: '10px'}}> Permissions </h1>
-          <div style={{backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
+          <h1 style={{color: 'white', marginTop: '10px'}}> {inGroupText} </h1>
+          <div style={{overflowY: 'scroll', backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
 
-
+          {!memberInGroup ? ( 
+            <Button variant='contained' sx={{width: '100%', height:'100%'}} onClick={() => registerUser(loggedInId, props.group_id, "viewer")}>Request Access</Button>
+          ) : ( 
+            <PermsCard group_id={props.group_id}/>
+          )}
+            
           </div>
           
       </div>

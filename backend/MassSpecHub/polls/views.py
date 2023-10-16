@@ -9,14 +9,16 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup
+from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup, PostGroup
 from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
 import math
 from datetime import datetime
-from bibtexparser.bibdatabase import BibDatabase
 import bibtexparser
+from bibtexparser.bibdatabase import BibDatabase
+
+
 
 @api_view(['POST'])
 def register_user(request):
@@ -88,6 +90,7 @@ def edit_profile(request):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def edit_notepad(request):
@@ -121,13 +124,20 @@ def create_post(request):
             serializer.save()
 
             post = Post.objects.get(id=serializer.instance.id)
-            for tag_name in request.POST.getlist('tags'):
+            for tag_name in json.loads(request.data.get('tags')):
                 try:
                     tag = Tag.objects.get(name=tag_name)
                 except ObjectDoesNotExist:
                     tag = Tag.objects.create(name=tag_name)
                 post.tags.add(tag)
-            
+            post.collaborators.clear()
+            print(request.data.get('collaborators'))
+            for collaborator in json.loads(request.data.get('collaborators')):
+                try:
+                    user = CustomUser.objects.get(id=collaborator)
+                    post.collaborators.add(user)
+                except:
+                    return Response({'error': f'User {collaborator} not found'}, status=status.HTTP_404_NOT_FOUND)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -181,6 +191,7 @@ def get_all_groups_by_id(request):
         groups = Group.objects.values_list('id', flat=True).order_by('created')
         return Response(groups, status=status.HTTP_200_OK)
 
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def update_group_perms(request):
@@ -191,7 +202,8 @@ def update_group_perms(request):
         if not permissions:
             return Response({'message': 'No permissions added'}, status=status.HTTP_400_BAD_REQUEST)
         if permissions not in ['admin', 'poster', 'viewer', 'requested']:
-            return Response({'message': f'Permission {permissions} is not a valid permission'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': f'Permission {permissions} is not a valid permission'},
+                            status=status.HTTP_400_BAD_REQUEST)
         group = Group.objects.get(id=group_id)
         user = CustomUser.objects.get(id=user_id)
         try:
@@ -200,7 +212,8 @@ def update_group_perms(request):
             return Response({'message': f'User {user.username} not in {group.name}'})
         usergroup.permissions = permissions
         usergroup.save()
-        return Response({'message': f'Permissions {permissions} added to user {user.username}.'}, status=status.HTTP_200_OK)
+        return Response({'message': f'Permissions {permissions} added to user {user.username}.'},
+                        status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -226,7 +239,7 @@ def add_data(request):
     if request.method == 'POST':
         data = copy.deepcopy(request.data)
         data_fields = {'compounds_file': data['compounds_file'], 'bounds_file': data['bounds_file'],
-                       'adducts_file': data['adducts_file'], 'data_publicity': True}
+                       'adducts_file': data['adducts_file'], 'data_publicity': data['data_publicity']}
         serializer = DataSerializer(data=data_fields)
         if serializer.is_valid():
             serializer.save()
@@ -243,6 +256,7 @@ def add_data(request):
             max_primaries = request.data.get('max_primaries')
             max_adducts = request.data.get('max_adducts')
             valence = request.data.get('valence')
+            manual_calibration = request.data.get('manual_calibration')
             analysis_results = binding_site_search.search(bounds_file, compounds_file, adducts_file,
                                                           tolerance=tolerance, peak_height=peak_height,
                                                           multi_protein=multi_protein,
@@ -251,7 +265,11 @@ def add_data(request):
                                                           calibrate=calibrate)
             json_df = analysis_results.to_json(orient='split', index=False)
             json_df = json.loads(json_df)
-            analysis_data = {'result_df': json_df, 'data_input': data.id}
+            analysis_data = {'result_df': json_df, 'data_input': data.id, 'tolerance': tolerance,
+                             'peak_height': peak_height, 'multi_protein': multi_protein, 'only_best': only_best,
+                             'min_primaries': min_primaries, 'max_primaries': max_primaries, 'valence': valence,
+                             'calibrate': calibrate, 'max_adducts': max_adducts,
+                             'manual_calibration': manual_calibration}
             analysis_serializer = PostAnalysisSerializer(data=analysis_data)
             if analysis_serializer.is_valid():
                 analysis_serializer.save()
@@ -262,6 +280,7 @@ def add_data(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_post_to_group(request):
     if request.method == 'POST':
         group_id = request.data.get('group_id')
@@ -283,6 +302,26 @@ def add_post_to_group(request):
         else:
             return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def remove_post_from_group(request):
+    if request.method == 'DELETE':
+        group_id = request.data.get('group_id')
+        post_id = request.data.get('post_id')
+        user = CustomUser.objects.get(id=request.user.id)
+        try:
+            group = Group.objects.get(id=group_id)
+            post = Post.objects.get(id=post_id)
+        except ObjectDoesNotExist:
+            return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
+            group.posts.remove(post)
+            return Response({'message': f'Post {post.title} removed from group {group.name}.'},
+                            status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'User does not have permission to remove post from group'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -294,7 +333,7 @@ def search_post(request):
         posts = Post.objects.filter(title__contains=query) | Post.objects.filter(
             summary__contains=query) | Post.objects.filter(description__contains=query) | Post.objects.filter(
             author__username__contains=query)
-        posts = posts.values_list('id', flat=True).order_by('post_time')
+        posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
 
 
@@ -302,12 +341,29 @@ def search_post(request):
 @permission_classes([IsAuthenticated])
 def search_post_by_tag(request):
     if request.method == 'GET':
-        query = request.query_params.get('query')
-        if not query:
-            return Response({'error': f'Tag {query} not found.'}, status=status.HTTP_404_NOT_FOUND)
-        posts = Post.objects.filter(tags__name__contains=query)
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        tags = request.query_params.getlist('query')
+        if not tags:
+            posts = Post.objects.order_by('post_time')
+            posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+            return Response(posts, status=status.HTTP_200_OK)
+
+        posts = Post.objects.none()
+        for tag in tags:
+            posts |= Post.objects.filter(tags__name__exact=tag)
+
+        if not posts:
+            return Response({'error': 'No posts found for the provided tags.'}, status=status.HTTP_404_NOT_FOUND)
+
+        posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_tags(request):
+    if request.method == 'GET':
+        tags = Tag.objects.order_by('name')
+        tags = TagSerializer(tags, many=True)
+        return Response(tags.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -320,9 +376,9 @@ def get_profile(request):
         profile_data['description'] = user.description
         profile_data['first_name'] = user.first_name
         profile_data['last_name'] = user.last_name
-        if user.profile_pic: #TODO REVIEW
+        if user.profile_pic:  # TODO REVIEW
             profile_data['profile_pic'] = user.profile_pic.url
-        if user.cover_photo: #TODO REVIEW
+        if user.cover_photo:  # TODO REVIEW
             profile_data['cover_photo'] = user.cover_photo.url
         profile_data['notepad'] = user.notepad
         posts = Post.objects.filter(author__id=user.id)
@@ -335,6 +391,8 @@ def get_post_by_id(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
+        post.interactions += 1
+        post.save()
         serializer = PostSerializer(post)
         data = serializer.data
         data['tags'] = post.tags.values_list('name', flat=True)
@@ -352,6 +410,7 @@ def edit_post(request):
             summary = request.data.get('summary')
             description = request.data.get('description')
             publicity = request.data.get('publicity')
+            collaborators = request.POST.getlist('collaborators')
             if title:
                 post.title = title
             if description:
@@ -360,6 +419,14 @@ def edit_post(request):
                 post.publicity = publicity
             if summary:
                 post.summary = summary
+            if collaborators:
+                post.collaborators.clear()
+                for collaborator in collaborators:
+                    try:
+                        user = CustomUser.objects.get(id=collaborator)
+                        post.collaborators.add(user)
+                    except:
+                        return Response({'error': f'User {collaborator} not found'}, status=status.HTTP_404_NOT_FOUND)
             post.save()
             return Response({'message': 'Post updated successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
@@ -390,9 +457,17 @@ def edit_group(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_all_posts(request):
+def get_all_post_ids(request):
     if request.method == 'GET':
         posts = Post.objects.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        return Response(posts, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
 
 
@@ -438,7 +513,8 @@ def get_group_by_id(request):
             serializer = GroupSerializer(group)
             return_data = serializer.data
             return_data['post_count'] = group.posts.count()
-            return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster', 'viewer']).count()
+            return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster',
+                                                                                                    'viewer']).count()
             return Response(return_data, status=status.HTTP_200_OK)
         except:
             return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -456,7 +532,52 @@ def get_graph_data(request):
         data = Data.objects.get(id=data_id)
         dataframe = pd.read_excel(data.bounds_file)
         normalised_dataframe = utils.normalise(dataframe)
-        peak_search.peak_find(normalised_dataframe, peak_height=0.001)
+        if post.associated_results.calibrate == 'Manual':
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height,
+                                  calibrate=post.associated_results.calibrate,
+                                  manual_calibration=post.associated_results.manual_calibration)
+        else:
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height)
+        values = [row[4] for row in linked_analysis['data']]
+        df = pd.DataFrame({'checkvals': normalised_dataframe['m/z']})
+        vals = np.array(values).reshape(1, -1)
+        df = df.iloc[abs(df.checkvals.to_numpy()[:, None] - vals).argmin(0)]
+        indexes_to_insert_protein = []
+        for i in df.index:
+            if i not in indexes_to_insert_protein:
+                indexes_to_insert_protein.append(i)
+        i = 0
+        normalised_dataframe['species'] = 'N/A'
+        for num in range(len(linked_analysis['data'])):
+            if linked_analysis['data'][num][7]:
+                j = indexes_to_insert_protein[i]
+                normalised_dataframe.loc[j, 'species'] = linked_analysis['data'][i][0]
+                i += 1
+        normalised_dataframe.drop(normalised_dataframe.columns[[0, 2]], axis=1, inplace=True)
+        normalised_dataframe = normalised_dataframe.to_numpy()
+        keys = ['m/z', 'normalised_intensity', 'species']
+        data_points = [dict(zip(keys, values)) for values in normalised_dataframe]
+        return Response({'all_points': data_points}, status=status.HTTP_200_OK)
+
+
+
+@api_view(['GET'])
+def get_graph_data_home(request):
+    if request.method == 'GET':
+        post_id = request.query_params.get('post_id')
+        post = Post.objects.get(id=post_id)
+        analysis = post.associated_results
+        linked_analysis = post.associated_results.result_df
+        data_id = analysis.data_input_id
+        data = Data.objects.get(id=data_id)
+        dataframe = pd.read_excel(data.bounds_file)
+        normalised_dataframe = utils.normalise(dataframe)
+        if post.associated_results.calibrate == 'Manual':
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height,
+                                  calibrate=post.associated_results.calibrate,
+                                  manual_calibration=post.associated_results.manual_calibration)
+        else:
+            peak_search.peak_find(normalised_dataframe, peak_height=post.associated_results.peak_height)
         values = [row[4] for row in linked_analysis['data']]
         df = pd.DataFrame({'checkvals': normalised_dataframe['m/z']})
         vals = np.array(values).reshape(1, -1)
@@ -484,20 +605,27 @@ def get_graph_data(request):
 def get_group_info(request):
     if request.method == 'GET':
         group_id = request.query_params.get('group_id')
-        group = Group.objects.get(id=group_id)
-        group_data = {}
-        group_data['name'] = group.name
-        group_data['description'] = group.description
-        group_data['group_pic'] = group.group_pic.url
-        group_data['posts'] = group.posts.values_list('id', flat=True)
-        group_data['member_count'] = UserGroup.objects.filter(group=group_id,
-                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('id', flat=True)
-        group_data['created'] = group.created
-        user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
-        group_data['user_permission'] = user_permission
-        if user_permission == 'admin':
-            group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
-                'user_id', flat=True)
+        try:
+            group = Group.objects.get(id=group_id)
+            group_data = {}
+            group_data['current_user_id'] = request.user.id
+            group_data['name'] = group.name
+            group_data['description'] = group.description
+            group_data['group_pic'] = group.group_pic.url
+            group_data['posts'] = group.posts.values_list('id', flat=True)
+            group_data['members'] = UserGroup.objects.filter(group=group_id,
+                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('user', 'permissions')
+            group_data['created'] = group.created
+            try:
+                user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
+            except:
+                user_permission = 'N/A'
+            group_data['user_permission'] = user_permission
+            if user_permission == 'admin':
+                group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
+                    'user', flat=True)
+        except:
+            return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(group_data, status=status.HTTP_200_OK)
 
@@ -509,7 +637,13 @@ def get_user_profile_info(request):
         user = CustomUser.objects.get(id=request.query_params.get('user_id'))
         user_data = {}
         user_data['username'] = user.username
-        user_data['profile_pic'] = user.profile_pic.url
+        if(user.profile_pic):
+            user_data['profile_pic'] = user.profile_pic.url
+        else:
+            user_data['profile_pic'] = None
+        return Response(user_data, status=status.HTTP_200_OK)
+
+    return Response(user_data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -518,6 +652,8 @@ def get_citation(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
+        post.interactions += 5
+        post.save()
         citation_type = request.query_params.get('citation')
         current_date = datetime.now()
         if citation_type == 'BibTeX':
@@ -544,3 +680,118 @@ def get_citation(request):
         else:
             return Response({'error': f'Citation type {citation_type} not found'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'citation': citation_output}, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_analysis(request):
+    if request.method == 'PUT':
+        try:
+            analysis_id = request.data.get('analysis_id')
+            analysis = PostAnalysis.objects.get(id=analysis_id)
+            data = Data.objects.get(id=analysis.data_input_id)
+            tolerance = request.data.get('tolerance')
+            peak_height = request.data.get('peak_height')
+            multi_protein = request.data.get('multi_protein')
+            only_best = request.data.get('only_best')
+            calibrate = request.data.get('calibrate')
+            min_primaries = request.data.get('min_primaries')
+            max_primaries = request.data.get('max_primaries')
+            max_adducts = request.data.get('max_adducts')
+            valence = request.data.get('valence')
+            if tolerance:
+                analysis.tolerance = tolerance
+            if peak_height:
+                analysis.peak_height = peak_height
+            if multi_protein:
+                analysis.multi_protein = multi_protein
+            if only_best:
+                analysis.only_best = only_best
+            if calibrate:
+                analysis.calibrate = calibrate
+            if min_primaries:
+                analysis.min_primaries = min_primaries
+            if max_adducts:
+                analysis.max_adducts = max_adducts
+            if valence:
+                analysis.valence = valence
+            if max_primaries:
+                analysis.max_primaries = max_primaries
+            analysis_results = binding_site_search.search(data.bounds_file, data.compounds_file, data.adducts_file,
+                                                          tolerance=analysis.tolerance,
+                                                          peak_height=analysis.peak_height,
+                                                          multi_protein=analysis.multi_protein,
+                                                          min_primaries=analysis.min_primaries,
+                                                          max_primaries=analysis.max_primaries,
+                                                          max_adducts=analysis.max_adducts, valence=analysis.valence,
+                                                          only_best=analysis.only_best,
+                                                          calibrate=analysis.calibrate)
+            json_df = analysis_results.to_json(orient='split', index=False)
+            json_df = json.loads(json_df)
+            analysis.result_df = json_df
+            analysis.save()
+            return Response({'message': 'Analysis config updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_config(request):
+    if request.method == 'GET':
+        analysis_id = request.query_params.get('analysis_id')
+        analysis = PostAnalysis.objects.get(id=analysis_id)
+        config_data = {}
+        config_data['tolerance'] = analysis.tolerance
+        config_data['peak_height'] = analysis.peak_height
+        config_data['multi_protein'] = analysis.multi_protein
+        config_data['only_best'] = analysis.only_best
+        config_data['calibrate'] = analysis.calibrate
+        config_data['min_primaries'] = analysis.min_primaries
+        config_data['max_primaries'] = analysis.max_primaries
+        config_data['max_adducts'] = analysis.max_adducts
+        config_data['valence'] = analysis.valence
+        return Response(config_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_username(request):
+    if request.method == 'GET':
+        username = request.query_params.get('username')
+        try:
+            user = CustomUser.objects.get(username=username)
+            return Response({'user_id': user.id}, status=status.HTTP_200_OK)
+        except:
+            return Response({'user_id': -1}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_post_group(request):
+    if request.method == 'GET':
+        post_id = request.query_params.get('post_id')
+        group_id = request.query_params.get('group_id')
+        try:
+            post_group = PostGroup.objects.get(post=post_id, group=group_id)
+            if post_group:
+                return Response({'in_group': True}, status=status.HTTP_200_OK)
+            else:
+                return Response({'in_group': False}, status=status.HTTP_200_OK)
+        except:
+            return Response({'in_group': False}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_groups_to_add_to_post(request):
+    if request.method == 'GET':
+        user = CustomUser.objects.get(id=request.user.id)
+        groups = user.groups.filter(permissions__in=['admin', 'poster'])
+        groups = groups.values_list('id', flat=True)
+        return Response(groups, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_trending_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.filter(publicity=True).order_by('-interactions').values_list('id', flat=True)
+        return Response(posts, status=status.HTTP_200_OK)

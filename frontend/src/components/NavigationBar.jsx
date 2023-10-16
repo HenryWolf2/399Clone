@@ -25,6 +25,7 @@ import Link from '@mui/material/Link';
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [profileImage, setProfileImage] = useState('')
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -57,13 +58,31 @@ function ResponsiveAppBar() {
           url: "/logout/",
           method: "POST",
         }).then((res) => {
-          console.log(res)
+          
         });
       } catch(e){
           console.error(e)
       }
     setAnchorElUser(null);
-  }
+  };
+
+  useEffect(() => {
+    async function GetProfileInformation() {
+      try{ 
+        await instance ({
+          url: "/profile/get",
+          method: "GET",          
+      }).then((res) => {
+        setProfileImage(res.data.profile_pic)
+      });
+      } catch(e) {
+        console.error(e)
+      }
+    }
+    GetProfileInformation();
+    } ,
+    []
+  );
 
   const logoStyle = {
     paddingBottom: 10,
@@ -218,7 +237,7 @@ function ResponsiveAppBar() {
           </Box>
 
                                 {/* Create Button */}
-            <Button sx={{margin:2}} id='create-button' className="custom-button" variant='contained' endIcon={<AddIcon/>} 
+            <Button sx={{margin:2}} id='create-button' className="custom-button" variant='contained' style={{ backgroundColor: '#02AEEC' }} endIcon={<AddIcon/>} 
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
@@ -233,7 +252,7 @@ function ResponsiveAppBar() {
               }}
             >
               <NavLink to="/create-post" style={{ textDecoration: 'none'}}>
-                <MenuItem onClick={handleClose}><Typography textAlign={'center'}>Post</Typography></MenuItem>
+                <MenuItem onClick={handleClose}><Typography textAlign={'center'}>Analysis</Typography></MenuItem>
               </NavLink>
               <NavLink to="/create-group" style={{ textDecoration: 'none'}}>
                 <MenuItem onClick={handleClose}><Typography textAlign={'center'}>Group</Typography></MenuItem>
@@ -244,7 +263,7 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open Settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="User Profile" src={instance.defaults.baseURL.replace("/api", "") + profileImage} />
               </IconButton>
             </Tooltip>
             <Menu
