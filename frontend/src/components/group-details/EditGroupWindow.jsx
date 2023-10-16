@@ -80,7 +80,7 @@ useEffect(() => {
 
 
 const handleNameChange = (event) => {
-  setGroupname(event.target.files[0]);
+  setGroupname(event.target.value);
 };
 
 const handleBannerPhotoChange = (event) => {
@@ -91,8 +91,13 @@ const handleDescriptionChange = (event) => {
   setDescription(event.target.value);
 };
 
-const handleProfileUpdate = async () => {
+async function handleDeleteGroup() {
+  
+}
+
+const handleGroupUpdate = async () => {
   const formData = new FormData();
+  formData.append('group_id', props.group_id);
   if (groupname) {
     formData.append('name', groupname);
   }
@@ -104,8 +109,10 @@ const handleProfileUpdate = async () => {
   console.log(formData);
 
   try{
-    await instance.post('/groups/edit', formData, {
-      // url: "/post/create/data",
+    await instance.put('/groups/edit', formData, {
+      params: {
+        group_id: props.group_id
+      },
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -142,6 +149,7 @@ const handleProfileUpdate = async () => {
           </Typography>
           <FormControl sx={{...centerFlex}}>
             <TextField 
+                style={{width:'400px'}}
                 id="filled-basic"
                 label="Group Name"  
                 defaultValue={groupname} 
@@ -168,8 +176,8 @@ const handleProfileUpdate = async () => {
                 onChange={handleBannerPhotoChange}
                 />
 
-            <Button onClick={()=> {handleProfileUpdate(); handleClose(); }} sx={{marginTop:'30px'}} variant='contained'>Save Changes</Button>
-            <Button onClick={()=> {handleProfileUpdate(); handleClose(); }} sx={{marginTop:'17.5px', backgroundColor:'red'}} variant='contained' color='error'>Delete Group</Button>
+            <Button onClick={()=> {handleGroupUpdate(); handleClose(); }} sx={{marginTop:'30px'}} variant='contained'>Save Changes</Button>
+            <Button onClick={()=> {handleGroupUpdate(); handleClose(); }} sx={{marginTop:'17.5px', backgroundColor:'red'}} variant='contained' color='error'>Delete Group</Button>
           </FormControl>
 
         </Box>
