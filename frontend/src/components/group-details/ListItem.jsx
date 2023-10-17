@@ -65,8 +65,9 @@ export default function CheckboxListSecondary(props) {
       const memberObjectList = [];
       for (const id of memberIdList) {
         const memberInfo = await GetMemberInformation(id[0]);
-        memberObjectList.push(memberInfo);
-        console.log("MemberObjectList", memberObjectList);
+        if (id[1] != 'requested') {
+          memberObjectList.push(memberInfo);
+        }
       }
       console.log("MemberObjectList", memberObjectList);
       setMemberObjectList(memberObjectList.map(memberInfo => memberInfo));

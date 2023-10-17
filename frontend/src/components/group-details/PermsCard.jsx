@@ -22,6 +22,7 @@ export default function PermsCard(props) {
   const [admin, setAdmin] = React.useState(false);
   const [checkingAdmin, setCheckingAdmin] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
+  const [openAccessModal, setOpenAccessModal] = React.useState(false);
   const groupId = props.group_id;
 
   const [memberList, setMemberList] = useState([]);
@@ -69,6 +70,14 @@ export default function PermsCard(props) {
   const handleClose = () => {
     setOpenModal(false);
   };
+
+  const handleOpenAccess = () => {
+    setOpenAccessModal(true);
+  }
+
+  const handleCloseAccess = () => {
+    setOpenAccessModal(false);
+  }
 
   const setCurrentPerm = (perm) => {
     setTempPerm(perm);
@@ -210,7 +219,9 @@ export default function PermsCard(props) {
                     className="custom-button"
                     variant="contained"
                     onClick={() => {
-                      updateUserPermissions(value[3], groupId, 'viewer');
+                      setCurrentId(value[3]);
+                      setCurrentName(value[0]);
+                      handleOpenAccess();
                     }}
                     >
                       Manage Access
@@ -348,7 +359,8 @@ export default function PermsCard(props) {
                 <Button
                 className="custom-button"
                 variant="contained"
-                sx={{marginTop:'15px', backgroundColor:'red'}}
+                sx={{marginTop:'15px', backgroundColor:'#ff3333'}}
+                color="error"
                 onClick={() => {
                   handleClose();
                   updateUserPermissions(tempUserId, groupId, changedPerm);
@@ -359,6 +371,46 @@ export default function PermsCard(props) {
             </Box>
           </Modal>
         )}
+          <Modal
+            open={openAccessModal}
+            onClose={handleCloseAccess}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+            <div style={{backgroundColor:'#02AEEC', padding:'10px', borderRadius: '20px', marginBottom:'35px'}}>
+              <Typography id="modal-modal-title" variant="h6" component="h2" sx={{textAlign: 'center', fontWeight: 'bold', fontSize: '30px', color: 'white'}}>
+                Manage Access
+              </Typography>
+              <Typography id="modal-modal-title" variant="h6" component="h2" sx={{textAlign: 'center', fontWeight: 'bold', fontSize: '30px', color: 'white'}}>
+                User: {tempUsername}
+              </Typography>
+              </div>
+
+                <Button
+                className="custom-button"
+                variant="contained"
+                onClick={() => {
+                  handleClose();
+                  updateUserPermissions(tempUserId, groupId, 'viewer');
+                }}
+                >
+                  Grant Access
+                </Button>
+                <Button
+                className="custom-button"
+                variant="contained"
+                sx={{marginTop:'15px', backgroundColor:'#ff3333'}}
+                color="error"
+                onClick={() => {
+                  handleCloseAccess();
+                  updateUserPermissions(tempUserId, groupId, changedPerm);
+                }}
+                >
+                  Remove Request
+                </Button>
+            </Box>
+          </Modal>
     </div>
   </div>
   );
