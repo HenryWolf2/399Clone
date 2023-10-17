@@ -363,7 +363,7 @@ export default function PermsCard(props) {
                 color="error"
                 onClick={() => {
                   handleClose();
-                  updateUserPermissions(tempUserId, groupId, changedPerm);
+                  updateUserPermissions(tempUserId, groupId, 'remove');
                 }}
                 >
                   Remove User
@@ -404,7 +404,7 @@ export default function PermsCard(props) {
                 color="error"
                 onClick={() => {
                   handleCloseAccess();
-                  updateUserPermissions(tempUserId, groupId, changedPerm);
+                  updateUserPermissions(tempUserId, groupId, 'remove');
                 }}
                 >
                   Remove Request
