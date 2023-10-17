@@ -33,99 +33,100 @@ const centerFlex = {
 
 
 export default function EditModal(props) {
-const [open, setOpen] = React.useState(false);
-const handleOpen = () => setOpen(true);
-const handleClose = () => setOpen(false);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-const [groupname, setGroupname] =   useState('')
-const [description, setDescription] = useState('')
-const [banner, setBanner] = useState('')
-const [groupPosts, setGroupPosts] = useState([])
-const [memberCount, setMemberCount] = useState('')
-const [postCount, setPostCount] = useState('')
-const [creationDate, setCreationDate] = useState('')
-const [userPermission, setUserPermission] = useState('')
-const [memberInGroup, setMemberinGroup] = React.useState(false);
-const [inGroupText, setInGroupText] = useState('Request Group Membership');
-const [loggedInId, setLoggedInId] = useState('');
+  const [groupname, setGroupname] =   useState('')
+  const [description, setDescription] = useState('')
+  const [banner, setBanner] = useState('')
+  const [groupPosts, setGroupPosts] = useState([])
+  const [memberCount, setMemberCount] = useState('')
+  const [postCount, setPostCount] = useState('')
+  const [creationDate, setCreationDate] = useState('')
+  const [userPermission, setUserPermission] = useState('')
+  const [memberInGroup, setMemberinGroup] = React.useState(false);
+  const [inGroupText, setInGroupText] = useState('Request Group Membership');
+  const [loggedInId, setLoggedInId] = useState('');
 
-useEffect(() => {
-    async function GetGroupInformation() {
-      try{ 
-        await instance ({
-          url: "/group/info",
-          method: "GET",
-          params: {group_id: props.group_id},       
-      }).then((res) => {
-        setLoggedInId(res.data.current_user_id)
-        setGroupname(res.data.name)
-        setDescription(res.data.description)
-        setBanner(res.data.group_pic)
-        setGroupPosts(res.data.posts)
-        setMemberCount(res.data.members.length)
-        setPostCount(res.data.posts.length)
-        setCreationDate(new Date(res.data.created).toLocaleDateString())
-        setUserPermission(res.data.user_permission)
-        //Need to define perms
+  useEffect(() => {
+      async function GetGroupInformation() {
+        try{ 
+          await instance ({
+            url: "/group/info",
+            method: "GET",
+            params: {group_id: props.group_id},       
+        }).then((res) => {
+          setLoggedInId(res.data.current_user_id)
+          setGroupname(res.data.name)
+          setDescription(res.data.description)
+          setBanner(res.data.group_pic)
+          setGroupPosts(res.data.posts)
+          setMemberCount(res.data.members.length)
+          setPostCount(res.data.posts.length)
+          setCreationDate(new Date(res.data.created).toLocaleDateString())
+          setUserPermission(res.data.user_permission)
+          //Need to define perms
 
-      });
-      } catch(e) {
-        console.error(e)
+        });
+        } catch(e) {
+          console.error(e)
+        }
       }
+      GetGroupInformation();
+      } , // <- function that will run on every dependency update
+      [] // <-- empty dependency array
+    ) 
+
+
+  const handleNameChange = (event) => {
+    setGroupname(event.target.value);
+  };
+
+  const handleBannerPhotoChange = (event) => {
+    setBanner(event.target.files[0]);
+  };
+
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value);
+  };
+
+  async function handleDeleteGroup() {
+    
+  }
+
+  const handleGroupUpdate = async () => {
+    const formData = new FormData();
+    formData.append('group_id', props.group_id);
+    if (groupname) {
+      formData.append('name', groupname);
     }
-    GetGroupInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
-  ) 
+    if (banner) {
+      formData.append('group_pic', banner);
+    }
+    formData.append('description', description);
 
+    console.log(formData);
 
-const handleNameChange = (event) => {
-  setGroupname(event.target.value);
-};
-
-const handleBannerPhotoChange = (event) => {
-  setBanner(event.target.files[0]);
-};
-
-const handleDescriptionChange = (event) => {
-  setDescription(event.target.value);
-};
-
-async function handleDeleteGroup() {
-  
-}
-
-const handleGroupUpdate = async () => {
-  const formData = new FormData();
-  formData.append('group_id', props.group_id);
-  if (groupname) {
-    formData.append('name', groupname);
+    try{
+      await instance.put('/groups/edit', formData, {
+        params: {
+          group_id: props.group_id
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(
+        (res) => {
+          
+        }
+      );
+    } catch(e){
+        //display error message (username or password incorrect)
+        console.error(e)
+    }
   }
-  if (banner) {
-    formData.append('group_pic', banner);
-  }
-  formData.append('description', description);
 
-  console.log(formData);
-
-  try{
-    await instance.put('/groups/edit', formData, {
-      params: {
-        group_id: props.group_id
-      },
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then(
-      (res) => {
-        
-      }
-    );
-  } catch(e){
-      //display error message (username or password incorrect)
-      console.error(e)
-  }
-}
 
   return (
     <div>
