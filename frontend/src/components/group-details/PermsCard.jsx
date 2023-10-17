@@ -141,6 +141,7 @@ export default function PermsCard(props) {
     } catch (error) {
       console.error('Error:', error);
     }
+    window.location.reload(false);
   };
 
   const GetMemberInformation = async (id) => {
@@ -178,6 +179,19 @@ export default function PermsCard(props) {
     fetchMemberInformation();
   }, [memberList]);
 
+  function checkIsRequested(perm) {
+    if (perm == 'requested') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function reloadPage() {
+    window.location.reload(false);
+  }
+
+
 
   return (
     <div>
@@ -185,37 +199,71 @@ export default function PermsCard(props) {
       {admin ? (
         memberObjectList.map((value) => {
           const labelId = `${value[0]}`;
+          const isRequested = checkIsRequested(value[2]);
           return (
-            <ListItem
-              key={value}
-              secondaryAction={
-                <Button
-                className="custom-button"
-                variant="contained"
-                onClick={() => {
-                  handleOpen();
-                  setCurrentPerm(value[2]);
-                  calcRemainingPerms(value[2]);
-                  setCurrentName(value[0]);
-                  changeAdminPerm(value[2]);
-                  setCurrentId(value[3]);
-                }}
+            <div>
+              {isRequested ? (
+                  <ListItem
+                  key={value}
+                  secondaryAction={
+                    <Button
+                    className="custom-button"
+                    variant="contained"
+                    onClick={() => {
+                      updateUserPermissions(value[3], groupId, 'viewer');
+                    }}
+                    >
+                      Manage Access
+                    </Button>
+                    
+                  }
+                  disablePadding
                 >
-                  Change Permissions
-                </Button>
-              }
-              disablePadding
-            >
-              <ListItemButton>
-                <ListItemAvatar>
-                  <Avatar
-                    alt={`${value[0]}`}
-                    src={instance.defaults.baseURL.replace('/api', "") + value[1]}
-                  />
-                </ListItemAvatar>
-                <ListItemText id={labelId} primary={`${value[0]}`} secondary={`${value[2]}`} />
-              </ListItemButton>
-            </ListItem>
+
+                  <ListItemButton>
+                    <ListItemAvatar>
+                      <Avatar
+                        alt={`${value[0]}`}
+                        src={instance.defaults.baseURL.replace('/api', "") + value[1]}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText id={labelId} primary={`${value[0]}`} secondary={`${value[2]}`} />
+                  </ListItemButton>
+                </ListItem>
+              ) : (
+                <ListItem
+                key={value}
+                secondaryAction={
+                  <Button
+                  className="custom-button"
+                  variant="contained"
+                  onClick={() => {
+                    handleOpen();
+                    setCurrentPerm(value[2]);
+                    calcRemainingPerms(value[2]);
+                    setCurrentName(value[0]);
+                    changeAdminPerm(value[2]);
+                    setCurrentId(value[3]);
+                  }}
+                  >
+                    Change Permissions
+                  </Button>
+                }
+                disablePadding
+              >
+
+                <ListItemButton>
+                  <ListItemAvatar>
+                    <Avatar
+                      alt={`${value[0]}`}
+                      src={instance.defaults.baseURL.replace('/api', "") + value[1]}
+                    />
+                  </ListItemAvatar>
+                  <ListItemText id={labelId} primary={`${value[0]}`} secondary={`${value[2]}`} />
+                </ListItemButton>
+              </ListItem>
+              )}
+            </div>
           );
         })
       ) : (
@@ -296,6 +344,17 @@ export default function PermsCard(props) {
                 }}
                 >
                   Submit Change
+                </Button>
+                <Button
+                className="custom-button"
+                variant="contained"
+                sx={{marginTop:'15px', backgroundColor:'red'}}
+                onClick={() => {
+                  handleClose();
+                  updateUserPermissions(tempUserId, groupId, changedPerm);
+                }}
+                >
+                  Remove User
                 </Button>
             </Box>
           </Modal>

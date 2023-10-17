@@ -614,7 +614,7 @@ def get_group_info(request):
             group_data['group_pic'] = group.group_pic.url
             group_data['posts'] = group.posts.values_list('id', flat=True)
             group_data['members'] = UserGroup.objects.filter(group=group_id,
-                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('user', 'permissions')
+                                                              permissions__in=['admin', 'poster', 'viewer', 'requested']).values_list('user', 'permissions')
             group_data['created'] = group.created
             try:
                 user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
