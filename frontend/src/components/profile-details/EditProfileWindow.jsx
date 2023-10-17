@@ -48,7 +48,6 @@ useEffect(() => {
         url: "/profile/get",
         method: "GET",          
     }).then((res) => {
-      console.log(res)
       setDescription(res.data.description)
     });
     } catch(e) {
@@ -83,7 +82,6 @@ const handleProfileUpdate = async () => {
   }
   formData.append('description', description);
 
-  console.log(formData);
 
   try{
     await instance.post('/profile/edit', formData, {
@@ -105,8 +103,7 @@ const handleProfileUpdate = async () => {
   return (
     <div>
       <Button
-        sx={{ margin: 3.5, top: '250px', left: '25px' }}
-        style = {{backgroundColor: '#02AEEC' }}
+        sx={{ margin: 3.5, top: '250px', left: '25px',backgroundColor: '#02AEEC' }}
         className="custom-button"
         variant="contained"
         onClick={handleOpen} // Use onClick here to open the modal

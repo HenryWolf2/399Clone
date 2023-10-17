@@ -21,7 +21,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import Contributors from '../individual-posts/contributors';
 import Tags from '../individual-posts/tags';
 
-const steps = ['Post files', 'Peak search settings', 'Feasible set settings', 'Post description']
+const steps = ['Upload files', 'Peak search settings', 'Feasible set settings', 'Analysis description']
 
 const spectrumCalibrationOptions = [
   {
@@ -182,7 +182,6 @@ const PostForm = () => {
         }
       }).then((res) => {
         //needs to navigate to the profile page once up
-        console.log(res)
         navigate("/profile");
       });
     } catch(e){
@@ -212,7 +211,6 @@ const PostForm = () => {
 
   const handleDeleteTag = (tagToDelete) => {
     setTags(tags.filter((tag) => tag !== tagToDelete));
-    console.log(tags);
   };
 
   const checkCollaborators = (newValue) => {

@@ -45,7 +45,6 @@ export default function Root() {
         setAllPosts(res.data)
       });
       } catch(e) {
-        console.error(e)
       }
     }
     GetAllPostsIDs();
@@ -66,7 +65,6 @@ export default function Root() {
         setAllGroups(res.data)
       });
       } catch(e) {
-        console.error(e)
       }
     }
     GetAllGroupsIDs();

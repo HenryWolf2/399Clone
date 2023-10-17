@@ -33,7 +33,7 @@ function RestrictedAppBar() {
             variant="h6"
             noWrap
             component="a"
-            href="/"
+            href="/login"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -44,7 +44,7 @@ function RestrictedAppBar() {
               textDecoration: 'none',
             }}
           >
-            MSH
+            MaSH
           </Typography>
         </Toolbar>
       </Container>

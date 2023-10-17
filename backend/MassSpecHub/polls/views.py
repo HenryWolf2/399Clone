@@ -354,7 +354,7 @@ def search_post_by_tag(request):
         if not posts:
             return Response({'error': 'No posts found for the provided tags.'}, status=status.HTTP_404_NOT_FOUND)
 
-        posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        posts = set(posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time'))
         return Response(posts, status=status.HTTP_200_OK)
     
 @api_view(['GET'])

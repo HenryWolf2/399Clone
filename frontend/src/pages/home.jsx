@@ -64,7 +64,7 @@ tppubtype = {article}
             <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Information</h1>
           </div>
           <div style={{flex:1, flexDirection: 'row', height: '100%',}}>
-            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Trending Posts</h1>
+            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Trending Analyses</h1>
           </div>
       </div>
 

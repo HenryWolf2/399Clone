@@ -84,7 +84,6 @@ function GroupDetails(props) {
           // Include your authentication tokens in the headers if needed
         },
       });
-      console.log('User Registered successfully');
     } catch (error) {
       console.error('Error:', error);
     }
@@ -156,7 +155,6 @@ function GroupDetails(props) {
     marginRight: '15px',
   }
 
-  console.log(userPermission);
 
 
   return (
@@ -189,7 +187,7 @@ function GroupDetails(props) {
             <div style={{display: 'flex', marginTop: '-20px', color: 'white', fontSize: '14px'}}>
               <h1 style={{marginRight: '15px'}}><MemberCard group_id={props.group_id} member_count={memberCount}/></h1>
               <span style={circleDot}></span>
-              <h1>{postCount} Posts</h1>
+              <h1>{postCount} Analyses</h1>
             </div>
             <div style={{float:'left', marginTop: '-10px'}}><GroupBar></GroupBar></div>
             <br></br>

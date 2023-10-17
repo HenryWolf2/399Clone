@@ -123,7 +123,7 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            MSH
+            MaSH
           </Typography>
 
                           {/* Section for the link menu on minimised page */}
@@ -237,7 +237,7 @@ function ResponsiveAppBar() {
           </Box>
 
                                 {/* Create Button */}
-            <Button sx={{margin:2}} id='create-button' className="custom-button" variant='contained' style={{ backgroundColor: '#02AEEC' }} endIcon={<AddIcon/>} 
+            <Button sx={{margin:2, backgroundColor: '#02AEEC'}} id='create-button' className="custom-button" variant='contained'  endIcon={<AddIcon/>} 
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
