@@ -55,6 +55,7 @@
 
 .Too-small{
     width: 60vmin;
+    margin-top: 5vmin;
 }
 
 .overlay {
@@ -76,7 +77,7 @@
 }
 
 .Overlay-title{
-    margin: 3vmin;
+    margin: 5vmin;
     font-size: 5vmin;
     font-family: monospace;
 }
