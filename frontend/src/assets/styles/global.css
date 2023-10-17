@@ -54,9 +54,8 @@
 }
 
 .Too-small{
-    height: 70vmin;
+    width: 60vmin;
 }
-
 
 .overlay {
     position: fixed;
@@ -74,6 +73,12 @@
         justify-content: center;
         align-items: center;
     }
+}
+
+.Overlay-title{
+    margin: 3vmin;
+    font-size: 5vmin;
+    font-family: monospace;
 }
 
 .Post-title{
