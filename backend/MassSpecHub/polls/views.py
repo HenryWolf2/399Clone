@@ -47,10 +47,12 @@ def user_login(request):
                 pass
 
         if not user:
-            user = authenticate(username=username, password=password)
+            auth_user = authenticate(username=username, password=password)
+        else:
+            auth_user = authenticate(username=user.username, password=password)
 
-        if user:
-            token, _ = Token.objects.get_or_create(user=user)
+        if auth_user:
+            token, _ = Token.objects.get_or_create(user=auth_user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
 
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
