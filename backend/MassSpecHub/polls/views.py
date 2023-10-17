@@ -201,7 +201,7 @@ def update_group_perms(request):
         permissions = request.data.get('permissions')
         if not permissions:
             return Response({'message': 'No permissions added'}, status=status.HTTP_400_BAD_REQUEST)
-        if permissions not in ['admin', 'poster', 'viewer', 'requested']:
+        if permissions not in ['admin', 'poster', 'viewer', 'requested', 'remove']:
             return Response({'message': f'Permission {permissions} is not a valid permission'},
                             status=status.HTTP_400_BAD_REQUEST)
         group = Group.objects.get(id=group_id)
