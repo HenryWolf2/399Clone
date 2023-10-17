@@ -8,6 +8,7 @@ import { Grid, Item, Box, Typography } from '@mui/material';
 import GroupGrid from '../components/group-card/group-grid';
 import './/../assets/styles/global.css';
 import Link from '@mui/material';
+import MobileOverlay from '../components/MobileOverlay';
 
 export default function Groups() {
     const [postIDs, setPostIDs] = useState([])
@@ -41,6 +42,7 @@ export default function Groups() {
 
   return (
     <div className="container">
+      <MobileOverlay />
       <NavigationBar />
       <Box sx={{width: '100%', display: 'flex' }}>
         <Box sx={{width: "22%", height: "100vh", padding: "0% 1%", backgroundColor: "#09A9EC"}}>
