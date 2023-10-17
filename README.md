@@ -1,5 +1,18 @@
-# Mass Spectrometry Hub
-## Backend Setup
+# Mass Spectrometry Hub (MaSH)
+
+## Project Management
+
+[https://team-4.atlassian.net/jira/software/projects/BACK/boards/3](Backend)
+[https://team-4.atlassian.net/jira/software/projects/FRONT/boards/1](Frontend)
+
+## Project Description
+The aim of this project is the publication of the AdductHunter tool allowing users to use the tool and share their results. The website allows users to take their Mass Spec data collected through research, run it through AdductHunter, and then publicize the results to the public and to groups that match their research niche. 
+
+## Technologies
+This project is made up of React in the frontend and Django in the backend. This allows us to create a RESTful API that links to our database, and the frontend is able to call this when needed.
+
+## Setup
+### Backend Setup
 First ensure that the migration files are present in the polls/migrations folder.
 
 Download PgAdmin4, and set up a database.
@@ -24,7 +37,7 @@ run the following commands to run the backend Django server:
 > python manage.py runserver
 ```
 
-## Frontend Setup
+### Frontend Setup
 Running the React App, after you've changed your folder to the frontend folder you can run the react app with npm start. This essentially runs the app in the development mode meaning we can reload the page to make the live changes and any errors are seen in the console.
 
 It should automatically open the local host however it can be found at, [http://localhost:3000](http://localhost:3000).
@@ -34,22 +47,14 @@ npm install
 npm start
 ```
 
-When we want to actually run our react app properly we can use this command. 
-```
-npm run build
-```
 
-Install mui into the project
-```
-npm install @mui/material @emotion/react @emotion/styled
-```
+## Usage Examples
 
-Install the font roborto which is default used by mui
-```
-npm install @fontsource/roboto
-```
 
-Install the icons from mui
-```
-npm install @mui/icons-material
-```
+## Website Link
+
+
+## Future Plan
+In the future, based on feedback
+
+## Acknowledgements

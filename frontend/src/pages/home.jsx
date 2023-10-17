@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
-import PublicNavigationBar from '../components/PublicNavigationBar';
 import PostGrid from '../components/individual-posts/postgrid';
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -37,16 +36,14 @@ tppubtype = {article}
 }`;
   const APA7 = "Derek Long, Liam Eade, Matthew P Sullivan et al. AdductHunter: Identifying Protein-Metal Complex Adducts in Mass Spectra, 05 September 2023, PREPRINT (Version 1) available at Research Square [https://doi.org/10.21203/rs.3.rs-3322854/v1]"
   
-  const copyToClipBoard = () => {
-    navigator.clipboard.writeText("citation")
-  }
+  
 
   useEffect(() => {
-    async function GetPublicPostsIDs() {
+    async function GetTrendingPostsIDs() {
       try{ 
         await instance ({
           // Set URL to get all posts by ID
-          url: "/post/get_all",
+          url: "posts/trending",
           method: "GET",
       }).then((res) => {
         setPublicPosts(res.data)
@@ -55,7 +52,7 @@ tppubtype = {article}
         console.error(e)
       }
     }
-    GetPublicPostsIDs();
+    GetTrendingPostsIDs();
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   ) 
@@ -69,7 +66,7 @@ tppubtype = {article}
             <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Information</h1>
           </div>
           <div style={{flex:1, flexDirection: 'row', height: '100%',}}>
-            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Public Posts</h1>
+            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Trending Posts</h1>
           </div>
       </div>
 

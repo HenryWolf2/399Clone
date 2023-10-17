@@ -39,10 +39,8 @@ const TabPanel = (props) => {
 
 
 export default function PostCitation({ openCitation, handleCloseCitation, post_id }) {
-    const [citation, setCitation] = useState('')
+    const [citation, setCitation] = useState('Please Select either BibTeX or APA 7')
     const [value, setValue] = useState(0);
-    const[bibTeXCitation, setBibTeXCitation] = useState('')
-    const[aPA7Citation, setAPA7Citation] = useState('')
 
 
     const copyToClipBoard = () => {
@@ -50,58 +48,42 @@ export default function PostCitation({ openCitation, handleCloseCitation, post_i
       }
     
     const handleAPA7 = () =>{
-        setCitation(aPA7Citation)
-        setValue(1);
+        GetAPA7Citation();
+        setValue(2);
     }
     const handleBibTeX = () =>{
-        setCitation(bibTeXCitation)
-        setValue(0);
-    }
-   
-
-
-
-    useEffect(() => {
-        async function GetBibTeXCitation() {
-          try{ 
-            await instance ({
-                url: "post/citation",
-                method: "GET",
-                params: {post_id: post_id, citation: 'BibTeX'}
-          }).then((res) => {
-            setBibTeXCitation(res.data.citation)
-            setCitation(res.data.citation)
-            
-          });
-          } catch(e) {
-            console.error(e)
-          }
-        }
         GetBibTeXCitation();
-        } , // <- function that will run on every dependency update
-        [] // <-- empty dependency array
-      ) 
-      useEffect(() => {
-        async function GetAPA7Citation() {
-          try{ 
-            await instance ({
-                url: "post/citation",
-                method: "GET",
-                params: {post_id: post_id, citation: 'APA7'}
-          }).then((res) => {
-            setAPA7Citation(res.data.citation)
-            
-          });
-          } catch(e) {
-            console.error(e)
-          }
-        }
-        GetAPA7Citation();
-        } , // <- function that will run on every dependency update
-        [] // <-- empty dependency array
-      ) 
-      
-    
+        setValue(1);
+    }
+
+    async function GetBibTeXCitation() {
+      try{ 
+        await instance ({
+            url: "post/citation",
+            method: "GET",
+            params: {post_id: post_id, citation: 'BibTeX'}
+      }).then((res) => {
+        setCitation(res.data.citation)
+         
+      });
+      } catch(e) {
+        console.error(e)
+      }
+    }
+    async function GetAPA7Citation() {
+      try{ 
+        await instance ({
+            url: "post/citation",
+            method: "GET",
+            params: {post_id: post_id, citation: 'APA7'}
+      }).then((res) => {
+        setCitation(res.data.citation)
+        
+      });
+      } catch(e) {
+        console.error(e)
+      }
+    }
 
 
     return(
@@ -116,7 +98,19 @@ export default function PostCitation({ openCitation, handleCloseCitation, post_i
           </Box>
   
           <Box sx={{ flex: 1 }}>
-            <TabPanel value={value} index={0}>
+          <TabPanel value={value} index={0}>
+              <h3>Citation</h3>
+              <div>
+              <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
+                    { citation }
+                </Typography>
+                
+                
+
+              </div>
+            </TabPanel>
+
+            <TabPanel value={value} index={1}>
               <h3>BibTeX Citation</h3>
               <div>
               <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>
@@ -129,7 +123,7 @@ export default function PostCitation({ openCitation, handleCloseCitation, post_i
             </TabPanel>
 
 
-            <TabPanel value={value} index={1}>
+            <TabPanel value={value} index={2}>
               <h3>APA 7 Citation</h3>
               <div>
               <Typography color="text.secondary" variant="body2" sx={{margin: "0px 20px 0px 20px"}}>

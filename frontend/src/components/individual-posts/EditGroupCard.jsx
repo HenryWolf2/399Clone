@@ -82,7 +82,7 @@ export default function EditGroupCard(props) {
 
           <Grid item xs>
             <Typography gutterBottom component="div" sx={{marginBottom: "0px", fontSize: "15px"}}>
-              {name} <br></br> {memberCount} Members | {postCount} Posts
+              {name} <br></br> {memberCount} Members | {postCount} Analyses
             </Typography>
           </Grid>
           <input

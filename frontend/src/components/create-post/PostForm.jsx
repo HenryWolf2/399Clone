@@ -680,7 +680,7 @@ const PostForm = () => {
           hidden = {activeStep == 1}
           variant="outlined"
           sx={{ mt: 3, mb: 2 }}
-          style = {{margin: 30}}
+          style = {{margin: 30, color: '#02AEEC' }}
           onClick = {handleBack}
           >Back</Button>
         )}
@@ -690,7 +690,7 @@ const PostForm = () => {
         className = "Next-button"
         variant="contained"
         sx={{ mt: 0, mb: 1 }}
-        style = {{margin: 30}}
+        style = {{margin: 30, backgroundColor: '#02AEEC'}}
         onClick = {handleNext}
         >Next</Button>
       )}
@@ -702,7 +702,7 @@ const PostForm = () => {
         size="large"
         variant="contained"
         sx={{ mt: 3, mb: 2 }}
-        style = {{margin: 30}}
+        style = {{margin: 30, backgroundColor: '#02AEEC'}}
         >
         Send Data
         </Button>
@@ -716,7 +716,7 @@ const PostForm = () => {
         size="large"
         variant="contained"
         sx={{ mt: 3, mb: 2 }}
-        style = {{margin: 30}}
+        style = {{margin: 30, backgroundColor: '#02AEEC'}}
         >
         Submit post
         </Button>

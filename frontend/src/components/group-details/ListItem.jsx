@@ -47,7 +47,7 @@ export default function CheckboxListSecondary(props) {
         params: {user_id: id},      
       }).then((res) => {
         const username = res.data.username
-        const profilePic = res.data.profile_pic
+        const profilePic = res.data.profile_pic && res.data.profile_pic !== '' ? res.data.profile_pic : 'missingImage';
         const memberList = [username, profilePic]
 
         return memberList
@@ -63,9 +63,11 @@ export default function CheckboxListSecondary(props) {
       const memberIdList = memberList;
       const memberObjectList = [];
       for (const id of memberIdList) {
-        const memberInfo = await GetMemberInformation(id);
+        const memberInfo = await GetMemberInformation(id[0]);
         memberObjectList.push(memberInfo);
+        console.log("MemberObjectList", memberObjectList);
       }
+      console.log("MemberObjectList", memberObjectList);
       setMemberObjectList(memberObjectList.map(memberInfo => memberInfo));
     };
   
@@ -76,6 +78,7 @@ export default function CheckboxListSecondary(props) {
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
+
     if (currentIndex === -1) {
       newChecked.push(value);
     } else {
@@ -93,13 +96,13 @@ export default function CheckboxListSecondary(props) {
         const labelId = `${value}`;
         return (
           <ListItem
-            key={value[0]}
-            disablePadding
+          key={value[0]}
+          disablePadding
           >
             <ListItemButton>
               <ListItemAvatar>
                 <Avatar
-                  alt={`Avatar n°${value + 1}`}
+                  alt={`${value[0]}`}
                   src={instance.defaults.baseURL.replace('/api', "") + value[1]}
                 />
               </ListItemAvatar>

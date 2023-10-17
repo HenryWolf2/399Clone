@@ -333,7 +333,7 @@ def search_post(request):
         posts = Post.objects.filter(title__contains=query) | Post.objects.filter(
             summary__contains=query) | Post.objects.filter(description__contains=query) | Post.objects.filter(
             author__username__contains=query)
-        posts = posts.values_list('id', flat=True).order_by('post_time')
+        posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
 
 
@@ -344,7 +344,7 @@ def search_post_by_tag(request):
         tags = request.query_params.getlist('query')
         if not tags:
             posts = Post.objects.order_by('post_time')
-            posts = posts.values_list('id', flat=True).order_by('post_time')
+            posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
             return Response(posts, status=status.HTTP_200_OK)
 
         posts = Post.objects.none()
@@ -354,7 +354,7 @@ def search_post_by_tag(request):
         if not posts:
             return Response({'error': 'No posts found for the provided tags.'}, status=status.HTTP_404_NOT_FOUND)
 
-        posts = posts.values_list('id', flat=True).order_by('post_time')
+        posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
         return Response(posts, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
@@ -524,6 +524,8 @@ def get_graph_data(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
+        post.interactions += 1
+        post.save()
         analysis = post.associated_results
         linked_analysis = post.associated_results.result_df
         data_id = analysis.data_input_id
@@ -603,20 +605,27 @@ def get_graph_data_home(request):
 def get_group_info(request):
     if request.method == 'GET':
         group_id = request.query_params.get('group_id')
-        group = Group.objects.get(id=group_id)
-        group_data = {}
-        group_data['name'] = group.name
-        group_data['description'] = group.description
-        group_data['group_pic'] = group.group_pic.url
-        group_data['posts'] = group.posts.values_list('id', flat=True)
-        group_data['members'] = UserGroup.objects.filter(group=group_id,
-                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('user', flat=True)
-        group_data['created'] = group.created
-        user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
-        group_data['user_permission'] = user_permission
-        if user_permission == 'admin':
-            group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
-                'user', flat=True)
+        try:
+            group = Group.objects.get(id=group_id)
+            group_data = {}
+            group_data['current_user_id'] = request.user.id
+            group_data['name'] = group.name
+            group_data['description'] = group.description
+            group_data['group_pic'] = group.group_pic.url
+            group_data['posts'] = group.posts.values_list('id', flat=True)
+            group_data['members'] = UserGroup.objects.filter(group=group_id,
+                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('user', 'permissions')
+            group_data['created'] = group.created
+            try:
+                user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
+            except:
+                user_permission = 'N/A'
+            group_data['user_permission'] = user_permission
+            if user_permission == 'admin':
+                group_data['requested'] = UserGroup.objects.filter(group=group_id, permissions='requested').values_list(
+                    'user', flat=True)
+        except:
+            return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(group_data, status=status.HTTP_200_OK)
 
@@ -628,7 +637,10 @@ def get_user_profile_info(request):
         user = CustomUser.objects.get(id=request.query_params.get('user_id'))
         user_data = {}
         user_data['username'] = user.username
-        user_data['profile_pic'] = user.profile_pic.url
+        if(user.profile_pic):
+            user_data['profile_pic'] = user.profile_pic.url
+        else:
+            user_data['profile_pic'] = None
         return Response(user_data, status=status.HTTP_200_OK)
 
     return Response(user_data, status=status.HTTP_200_OK)
@@ -640,6 +652,8 @@ def get_citation(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
+        post.interactions += 5
+        post.save()
         citation_type = request.query_params.get('citation')
         current_date = datetime.now()
         if citation_type == 'BibTeX':
@@ -774,3 +788,10 @@ def get_groups_to_add_to_post(request):
         groups = user.groups.filter(permissions__in=['admin', 'poster'])
         groups = groups.values_list('id', flat=True)
         return Response(groups, status=status.HTTP_200_OK)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_trending_posts(request):
+    if request.method == 'GET':
+        posts = Post.objects.filter(publicity=True).order_by('-interactions').values_list('id', flat=True)
+        return Response(posts, status=status.HTTP_200_OK)

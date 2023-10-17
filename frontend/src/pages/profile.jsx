@@ -7,6 +7,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import MobileOverlay from '../components/MobileOverlay';
 
 export default function Profile() {
+
   return (
     <div className="container">
       <MobileOverlay />

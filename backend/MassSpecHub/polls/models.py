@@ -38,7 +38,7 @@ class PostGroup(models.Model):
 
 class CustomUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    profile_pic = models.ImageField(upload_to='profile_pics', blank=True)
+    profile_pic = models.ImageField(upload_to='profile_pics', null=True)
     cover_photo = models.ImageField(upload_to='profile_banners', default='default.jpg')
     description = models.TextField(default="Click edit profile to update your description, profile picture and banner for your profile.")
     notepad = models.TextField(default="Click here to enter notes. Text will be converted to markdown when you click out of the text field...")
@@ -78,6 +78,7 @@ class Post(models.Model):
     associated_results = models.OneToOneField('PostAnalysis', on_delete=models.CASCADE, null=True)
     post_pic = models.ImageField(upload_to='post_pics', default='default.png')
     collaborators = models.ManyToManyField(to='CustomUser', related_name='collaborators', through='CollaboratorPost')
+    interactions = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'Post'
