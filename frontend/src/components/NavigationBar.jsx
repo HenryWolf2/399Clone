@@ -65,6 +65,14 @@ function ResponsiveAppBar() {
       }
     setAnchorElUser(null);
   };
+  // adding in effect for getting the token from local storage
+  useEffect(() => {
+    if(localStorage.getItem('token') != null){
+      instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
+    }else{
+      navigate("/login")
+    }
+  },[])
 
   useEffect(() => {
     async function GetProfileInformation() {
@@ -89,14 +97,7 @@ function ResponsiveAppBar() {
     paddingTop: 10,
   };
 
-  // adding in effect for getting the token from local storage
-  useEffect(() => {
-    if(localStorage.getItem('token') != null){
-      instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
-    }else{
-      navigate("/login")
-    }
-  },[])
+ 
 
   return (
     <AppBar position="static" sx={{backgroundColor:'black'}}>

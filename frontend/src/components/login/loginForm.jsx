@@ -20,7 +20,7 @@ const LoginForm = () => {
 
     useEffect(() => {
         setErrorMessage('');
-    },[username, password])
+    },[username,password])
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -28,6 +28,7 @@ const LoginForm = () => {
             username: username,
             password: password
         }
+        setPassword("")
         try{
         await instance({
             url: "/login/",
@@ -45,10 +46,9 @@ const LoginForm = () => {
             //display error message (username or password incorrect)
             //clear the password field
             if(e.response.status === 401){
-                setPassword("")
+                console.log("hello")
                 setErrorMessage("Invalid Username or Password")
             }else{
-                setPassword("")
                 setErrorMessage("Internal Server Error")
             }
         }
@@ -58,7 +58,7 @@ const LoginForm = () => {
         
         <Container maxWidth= "sm">
         <React.Fragment>
-        {errorMessage ? <Alert severity="error" fullWidth> {errorMessage} — <strong>Please try again!</strong> </Alert> : null}
+        {errorMessage ? <Alert severity="error"> {errorMessage} — <strong>Please try again!</strong> </Alert> : null}
         <form onSubmit ={handleSubmit}>   
                 <TextField
                 margin="normal"
