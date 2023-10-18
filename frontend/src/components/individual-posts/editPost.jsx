@@ -51,7 +51,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   const [tolerance, setTolerance] = useState("3.1")
   const [peak_height, setMinimumPeakHeight] = useState("0.01")
   const [calibrate, setSpectrumCalibration] = useState("Automatic")
-  const [only_best, setReturnPeaksDetected] = useState("False")
+  const [only_best, setReturnPeaksDetected] = useState("")
   const [max_adducts, setMaximumUnique] = useState("2")
   const [valence, setCoordinationNumber] = useState("4")
   const [min_primaries, setMinimumProteinNumber] = useState("1")
@@ -79,13 +79,18 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
         })
     ));
     }
-
+    let final_publicity = ""
+    if (stringPublicity === "True" && publicity === "False") {
+      final_publicity = "True"
+    } else {
+      final_publicity = publicity
+    }
   try {
     await instance.put('/post/edit', {
       post_id: allData.id,
       title: title,
       description: description,
-      publicity: publicity,
+      publicity: final_publicity,
       tags: tags,
       collaborators: collaboratorIDs,
     }, {
@@ -167,15 +172,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
       value: 'False',
       label: 'Private',
     },
-    {
-      value: 'true',
-      label: 'Public',
-    },
-    {
-      value: 'false',
-      label: 'Private',
-    },
   ]
+  
   const yesNo = [
     {
       value: 'True',
@@ -342,11 +340,17 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   let arrayDataItems = groupIDs.map((group_id) =>  <Grid item key={group_id} xs={6} sx={{ paddingTop: "0px", marginBottom: "20px"}}> <EditGroupCard group_id={group_id} post_id={allData.id}  setCheckboxStates={setCheckboxStates} checkboxStates={checkboxStates}/> </Grid>); 
 
   let stringPublicity = ""
-
-  if (publicity === false) {
+  if (allData.publicity === false) {
     stringPublicity = "False"
   } else {
     stringPublicity = "True"
+  }
+
+  let stringDataPublicity = ""
+  if (data_publicity === false) {
+    stringDataPublicity = "False"
+  } else {
+    stringDataPublicity = "True"
   }
 
   return (
@@ -524,7 +528,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                   sx={{ width: '48%', float: 'right', marginBottom: '32px' }}
                   label="Data Publicity"
                   name="setDataPublic"
-                  value={data_publicity}
+                  value={stringDataPublicity}
                   onChange={e => setDataPublic(e.target.value)}
                 >
                   {publicPrivate.map((option) => (
