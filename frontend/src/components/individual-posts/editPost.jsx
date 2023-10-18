@@ -44,7 +44,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   const [error, setError] = useState(false);
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [publicity, setPostPublic] = useState("False")
+  const [publicity, setPostPublic] = useState("")
 
   const [checkboxStates, setCheckboxStates] = useState({});
 
@@ -80,11 +80,12 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     ));
     }
     let final_publicity = ""
-    if (stringPublicity === "True" && publicity === "False") {
-      final_publicity = "True"
-    } else {
+    if (publicity !== "") {
       final_publicity = publicity
+    } else {
+      final_publicity = stringPublicity
     }
+
   try {
     await instance.put('/post/edit', {
       post_id: allData.id,
@@ -101,8 +102,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   } catch(e) {
     console.error(e)
   }
-  setOpen(false);
-  window.location.reload(false);
+  // setOpen(false);
+  // window.location.reload(false);
   };
 
   const handleDelete = async (e) => {
@@ -125,6 +126,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
 
   const handleAnalysisChanges = async (e) => {
     e.preventDefault();
+
+    console.log(data_publicity)
 
     try {
       await instance.put('/post/edit/config', {
