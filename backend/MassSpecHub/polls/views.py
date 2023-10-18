@@ -47,10 +47,12 @@ def user_login(request):
                 pass
 
         if not user:
-            user = authenticate(username=username, password=password)
+            auth_user = authenticate(username=username, password=password)
+        else:
+            auth_user = authenticate(username=user.username, password=password)
 
-        if user:
-            token, _ = Token.objects.get_or_create(user=user)
+        if auth_user:
+            token, _ = Token.objects.get_or_create(user=auth_user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
 
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -201,13 +203,17 @@ def update_group_perms(request):
         permissions = request.data.get('permissions')
         if not permissions:
             return Response({'message': 'No permissions added'}, status=status.HTTP_400_BAD_REQUEST)
-        if permissions not in ['admin', 'poster', 'viewer', 'requested']:
+        if permissions not in ['admin', 'poster', 'viewer', 'requested', 'remove']:
             return Response({'message': f'Permission {permissions} is not a valid permission'},
                             status=status.HTTP_400_BAD_REQUEST)
         group = Group.objects.get(id=group_id)
-        user = CustomUser.objects.get(id=user_id)
+        user = CustomUser.objects.get(id=user_id)       
         try:
             usergroup = UserGroup.objects.get(user=user.id, group=group.id)
+            if permissions == 'remove':
+                usergroup.delete()
+                return Response({'message': f'User {user.username} removed from {group.name}.'},
+                                status=status.HTTP_200_OK)
         except:
             return Response({'message': f'User {user.username} not in {group.name}'})
         usergroup.permissions = permissions
@@ -828,3 +834,21 @@ def get_trending_posts(request):
     if request.method == 'GET':
         posts = Post.objects.filter(publicity=True).order_by('-interactions').values_list('id', flat=True)
         return Response(posts, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_post(request):
+    if request.method == 'DELETE':
+        post_id = request.data.get('post_id')
+        post = Post.objects.get(id=post_id)
+        post.delete()
+        return Response({'message': 'Post deleted successfully'}, status=status.HTTP_200_OK)
+        
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_group(request):
+    if request.method == 'DELETE':
+        group_id = request.data.get('group_id')
+        group = Group.objects.get(id=group_id)   
+        group.delete()
+        return Response({'message': 'Group deleted successfully'}, status=status.HTTP_200_OK)
