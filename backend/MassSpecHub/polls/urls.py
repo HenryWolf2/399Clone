@@ -43,7 +43,7 @@ urlpatterns = [
     path('groups/post/delete', remove_post_from_group, name='remove_post_from_group'),
     path('home/graph', get_graph_data_home, name='get_graph_data_home'),
     path('posts/trending', get_trending_posts, name='get_trending_posts'),
-    path('data/update', update_data, name='update_data')
+    path('data/update', update_data, name='update_data'),
     path('post/delete', delete_post, name='delete_post'),
     path('group/delete', delete_group, name='delete_group'),
 ]
