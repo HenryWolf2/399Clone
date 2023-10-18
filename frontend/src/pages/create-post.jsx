@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import PostForm from '../components/create-post/PostForm';
 import LogoTransparent from '../assets/images/LogoMSH_Transparent.png';
+import MobileOverlay from '../components/MobileOverlay';
 
 export default function CreatePost() {
   return (
     <div className="container">
+      <MobileOverlay />
       <NavigationBar />
       <div className="Post">
         <div className='Post-header'>

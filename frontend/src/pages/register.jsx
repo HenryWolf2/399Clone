@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import RegisterForm from '../components/register/registerForm'
 import RestrictedNavigationBar from '../components/restrictedNavigationBar'
+import MobileOverlay from '../components/MobileOverlay';
 
 export default function Register() {
   return (
     <div className="container">
+      <MobileOverlay />
       <RestrictedNavigationBar />
       <div className="App">
         <div className='App-header'>

@@ -53,6 +53,35 @@
     pointer-events: none;
 }
 
+.Too-small{
+    width: 60vmin;
+    margin-top: 5vmin;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 1);
+    display: none;
+    z-index: 9999;
+}
+@media (max-width: 800px){
+    .overlay{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.Overlay-title{
+    margin: 5vmin;
+    font-size: 5vmin;
+    font-family: monospace;
+}
+
 .Post-title{
     padding-top: 1vmin;
     margin-top: 0vmin;
