@@ -102,8 +102,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   } catch(e) {
     console.error(e)
   }
-  // setOpen(false);
-  // window.location.reload(false);
+  setOpen(false);
+  window.location.reload(false);
   };
 
   const handleDelete = async (e) => {
