@@ -14,6 +14,7 @@ import ProfilePicture from '../components/individual-posts/profile';
 import Contributors from '../components/individual-posts/contributors';
 import EditPopup from '../components/individual-posts/editPost';
 import PostCitation from '../components/individual-posts/postCitation';
+import Avatar from '@mui/material/Avatar';
 
 export default function PostPage(props) {
 
@@ -61,7 +62,30 @@ export default function PostPage(props) {
     }
     GetPostInformation();
     } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    [props.post_id] // <-- empty dependency array
+    
+  )
+
+  const [profilePicture, setProfileImage] = useState('')
+
+  useEffect(() => {
+    async function GetIndividualInformation() {
+      try{ 
+        await instance ({
+          url: "user/info",
+          method: "GET",
+          params: { 
+            user_id: allData.author
+          }
+        }).then((res) => {
+          setProfileImage(res.data.profile_pic);
+        });
+      } catch(e) {
+        console.error(e)
+      }
+    }
+    GetIndividualInformation();
+    }, [allData.author] // <-- empty dependency array
   )
 
   let CheckedResultsId = resultsId
@@ -91,7 +115,7 @@ export default function PostPage(props) {
           {/* Profile picture will need to be reviewed when the backend is linked */}
 
           <Grid item sx={{margin: "0px 0px 0px 20px"}}>
-            <ProfilePicture />
+            <Avatar src={instance.defaults.baseURL.replace("/api", "") + profilePicture} />
           </Grid>
           <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
             <Typography gutterBottom variant="h3" component="div" sx={{margin: "20px" }}>
