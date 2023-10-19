@@ -10,6 +10,7 @@ export default function ProfilePicture(props) {
   const [profilePicture, setProfileImage] = useState('')
 
   useEffect(() => {
+    if (props.author !== undefined) {
     async function GetIndividualInformation() {
       try{ 
         await instance ({
@@ -26,8 +27,8 @@ export default function ProfilePicture(props) {
       }
     }
     GetIndividualInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    } }, // <- function that will run on every dependency update
+    [props.author] // <-- empty dependency array
   )
 
   return (

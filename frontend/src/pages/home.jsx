@@ -1,9 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import PostGrid from '../components/individual-posts/postgrid';
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
 import instance from '../components/api/api_instance';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -15,10 +13,6 @@ import MobileOverlay from '../components/MobileOverlay';
 import '../assets/styles/global.css';
 
 export default function Home() {
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   navigate("/profile");;
-  // },[])
   const [PublicPosts, setPublicPosts] = useState([])
   const BibTeX = `
 @article{Long2023adducthunter,
@@ -42,7 +36,6 @@ tppubtype = {article}
     async function GetTrendingPostsIDs() {
       try{ 
         await instance ({
-          // Set URL to get all posts by ID
           url: "posts/trending",
           method: "GET",
       }).then((res) => {
@@ -66,7 +59,7 @@ tppubtype = {article}
             <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Information</h1>
           </div>
           <div style={{flex:1, flexDirection: 'row', height: '100%',}}>
-            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Trending Posts</h1>
+            <h1 style={{textAlign: 'center', color:'black', paddingRight:"60px"}}>Trending Analyses</h1>
           </div>
       </div>
 
