@@ -109,7 +109,7 @@ export default function PermsCard(props) {
       }).then((res) => {
         setMemberList(res.data.members)
         const currentUserPerm = res.data.user_permission
-        if (currentUserPerm == 'admin') {
+        if (currentUserPerm == 'admin' || currentUserPerm == 'owner') {
           setAdmin(true)
         }
 
@@ -190,6 +190,7 @@ export default function PermsCard(props) {
               key={value}
               secondaryAction={
                 <Button
+                sx={{backgroundColor:'#02AEEC'}}
                 className="custom-button"
                 variant="contained"
                 onClick={() => {

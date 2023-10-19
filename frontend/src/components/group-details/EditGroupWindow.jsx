@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import { FormControl, FormLabel } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import Upload from '@mui/icons-material/Upload';
+import {Routes, Route, useNavigate} from 'react-router-dom';
 
 const style = {
   position: 'absolute',
@@ -36,6 +37,7 @@ export default function EditModal(props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const navigate = useNavigate();
 
   const [groupname, setGroupname] =   useState('')
   const [description, setDescription] = useState('')
@@ -45,9 +47,24 @@ export default function EditModal(props) {
   const [postCount, setPostCount] = useState('')
   const [creationDate, setCreationDate] = useState('')
   const [userPermission, setUserPermission] = useState('')
-  const [memberInGroup, setMemberinGroup] = React.useState(false);
   const [inGroupText, setInGroupText] = useState('Request Group Membership');
   const [loggedInId, setLoggedInId] = useState('');
+  const [isOwner, setIsOwner] = React.useState(false);
+  const [memberList, setMemberList] = useState([])
+
+  useEffect(() => {
+    function updateDeleteView() {
+      if(userPermission == "owner") {
+        setIsOwner(true);
+      }
+    }
+    updateDeleteView();
+  })
+
+  const navigateToLanding = () => {
+    // 👇️ navigate to /contacts
+    navigate('/groups');
+  };
 
   useEffect(() => {
       async function GetGroupInformation() {
@@ -66,6 +83,7 @@ export default function EditModal(props) {
           setPostCount(res.data.posts.length)
           setCreationDate(new Date(res.data.created).toLocaleDateString())
           setUserPermission(res.data.user_permission)
+          setMemberList(res.data.members);
           //Need to define perms
 
         });
@@ -91,8 +109,26 @@ export default function EditModal(props) {
     setDescription(event.target.value);
   };
 
+  async function removeAllMembers() {
+    const memberIdList = memberList;
+    for (const id of memberIdList) {
+      const memberInfo = await updateUserPermissions(id[0], props.group_id, 'remove');
+    }
+  }
+
   async function handleDeleteGroup() {
-    
+    try {
+      removeAllMembers();
+      const res = await instance({
+        url: "/group/delete",
+        method: "DELETE",
+        data: {group_id: props.group_id}
+      });
+      // Do something with res
+    } catch(e) {
+      console.error(e);
+    }
+    navigateToLanding();
   }
 
   const handleGroupUpdate = async () => {
@@ -125,13 +161,35 @@ export default function EditModal(props) {
         //display error message (username or password incorrect)
         console.error(e)
     }
+    window.location.reload(false);
   }
+
+  const updateUserPermissions = async (userId, groupId, permission) => {
+    const data = {
+      user_id: userId,
+      group_id: groupId,
+      permissions: permission,
+    };
+
+    try {
+      await instance.put('groups/update_perms', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Include your authentication tokens in the headers if needed
+        },
+      });
+      console.log('Permissions updated successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
 
 
   return (
     <div>
       <Button
-        style = {{marginBottom:'-50px', backgroundColor:'#02AEEC'}}
+        style = {{marginBottom:'-50px', backgroundColor:'#02AEEC', width:'150px'}}
         className="custom-button"
         variant="contained"
         onClick={handleOpen} // Use onClick here to open the modal
@@ -178,7 +236,11 @@ export default function EditModal(props) {
                 />
 
             <Button onClick={()=> {handleGroupUpdate(); handleClose(); }} sx={{marginTop:'30px'}} variant='contained'>Save Changes</Button>
-            <Button onClick={()=> {handleGroupUpdate(); handleClose(); }} sx={{marginTop:'17.5px', backgroundColor:'red'}} variant='contained' color='error'>Delete Group</Button>
+            {isOwner ? (
+                <Button onClick={()=> {handleDeleteGroup(); handleClose(); }} sx={{marginTop:'17.5px', backgroundColor:'red'}} variant='contained' color='error'>Delete Group</Button>
+            ) : (
+              <div></div>
+            )}
           </FormControl>
 
         </Box>

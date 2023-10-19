@@ -152,7 +152,7 @@ def create_group(request):
         if serializer.is_valid():
             serializer.save()
             CustomUser.objects.get(id=request.user.id).groups.add(serializer.instance,
-                                                                  through_defaults={'permissions': 'admin'})
+                                                                  through_defaults={'permissions': 'owner'})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -518,7 +518,7 @@ def get_group_by_id(request):
             return_data = serializer.data
             return_data['post_count'] = group.posts.count()
             return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster',
-                                                                                                    'viewer']).count()
+                                                                                                    'viewer', 'owner']).count()
             return Response(return_data, status=status.HTTP_200_OK)
         except:
             return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -620,7 +620,7 @@ def get_group_info(request):
             group_data['group_pic'] = group.group_pic.url
             group_data['posts'] = group.posts.values_list('id', flat=True)
             group_data['members'] = UserGroup.objects.filter(group=group_id,
-                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('user', 'permissions')
+                                                              permissions__in=['admin', 'poster', 'viewer', 'requested', 'owner']).values_list('user', 'permissions')
             group_data['created'] = group.created
             try:
                 user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
@@ -816,6 +816,9 @@ def delete_post(request):
 def delete_group(request):
     if request.method == 'DELETE':
         group_id = request.data.get('group_id')
+        print("GROUPID:", group_id)
         group = Group.objects.get(id=group_id)   
         group.delete()
         return Response({'message': 'Group deleted successfully'}, status=status.HTTP_200_OK)
+    
+
