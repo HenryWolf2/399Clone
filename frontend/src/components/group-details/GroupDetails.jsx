@@ -29,6 +29,7 @@ function GroupDetails(props) {
   const [memberInGroup, setMemberinGroup] = React.useState(false);
   const [inGroupText, setInGroupText] = useState('Request Group Membership');
   const [loggedInId, setLoggedInId] = useState('');
+  const [inButtonTxt, setInButtonTxt] = useState('Request Access');
   // Still need to organize user perms
 
   useEffect(() => {
@@ -36,6 +37,8 @@ function GroupDetails(props) {
       if(userPermission == "admin" || userPermission == "viewer" || userPermission == "poster") {
         setMemberinGroup(true)
         setInGroupText("Permissions")
+      } else if (userPermission == "requested") {
+        setInButtonTxt('Access has been requested and is pending admin approval')
       }
     }
     updatePermissionView();
@@ -70,23 +73,27 @@ function GroupDetails(props) {
     [] // <-- empty dependency array
   ) 
 
-  const registerUser = async (userId, groupId, permission) => {
-    const data = {
-      user_id: userId,
-      group_id: groupId,
-      permissions: permission,
-    };
-  
-    try {
-      await instance.post('users/assign_groups', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          // Include your authentication tokens in the headers if needed
-        },
-      });
-      console.log('User Registered successfully');
-    } catch (error) {
-      console.error('Error:', error);
+  const updateUserPermissions = async (userId, groupId, permission) => {
+    if(userPermission == 'requested') {
+      setInButtonTxt('Access has been requested and is pending admin approval');
+    } else {
+      const data = {
+        user_id: userId,
+        group_id: groupId,
+        permissions: permission,
+      };
+      try {
+        await instance.post('/users/assign_groups', data, {
+          headers: {
+            'Content-Type': 'application/json',
+            // Include your authentication tokens in the headers if needed
+          },
+        });
+        console.log('Permissions updated successfully');
+      } catch (error) {
+        console.error('Error:', error);
+      }
+      window.location.reload(false);
     }
   };
 
@@ -155,8 +162,6 @@ function GroupDetails(props) {
     marginTop: '35px',
     marginRight: '15px',
   }
-
-  console.log(userPermission);
 
 
   return (
@@ -228,29 +233,58 @@ function GroupDetails(props) {
 
       </div>
 
-      <div style={{
-          height: '300px',
-          backgroundColor: '#02AEEC',
-          display: minimized ? 'none' : 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}>
-          <div style={{width: '100%', marginBottom: '-15px'}}>
-          <p style={{fontSize: '15px', color: 'white', fontWeight: 'bold', textAlign:'left', marginLeft:'5px', marginTop: '5px'}}>Status: {userPermission}</p>
-          </div>
+        {!memberInGroup ? (
+          <div style={{
+            height: '300px',
+            backgroundColor: '#02AEEC',
+            display: minimized ? 'none' : 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}>
+            <div style={{width: '100%'}}>
+            <p style={{fontSize: '15px', color: 'white', fontWeight: 'bold', textAlign:'left', marginLeft:'5px', marginTop: '5px'}}>Status: {userPermission}</p>
+            </div>
 
-          <h1 style={{color: 'white', marginTop: '10px'}}> {inGroupText} </h1>
-          <div style={{overflowY: 'scroll', backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
+            <h1 style={{color: 'white', marginTop: '10px'}}> {inGroupText} </h1>
+            <div style={{backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
 
-          {!memberInGroup ? ( 
-            <Button variant='contained' sx={{width: '100%', height:'100%'}} onClick={() => registerUser(loggedInId, props.group_id, "viewer")}>Request Access</Button>
-          ) : ( 
-            <PermsCard group_id={props.group_id}/>
-          )}
+            {!memberInGroup ? (
+              <Button variant='contained' sx={{width: '100%', height:'100%'}} onClick={() => updateUserPermissions(loggedInId, props.group_id, 'requested')}>{inButtonTxt}</Button>
+            ) : ( 
+              <PermsCard group_id={props.group_id}/>
+            )}
             
-          </div>
-          
-      </div>
+              
+            </div>
+            
+        </div>
+        ) : (
+          <div style={{
+            height: '300px',
+            backgroundColor: '#02AEEC',
+            display: minimized ? 'none' : 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}>
+            <div style={{width: '100%', marginBottom: '-15px'}}>
+            <p style={{fontSize: '15px', color: 'white', fontWeight: 'bold', textAlign:'left', marginLeft:'5px', marginTop: '5px'}}>Status: {userPermission}</p>
+            </div>
+  
+            <h1 style={{color: 'white', marginTop: '10px'}}> {inGroupText} </h1>
+            <div style={{overflowY: 'scroll', backgroundColor:'grey', width: '85%', height: '60%', marginTop: '0px', border: 'solid 3px white', borderRadius: '10px'}}>
+  
+            {!memberInGroup ? (
+              <Button variant='contained' sx={{width: '100%', height:'100%'}} onClick={() => updateUserPermissions(loggedInId, props.group_id, "requested")}>{inButtonTxt}</Button>
+            ) : ( 
+              <PermsCard group_id={props.group_id}/>
+            )}
+            
+              
+            </div>
+            
+        </div>
+        )}
+
 
     </div>
   );
