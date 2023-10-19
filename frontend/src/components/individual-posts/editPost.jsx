@@ -325,6 +325,9 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   }, []);
   
   useEffect(() => {
+    if (allData.associated_results !== undefined ) {
+
+    
     async function getAnalysisDetails() {
       try {
         const response = await instance({
@@ -350,7 +353,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     };
     
     getAnalysisDetails();
-  }, [allData.associated_results]);
+  }}, [allData.associated_results]);
 
   let arrayDataItems = groupIDs.map((group_id) =>  <Grid item key={group_id} xs={6} sx={{ paddingTop: "0px", marginBottom: "20px"}}> <EditGroupCard group_id={group_id} post_id={allData.id}  setCheckboxStates={setCheckboxStates} checkboxStates={checkboxStates}/> </Grid>); 
 
