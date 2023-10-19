@@ -379,6 +379,7 @@ def get_profile(request):
         profile_data['description'] = user.description
         profile_data['first_name'] = user.first_name
         profile_data['last_name'] = user.last_name
+        profile_data['id'] = request.user.id
         if user.profile_pic:  # TODO REVIEW
             profile_data['profile_pic'] = user.profile_pic.url
         if user.cover_photo:  # TODO REVIEW
@@ -853,3 +854,16 @@ def delete_group(request):
         group = Group.objects.get(id=group_id)   
         group.delete()
         return Response({'message': 'Group deleted successfully'}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_post_files(request):
+    if request.method == 'GET':
+        analysis_id = request.query_params.get('analysis_id')
+        data = PostAnalysis.objects.get(id=analysis_id).data_input
+        return_data = {}
+        return_data['publicity'] = data.data_publicity
+        return_data['compounds'] = data.compounds_file.url
+        return_data['adducts'] = data.adducts_file.url
+        return_data['bounds'] = data.bounds_file.url
+        return Response(return_data, status=status.HTTP_200_OK)
