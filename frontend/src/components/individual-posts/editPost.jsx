@@ -56,7 +56,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   const [valence, setCoordinationNumber] = useState("4")
   const [min_primaries, setMinimumProteinNumber] = useState("1")
   const [max_primaries, setMaximumProteinNumber] = useState("1")
-  const [data_publicity, setDataPublic] = useState("False")
+  const [data_publicity, setDataPublic] = useState("")
   const [multi_protein, setMultiProtein] = useState("off")
   const [manual_calibration, setManualCalibration] = useState("0")
 
@@ -127,22 +127,26 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   const handleAnalysisChanges = async (e) => {
     e.preventDefault();
 
-    console.log(data_publicity)
-
+    let final_data_publicity = ""
+    if (data_publicity === "True" || data_publicity === "true" || data_publicity === true) {
+      final_data_publicity = true
+    } else {
+      final_data_publicity = false
+    }
     try {
       await instance.put('/post/edit/config', {
-        "analysis_id": allData.associated_results,
-        "tolerance": tolerance,
-        "peak_height": peak_height,
-        "multi_protein": multi_protein,
-        "only_best": only_best,
-        "calibrate": calibrate,
-        "min_primaries": min_primaries,
-        "max_primaries": max_primaries,
-        "max_adducts": max_adducts,
-        "valence": valence,
-        "publicity": data_publicity,
-        "manual_calibration": manual_calibration
+        analysis_id: allData.associated_results,
+        tolerance: tolerance,
+        peak_height: peak_height,
+        multi_protein: multi_protein,
+        only_best: only_best,
+        calibrate: calibrate,
+        min_primaries: min_primaries,
+        max_primaries: max_primaries,
+        max_adducts: max_adducts,
+        valence: valence,
+        publicity: final_data_publicity,
+        manual_calibration: manual_calibration
       }, {
         headers: {
           'Content-Type': 'application/json',
@@ -151,8 +155,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     } catch(e) {
       console.error(e)
     }
-    setOpen(false);
-    window.location.reload(false);
+    // setOpen(false);
+    // window.location.reload(false);
   }
 
   const spectrumCalibrationOptions = [
@@ -525,13 +529,14 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                 </TextField>
                 <TextField
                   margin="normal"
+                  sx={{ width: '48%', float: 'right', marginBottom: '32px' }}
                   select
                   required
+                  className='Floater'
                   size="large"
-                  sx={{ width: '48%', float: 'right', marginBottom: '32px' }}
                   label="Data Publicity"
                   name="setDataPublic"
-                  value={stringDataPublicity}
+                  defaultValue={stringDataPublicity}
                   onChange={e => setDataPublic(e.target.value)}
                 >
                   {publicPrivate.map((option) => (
@@ -578,7 +583,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                   freeSolo
                   options={[]}
                   defaultValue={allData.tags}
-                  onChange={(event, newValue, reason, details) => {
+                  onChange={(newValue) => {
                       setTags(newValue);
                   }}
 
@@ -599,7 +604,6 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                       variant="outlined"
                       style={{ width: 700 }}
                       label="Tags"
-                      // placeholder="Enter tags"
                       onKeyDown={(event) => {
                         if (event.key === 'Enter') {
                           handleAddTag(event, event.target.value);

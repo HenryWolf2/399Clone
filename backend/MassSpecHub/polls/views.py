@@ -715,7 +715,7 @@ def edit_analysis(request):
             valence = request.data.get('valence')
             publicity = request.data.get('publicity')
             manual_calibration = request.data.get('manual_calibration')
-            if publicity:
+            if publicity != None:
                 data.data_publicity = publicity
             if manual_calibration:
                 analysis.manual_calibration = manual_calibration
@@ -750,6 +750,7 @@ def edit_analysis(request):
             json_df = json.loads(json_df)
             analysis.result_df = json_df
             analysis.save()
+            data.save()
             return Response({'message': 'Analysis config updated successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
