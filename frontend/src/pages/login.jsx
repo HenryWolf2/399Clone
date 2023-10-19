@@ -6,6 +6,7 @@ import RestrictedNavigationBar from '../components/restrictedNavigationBar'
 import LoginLanding from '../components/login/loginLanding';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Typography } from '@mui/material';
+import MobileOverlay from '../components/MobileOverlay';
 
 import '../assets/styles/global.css';
 import { Button } from '@mui/material';
@@ -13,6 +14,7 @@ import { Button } from '@mui/material';
 export default function Login() {
   return (
     <div className="container">
+      <MobileOverlay />
       <RestrictedNavigationBar/>
       <div className="App">
         <div className='App-header' style={{backgroundAttachment: "fixed"}}>

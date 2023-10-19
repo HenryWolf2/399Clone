@@ -8,6 +8,7 @@ import instance from '../components/api/api_instance';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import MobileOverlay from '../components/MobileOverlay';
 
 
 
@@ -57,6 +58,7 @@ tppubtype = {article}
   ) 
   return (
     <div className="container">
+      <MobileOverlay />
       <NavigationBar />
       
       <div style={{height: '85px',display:'flex'}}>

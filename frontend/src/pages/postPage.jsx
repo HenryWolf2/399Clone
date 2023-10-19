@@ -15,6 +15,7 @@ import Contributors from '../components/individual-posts/contributors';
 import EditPopup from '../components/individual-posts/editPost';
 import PostCitation from '../components/individual-posts/postCitation';
 import Avatar from '@mui/material/Avatar';
+import MobileOverlay from '../components/MobileOverlay';
 
 export default function PostPage(props) {
 
@@ -209,6 +210,7 @@ export default function PostPage(props) {
 
   return (
     <div className="container">
+      <MobileOverlay />
       <NavigationBar />
 
       <Box sx={{ width: '80%', bgcolor: '#FFFFFF', borderRadius: '10px', padding: "10px 0px 20px 0px", marginLeft: "10%", marginTop: "2%", boxShadow: 5, marginBottom: '2%' }}>
