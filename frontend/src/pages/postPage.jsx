@@ -117,6 +117,7 @@ export default function PostPage(props) {
   const [profilePicture, setProfileImage] = useState('')
 
   useEffect(() => {
+    if (allData.author !== undefined) {
     async function GetIndividualInformation() {
       try{ 
         await instance ({
@@ -133,7 +134,7 @@ export default function PostPage(props) {
       }
     }
     GetIndividualInformation();
-    }, [allData.author] // <-- empty dependency array
+    }}, [allData.author] // <-- empty dependency array
   )
 
   let CheckedResultsId = resultsId
