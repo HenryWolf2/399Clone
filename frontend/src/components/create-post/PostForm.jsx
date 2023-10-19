@@ -21,7 +21,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import Contributors from '../individual-posts/contributors';
 import Tags from '../individual-posts/tags';
 
-const steps = ['Post files', 'Peak search settings', 'Feasible set settings', 'Post description']
+const steps = ['Analysis files', 'Peak search settings', 'Feasible set settings', 'Analysis description']
 
 const spectrumCalibrationOptions = [
   {
@@ -718,7 +718,7 @@ const PostForm = () => {
         sx={{ mt: 3, mb: 2 }}
         style = {{margin: 30, backgroundColor: '#02AEEC'}}
         >
-        Submit post
+        Submit Analysis
         </Button>
         </div>
       )}
