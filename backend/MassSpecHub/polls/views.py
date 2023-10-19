@@ -297,17 +297,14 @@ def add_post_to_group(request):
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
-        if post.publicity == True:
-            if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
-                group.posts.add(post)
-                return Response({'message': f'Post {post.title} added to group {group.name}.'},
-                                status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'User does not have permission to add post to group'},
-                                status=status.HTTP_401_UNAUTHORIZED)
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
+            group.posts.add(post)
+            return Response({'message': f'Post {post.title} added to group {group.name}.'},
+                            status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({'error': 'User does not have permission to add post to group'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+        
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def remove_post_from_group(request):
@@ -382,6 +379,7 @@ def get_profile(request):
         profile_data['description'] = user.description
         profile_data['first_name'] = user.first_name
         profile_data['last_name'] = user.last_name
+        profile_data['id'] = request.user.id
         if user.profile_pic:  # TODO REVIEW
             profile_data['profile_pic'] = user.profile_pic.url
         if user.cover_photo:  # TODO REVIEW
@@ -414,7 +412,12 @@ def edit_post(request):
             summary = request.data.get('summary')
             description = request.data.get('description')
             publicity = request.data.get('publicity')
-            collaborators = request.POST.getlist('collaborators')
+            collaborators = request.data.get('collaborators')
+            tags = request.data.get('tags')
+
+            post.tags.clear()
+            post.collaborators.clear()
+
             if title:
                 post.title = title
             if description:
@@ -423,8 +426,14 @@ def edit_post(request):
                 post.publicity = publicity
             if summary:
                 post.summary = summary
+            if tags:
+                for tag_name in tags:
+                    try:
+                        tag = Tag.objects.get(name=tag_name)
+                    except ObjectDoesNotExist:
+                        tag = Tag.objects.create(name=tag_name)
+                    post.tags.add(tag)
             if collaborators:
-                post.collaborators.clear()
                 for collaborator in collaborators:
                     try:
                         user = CustomUser.objects.get(id=collaborator)
@@ -705,6 +714,12 @@ def edit_analysis(request):
             max_primaries = request.data.get('max_primaries')
             max_adducts = request.data.get('max_adducts')
             valence = request.data.get('valence')
+            publicity = request.data.get('publicity')
+            manual_calibration = request.data.get('manual_calibration')
+            if publicity != None:
+                data.data_publicity = publicity
+            if manual_calibration:
+                analysis.manual_calibration = manual_calibration
             if tolerance:
                 analysis.tolerance = tolerance
             if peak_height:
@@ -736,6 +751,7 @@ def edit_analysis(request):
             json_df = json.loads(json_df)
             analysis.result_df = json_df
             analysis.save()
+            data.save()
             return Response({'message': 'Analysis config updated successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -753,11 +769,30 @@ def get_config(request):
         config_data['multi_protein'] = analysis.multi_protein
         config_data['only_best'] = analysis.only_best
         config_data['calibrate'] = analysis.calibrate
+        config_data['manual_calibration'] = analysis.manual_calibration
         config_data['min_primaries'] = analysis.min_primaries
         config_data['max_primaries'] = analysis.max_primaries
         config_data['max_adducts'] = analysis.max_adducts
         config_data['valence'] = analysis.valence
+        config_data['data'] = analysis.data_input.data_publicity
         return Response(config_data, status=status.HTTP_200_OK)
+    
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_data(request):
+    if request.method == 'PUT':
+        try:
+            data_id = request.data.get('data_id')
+            data = Data.objects.get(id=data_id)
+            publicity = request.data.get('publicity')
+            if publicity:
+                data.data_publicity = publicity
+            data.save()
+            return Response({'message': 'Analysis config updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 @api_view(['GET'])
@@ -819,3 +854,16 @@ def delete_group(request):
         group = Group.objects.get(id=group_id)   
         group.delete()
         return Response({'message': 'Group deleted successfully'}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_post_files(request):
+    if request.method == 'GET':
+        analysis_id = request.query_params.get('analysis_id')
+        data = PostAnalysis.objects.get(id=analysis_id).data_input
+        return_data = {}
+        return_data['publicity'] = data.data_publicity
+        return_data['compounds'] = data.compounds_file.url
+        return_data['adducts'] = data.adducts_file.url
+        return_data['bounds'] = data.bounds_file.url
+        return Response(return_data, status=status.HTTP_200_OK)
