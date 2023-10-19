@@ -11,6 +11,7 @@ import Grid from '@mui/material/Grid';
 import EditGroupCard from './EditGroupCard';
 import {Button, Chip} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import {CircularProgress} from '@mui/material';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -60,8 +61,11 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   const [multi_protein, setMultiProtein] = useState("off")
   const [manual_calibration, setManualCalibration] = useState("0")
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleContentSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault();
+    setIsLoading(true);
 
     if (collaboratorsList !== undefined) {
       await Promise.all(collaboratorsList.map(username => 
@@ -108,6 +112,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
 
   const handleDelete = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try{
       await instance.delete('/groups/post/delete', {
         data: {
@@ -126,7 +131,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
 
   const handleAnalysisChanges = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     let final_data_publicity = ""
     if (data_publicity === "True" || data_publicity === "true" || data_publicity === true) {
       final_data_publicity = true
@@ -155,8 +160,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     } catch(e) {
       console.error(e)
     }
-    // setOpen(false);
-    // window.location.reload(false);
+    setOpen(false);
+    window.location.reload(false);
   }
 
   const spectrumCalibrationOptions = [
@@ -218,6 +223,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   };
 
   const handleGroupChanges = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
     for (let id in checkboxStates) {
       if (id !== "") {
         if (checkboxStates[id] === true) {
@@ -253,6 +260,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
       }
     }
     setOpen(false);
+    window.location.reload(false);
   }
 
   const checkCollaborators = (newValue) => {
@@ -379,10 +387,14 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
               
             </Grid>
             <Grid item xs={12}>
-                <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB" }} onClick={handleGroupChanges}>
+                {isLoading ? (
+                    <CircularProgress sx={{float: "right"}} />
+                ) : (
+                  <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB" }} onClick={handleGroupChanges}>
                   Submit Groups
                 </Button>
-              </Grid>
+                )}
+            </Grid>
 
            
           </TabPanel>
@@ -547,9 +559,17 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                 </TextField>
                 
                 </div>
-                <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB", marginTop:"10px" }} onClick={handleAnalysisChanges}>
-                    Submit Settings
-                </Button>
+                {isLoading ? (
+                    <CircularProgress sx={{float: "right"}} />
+                ) : (
+                    <Button 
+                        variant="contained" 
+                        sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB", marginTop:"10px" }} 
+                        onClick={handleAnalysisChanges}
+                    >
+                        Submit Settings
+                    </Button>
+                )}
           </TabPanel>
 
           <TabPanel value={value} index={2} >
@@ -671,9 +691,13 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
               
 
             </div>
-            <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB", marginTop:"10px" }} onClick={handleContentSubmit}>
-                Submit Content
-            </Button>
+            {isLoading ? (
+                    <CircularProgress sx={{float: "right"}} />
+                ) : (
+                  <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB", marginTop:"10px" }} onClick={handleContentSubmit}>
+                  Submit Content
+              </Button>
+                )}
           </TabPanel>
 
           <TabPanel value={value} index={3} sx={{ margin: 20 }}>
@@ -682,9 +706,13 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
             <p>Are you sure that you want to delete this post? It will be removed from every group it has been shared with and will permanently deleted.<br></br></p>
             <p>This action can not be undone so please be certain before deleting!</p>
             <Grid item xs={12}>
-                <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#FC7770" }} onClick={handleDelete}>
-                  Delete Post
-                </Button>
+            {isLoading ? (
+                    <CircularProgress sx={{float: "right"}} />
+                ) : (
+                  <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#FC7770" }} onClick={handleDelete}>
+                    Delete Post
+                  </Button>
+                )}
               </Grid>
 
            
