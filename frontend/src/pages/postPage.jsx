@@ -238,14 +238,14 @@ export default function PostPage(props) {
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
           {userID === allData.author || collaborators.includes(userID) ? (
             <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={handleOpen}>
-              Edit Post
+              Edit Analysis
             </Button>
           ) : (<p></p>) }
             <EditPopup open={open} setOpen={setOpen} handleClose={handleClose} allData={allData}/>
           </Grid>
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
-            <Button variant="contained" onClick={handleOpenCitation} style={{ backgroundColor: '#02AEEC' }}>
-              Cite Post
+            <Button variant="contained" onClick={handleOpenCitation} sx={{ backgroundColor: '#02AEEC' }}>
+              Cite Analysis
             </Button>
             
             <PostCitation openCitation={openCitation} handleCloseCitation={handleCloseCitation}post_id={props.post_id}/>
