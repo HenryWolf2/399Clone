@@ -9,16 +9,12 @@ export default function NotFound() {
     <div className="container">
       <MobileOverlay />
       <NavigationBar />
-      <div style={{ 
-      backgroundImage: `url(${logo})`,
-      backgroundRepeat: 'round',
-      backgroundPosition: 'top left',
-      backgroundSize: '30px',
-    }}
-    className = 'NotFound-background'>
-      <div className = 'NotFound-popup'>
+      <div>
+      <div className = 'App-header'>
+        <div className='NotFound-popup'>
         <img src={logo} className="Post-logo" alt="logo" />
         <h1 className = 'Overlay-title'>404: PAGE NOT FOUND</h1>
+        </div>
         
       </div>
     </div>
