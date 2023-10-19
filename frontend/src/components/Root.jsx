@@ -38,15 +38,12 @@ export default function Root() {
     async function GetAllPostsIDs() {
       try{ 
         await instance ({
-          // Set URL to get all posts by ID
           url: "/post/get_all_objects",
           method: "GET",
       }).then((res) => {
         setAllPosts(res.data)
       });
-      } catch(e) {
-        console.error(e)
-      }
+      } catch(e) { }
     }
     GetAllPostsIDs();
     } , // <- function that will run on every dependency update
@@ -65,9 +62,7 @@ export default function Root() {
       }).then((res) => {
         setAllGroups(res.data)
       });
-      } catch(e) {
-        console.error(e)
-      }
+      } catch(e) { }
     }
     GetAllGroupsIDs();
     } , // <- function that will run on every dependency update

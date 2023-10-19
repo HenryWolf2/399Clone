@@ -65,6 +65,14 @@ function ResponsiveAppBar() {
       }
     setAnchorElUser(null);
   };
+  // adding in effect for getting the token from local storage
+  useEffect(() => {
+    if(localStorage.getItem('token') != null){
+      instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
+    }else{
+      navigate("/login")
+    }
+  },[])
 
   useEffect(() => {
     async function GetProfileInformation() {
@@ -89,21 +97,14 @@ function ResponsiveAppBar() {
     paddingTop: 10,
   };
 
-  // adding in effect for getting the token from local storage
-  useEffect(() => {
-    if(localStorage.getItem('token') != null){
-      instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
-    }else{
-      navigate("/login")
-    }
-  },[])
+ 
 
   return (
     <AppBar position="static" sx={{backgroundColor:'black'}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
-                {/* Logo Section */}
+          {/* Logo Section */}
 
           <div style={logoStyle}>
             <img src={LogoTransparent} className="App-logo" alt="logo" width={50} />
@@ -123,51 +124,8 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            MSH
+            MaSH
           </Typography>
-
-                          {/* Section for the link menu on minimised page */}
-
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">Home</Typography>
-                </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">Groups</Typography>
-                </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">Public</Typography>
-                </MenuItem>
-            </Menu>
-          </Box>
 
             {/* The Navigation Bar Link Section */}
 
@@ -202,42 +160,10 @@ function ResponsiveAppBar() {
               </Button>
               </NavLink>
 
-                {/* Temporary Links for Testing */}
-
-              {/* <NavLink to="/loading" style={{ textDecoration: 'none' }}>
-              <Button
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
-                  backgroundColor: 'grey',
-                },}}
-              > Loading
-              </Button>
-              </NavLink>
-
-              <NavLink to="/login" style={{ textDecoration: 'none' }}>
-              <Button
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
-                  backgroundColor: 'grey',
-                },}}
-              > Login
-              </Button>
-              </NavLink>
-
-              <NavLink to="/register" style={{ textDecoration: 'none' }}>
-              <Button
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
-                  backgroundColor: 'grey',
-                },}}
-              > Register
-              </Button>
-              </NavLink> */}
-
           </Box>
 
                                 {/* Create Button */}
-            <Button sx={{margin:2}} id='create-button' className="custom-button" variant='contained' style={{ backgroundColor: '#02AEEC' }} endIcon={<AddIcon/>} 
+            <Button sx={{margin:2, backgroundColor: '#02AEEC'}} id='create-button' className="custom-button" variant='contained'  endIcon={<AddIcon/>} 
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
@@ -290,7 +216,7 @@ function ResponsiveAppBar() {
 
                 <NavLink to="/login" style={{ textDecoration: 'none'}}>
                 <MenuItem onClick={handleLogoutTokens}>
-                  <Typography textAlign="center">Signout</Typography>
+                  <Typography textAlign="center">Sign Out</Typography>
                 </MenuItem>
               </NavLink>
 
