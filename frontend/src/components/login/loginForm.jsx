@@ -64,7 +64,6 @@ const LoginForm = () => {
                 label="Username"
                 name="username"
                 autoComplete="username"
-                autoFocus
                 onChange={e => setUsername(e.target.value)}
                 />
                 <TextField

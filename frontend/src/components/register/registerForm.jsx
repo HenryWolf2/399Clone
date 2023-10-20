@@ -96,7 +96,6 @@ const RegisterForm = () => {
                     label="First Name"
                     name="firstName"
                     autoComplete="firstname"
-                    autoFocus
                     onChange={e => setFirstName(e.target.value)}
                     />
                     <TextField
@@ -107,7 +106,6 @@ const RegisterForm = () => {
                     label="Last Name"
                     name="lastName"
                     autoComplete="lastname"
-                    autoFocus
                     onChange={e => setLastName(e.target.value)}
                     />
                 </Stack>
@@ -119,7 +117,6 @@ const RegisterForm = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                autoFocus
                 error = {emailError}
                 onChange={e => setEmail(e.target.value)}
                 />
@@ -131,7 +128,6 @@ const RegisterForm = () => {
                 label="Username"
                 name="userName"
                 autoComplete="off"
-                autoFocus
                 onChange={e => setUserName(e.target.value)}
                 />
                 {passwordMatchError ? <Alert severity="error" > Passwords do not match</Alert> : null}
