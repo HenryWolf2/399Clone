@@ -33,18 +33,23 @@ export default function PermsCard(props) {
   const [tempUserId, setTempuserId] = useState('');
 
   const [changedPerm, setChangedPerm] = React.useState('');
+  const [currentUserPerm, setCurrentUserPerm] = useState('');
 
   const handleChange = (event) => {
     setChangedPerm(event.target.value);
   };
   
   const changeAdminPerm = (perm) => {
-    if (perm == "admin") {
+    if (perm == "admin" || perm == "owner") {
       setCheckingAdmin(true);
-    } else {
+    }
+    if (currentUserPerm == "owner" && perm == "owner") {
+      setCheckingAdmin(true);
+    } else if (currentUserPerm == "owner" && perm != "owner") {
       setCheckingAdmin(false);
     }
   }
+  
 
   
   const style = {
@@ -109,6 +114,7 @@ export default function PermsCard(props) {
       }).then((res) => {
         setMemberList(res.data.members)
         const currentUserPerm = res.data.user_permission
+        setCurrentUserPerm(currentUserPerm)
         if (currentUserPerm == 'admin' || currentUserPerm == 'owner') {
           setAdmin(true)
         }
