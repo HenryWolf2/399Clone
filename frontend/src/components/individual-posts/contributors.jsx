@@ -28,8 +28,16 @@ export default function Contributors(props) {
     Promise.all(collaboratorsArray.map(user_id => GetIndividualInformation(user_id)))
   }, [collaboratorsArray]);
   
+  let finalUsers = []
 
-  const collaboratorsAvatarsV2 = users?.map((user, i) => 
+  users.forEach(element => {
+    if (!finalUsers.some(user => user.username === element.username)) {
+      finalUsers.push(element);
+    }
+  })
+
+
+  const collaboratorsAvatarsV2 = finalUsers?.map((user, i) => 
     <Avatar key={i} id={user.id} alt={user.name} src={instance.defaults.baseURL.replace("/api", "") + user.profile_pic} />
   );
 

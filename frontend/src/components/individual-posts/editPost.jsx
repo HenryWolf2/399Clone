@@ -75,7 +75,11 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
         })
         .then(response => {
             let reply = Object.values(response.data)[0];
-            collaboratorIDs.push(reply);
+
+            if (!collaboratorIDs.some(user => user.username === reply.username)) {
+                collaboratorIDs.push(reply);
+            }
+            
         })
         .catch(error => {
             console.error(error);
@@ -88,13 +92,9 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     } else {
       final_publicity = stringPublicity
     }
-    console.log(tags)
 
     if (tags === undefined) {
-      console.log("hello ?")
-      console.log(allData)
       setTags(allData.tags)
-      console.log(tags)
     }
   try {
     await instance.put('/post/edit', {
@@ -216,10 +216,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
 
   const handleAddTag = (event, newTag) => {
     if (tags !== undefined && newTag && !tags.includes(newTag)) {
-      console.log("here")
       setTags(prevTags => [...prevTags, newTag]);
     }
-    console.log(tags)
   };
 
   const handleDeleteTag = (tagToDelete) => {
@@ -288,27 +286,29 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     })
   }
 
-  const collaboratorsArray = allData.collaborators;
+  
   
   useEffect(() => {
-    async function GetIndividualInformation(user_id) {
-      try{ 
-        await instance ({
-          url: "user/info",
-          method: "GET",
-          params: { 
-            user_id: user_id 
-          }
-        }).then((res) => {
-          setCollaborators(prevUsers => [...prevUsers, res.data.username]);
-        });
-      } catch(e) {
-        console.error(e)
+    if (allData.collaborators !== undefined) {
+      const collaboratorsArray = allData.collaborators;
+      async function GetIndividualInformation(user_id) {
+        try{ 
+          await instance ({
+            url: "user/info",
+            method: "GET",
+            params: { 
+              user_id: user_id 
+            }
+          }).then((res) => {
+            setCollaborators(prevUsers => [...prevUsers, res.data.username]);
+          });
+        } catch(e) {
+          console.error(e)
+        }
       }
-    }
-
-    Promise.all(collaboratorsArray?.map(user_id => GetIndividualInformation(user_id)) || [])
-  }, [collaboratorsArray]);
+      setCollaborators([])
+      Promise.all(collaboratorsArray?.map(user_id => GetIndividualInformation(user_id)) || [])
+  }}, [allData.collaborators]);
 
   useEffect(() => {
     if (allData.tags) {
