@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup, PostGroup
+from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup, PostGroup, TagPost
 from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
@@ -363,10 +363,15 @@ def search_post_by_tag(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_tags(request):
-    if request.method == 'GET':
-        tags = Tag.objects.order_by('name')
-        tags = TagSerializer(tags, many=True)
-        return Response(tags.data, status=status.HTTP_200_OK)
+    tag_names = []
+    tags = list(TagPost.objects.values('tag_id').distinct())
+    for tag_id in tags:
+        try:
+            tag = Tag.objects.get(id=tag_id['tag_id'])
+            tag_names.append(tag.name)
+        except:
+            pass
+    return Response(tag_names, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

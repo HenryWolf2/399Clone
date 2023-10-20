@@ -99,7 +99,7 @@ export default function Post() {
       }).then((res) => {
         let newList = [];
         for(let i = 0; i < res.data.length; i++){
-          let names = res.data[i].name;
+          let names = res.data[i];
           newList.push(names);
 
           }
