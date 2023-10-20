@@ -14,7 +14,7 @@ export default function Tags(props) {
   }
   
   return (
-    <Stack direction="row" spacing={1} sx={{margin: "0px 20px 0px 20px"}}>
+    <Stack direction="row" spacing={1} sx={{margin: "0px 20px 0px 20px", overflow:"scroll", overflowY:"hidden"}}>
       {newArray}
     </Stack>
   );
