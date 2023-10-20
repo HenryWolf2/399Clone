@@ -216,21 +216,6 @@ export default function PermsCard(props) {
           const labelId = `${value[0]}`;
           const isRequested = checkIsRequested(value[2]);
           return (
-            <ListItem
-              key={value}
-              secondaryAction={
-                <Button
-                sx={{backgroundColor:'#02AEEC'}}
-                className="custom-button"
-                variant="contained"
-                onClick={() => {
-                  handleOpen();
-                  setCurrentPerm(value[2]);
-                  calcRemainingPerms(value[2]);
-                  setCurrentName(value[0]);
-                  changeAdminPerm(value[2]);
-                  setCurrentId(value[3]);
-                }}
             <div>
               {isRequested ? (
                   <ListItem

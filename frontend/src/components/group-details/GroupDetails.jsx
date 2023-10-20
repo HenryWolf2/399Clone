@@ -109,6 +109,7 @@ function GroupDetails(props) {
       console.log('User Registered successfully');
     } catch (error) {
       console.error('Error:', error);
+    }
 
   const updateUserPermissions = async (userId, groupId, permission) => {
     if(userPermission == 'requested') {
@@ -133,28 +134,6 @@ function GroupDetails(props) {
       window.location.reload(false);
     }
   };
-
-  const updateUserPermissions = async (userId, groupId, permission) => {
-    const data = {
-      user_id: userId,
-      group_id: groupId,
-      permissions: permission,
-    };
-  
-    try {
-      await instance.put('groups/update_perms', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          // Include your authentication tokens in the headers if needed
-        },
-      });
-      console.log('Permissions updated successfully');
-    } catch (error) {
-      console.error('Error:', error);
-    }
-    window.location.reload(false);
-  };
-
 
   const divStyle = {
     width: minimized ? '15%' : '50%',
@@ -356,6 +335,7 @@ function GroupDetails(props) {
 
     </div>
   );
+  } 
 }
 
 export default GroupDetails;
