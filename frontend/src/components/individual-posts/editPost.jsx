@@ -88,7 +88,14 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     } else {
       final_publicity = stringPublicity
     }
+    console.log(tags)
 
+    if (tags === undefined) {
+      console.log("hello ?")
+      console.log(allData)
+      setTags(allData.tags)
+      console.log(tags)
+    }
   try {
     await instance.put('/post/edit', {
       post_id: allData.id,
@@ -303,7 +310,11 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     Promise.all(collaboratorsArray?.map(user_id => GetIndividualInformation(user_id)) || [])
   }, [collaboratorsArray]);
 
-
+  useEffect(() => {
+    if (allData.tags) {
+      setTags(allData.tags);
+    }
+  }, [allData.tags]);
 
   useEffect(() => {
     async function getGroupInformation() {
