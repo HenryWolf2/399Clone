@@ -34,18 +34,23 @@ export default function PermsCard(props) {
   const [tempUserId, setTempuserId] = useState('');
 
   const [changedPerm, setChangedPerm] = React.useState('');
+  const [currentUserPerm, setCurrentUserPerm] = useState('');
 
   const handleChange = (event) => {
     setChangedPerm(event.target.value);
   };
   
   const changeAdminPerm = (perm) => {
-    if (perm == "admin") {
+    if (perm == "admin" || perm == "owner") {
       setCheckingAdmin(true);
-    } else {
+    }
+    if (currentUserPerm == "owner" && perm == "owner") {
+      setCheckingAdmin(true);
+    } else if (currentUserPerm == "owner" && perm != "owner") {
       setCheckingAdmin(false);
     }
   }
+  
 
   
   const style = {
@@ -118,7 +123,8 @@ export default function PermsCard(props) {
       }).then((res) => {
         setMemberList(res.data.members)
         const currentUserPerm = res.data.user_permission
-        if (currentUserPerm == 'admin') {
+        setCurrentUserPerm(currentUserPerm)
+        if (currentUserPerm == 'admin' || currentUserPerm == 'owner') {
           setAdmin(true)
         }
 
@@ -210,6 +216,21 @@ export default function PermsCard(props) {
           const labelId = `${value[0]}`;
           const isRequested = checkIsRequested(value[2]);
           return (
+            <ListItem
+              key={value}
+              secondaryAction={
+                <Button
+                sx={{backgroundColor:'#02AEEC'}}
+                className="custom-button"
+                variant="contained"
+                onClick={() => {
+                  handleOpen();
+                  setCurrentPerm(value[2]);
+                  calcRemainingPerms(value[2]);
+                  setCurrentName(value[0]);
+                  changeAdminPerm(value[2]);
+                  setCurrentId(value[3]);
+                }}
             <div>
               {isRequested ? (
                   <ListItem
@@ -352,6 +373,7 @@ export default function PermsCard(props) {
                 onClick={() => {
                   handleClose();
                   updateUserPermissions(tempUserId, groupId, changedPerm);
+                  window.location.reload(false);
                 }}
                 >
                   Submit Change

@@ -8,6 +8,7 @@ import instance from '../api/api_instance';
 import PermsCard from './PermsCard';
 import MemberCard from './MemberCard';
 import { Typography } from '@mui/material';
+import EditGroupWindow from './EditGroupWindow';
 
 function GroupDetails(props) {
   const [minimized, setMinimized] = useState(false);
@@ -29,12 +30,24 @@ function GroupDetails(props) {
   const [memberInGroup, setMemberinGroup] = React.useState(false);
   const [inGroupText, setInGroupText] = useState('Request Group Membership');
   const [loggedInId, setLoggedInId] = useState('');
+  const [isOwner, setIsOwner] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
   const [inButtonTxt, setInButtonTxt] = useState('Request Access');
+
   // Still need to organize user perms
+
+  function checkAdmin() {
+    console.log(userPermission);
+    if(userPermission == 'admin') {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }
 
   useEffect(() => {
     function updatePermissionView() {
-      if(userPermission == "admin" || userPermission == "viewer" || userPermission == "poster") {
+      if(userPermission == "admin" || userPermission == "viewer" || userPermission == "poster" || userPermission == "owner") {
         setMemberinGroup(true)
         setInGroupText("Permissions")
       } else if (userPermission == "requested") {
@@ -61,7 +74,13 @@ function GroupDetails(props) {
         setPostCount(res.data.posts.length)
         setCreationDate(new Date(res.data.created).toLocaleDateString())
         setUserPermission(res.data.user_permission)
-        //Need to define perms
+        const currentUserPerm = res.data.user_permission
+        if (currentUserPerm == 'admin' || currentUserPerm == 'owner') {
+          setIsAdmin(true)
+        }
+        if (currentUserPerm == "owner" || currentUserPerm == 'requested' || currentUserPerm == 'N/A') {
+          setIsOwner(true);
+        }
 
       });
       } catch(e) {
@@ -72,6 +91,24 @@ function GroupDetails(props) {
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   ) 
+
+  const registerUser = async (userId, groupId, permission) => {
+    const data = {
+      user_id: userId,
+      group_id: groupId,
+      permissions: permission,
+    };
+  
+    try {
+      await instance.post('users/assign_groups', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Include your authentication tokens in the headers if needed
+        },
+      });
+      console.log('User Registered successfully');
+    } catch (error) {
+      console.error('Error:', error);
 
   const updateUserPermissions = async (userId, groupId, permission) => {
     if(userPermission == 'requested') {
@@ -95,6 +132,27 @@ function GroupDetails(props) {
       }
       window.location.reload(false);
     }
+  };
+
+  const updateUserPermissions = async (userId, groupId, permission) => {
+    const data = {
+      user_id: userId,
+      group_id: groupId,
+      permissions: permission,
+    };
+  
+    try {
+      await instance.put('groups/update_perms', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          // Include your authentication tokens in the headers if needed
+        },
+      });
+      console.log('Permissions updated successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+    window.location.reload(false);
   };
 
 
@@ -122,8 +180,8 @@ function GroupDetails(props) {
     fontSize: '40px',
     marginRight:'10px',
     textAlign: 'right',
-    width: '50px',
-    height: '60px',
+    width: '10%',
+    height: '15%',
   }
 
   const expandButton = {
@@ -163,7 +221,6 @@ function GroupDetails(props) {
     marginRight: '15px',
   }
 
-
   return (
     <div
       className={`minimizable-div ${minimized ? 'minimized' : ''}`}
@@ -186,6 +243,7 @@ function GroupDetails(props) {
       
 
           <div style={overlayStyleExpanded}>
+
             <h1 style={{color: 'white', marginTop: '50px'}}>{groupname}</h1>
             <div style={{display: 'flex', marginTop: '-40px', color: 'white', fontSize: '14px'}}>
               <h1 style={{marginRight: '15px'}}>{creationDate}</h1>
@@ -201,6 +259,16 @@ function GroupDetails(props) {
             <h1 style={{color: 'white', marginTop: '20px', fontSize: '27px'}}> Description </h1>
             <hr style={{width:'400px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
             <p style={{fontSize: '15px', color: 'white'}}>{description}</p>
+            {!isAdmin ? ( 
+              <div></div>
+          ) : ( 
+            <EditGroupWindow group_id={props.group_id}></EditGroupWindow>
+          )}
+          {!isOwner ? ( 
+              <Button sx={{marginTop:'50px', backgroundColor:'red', width:'150px'}} color='error' variant='contained' onClick={() => updateUserPermissions(loggedInId, props.group_id, "remove")}>Leave Group</Button>
+          ) : ( 
+            <div></div>
+          )}
 
         </div>
 
