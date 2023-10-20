@@ -40,7 +40,6 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   const [analysisContent, setAnalysisContent] = useState([])
   const [collaboratorsList, setCollaborators] = useState([])
   const [collaboratorIDs, setCollaboratorIDs] = useState([]);
-
   const [tags, setTags] = useState(allData.tags);
   const [error, setError] = useState(false);
   const [title, setTitle] = useState("")
@@ -208,14 +207,12 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     }
   ]
 
-  useEffect(() => {
-      setTags(allData.tags);
-  }, [allData.tags]);
-
   const handleAddTag = (event, newTag) => {
-    if (tags && newTag && !tags.includes(newTag)) {
-      setTags([...tags, newTag]);
+    if (tags !== undefined && newTag && !tags.includes(newTag)) {
+      console.log("here")
+      setTags(prevTags => [...prevTags, newTag]);
     }
+    console.log(tags)
   };
 
   const handleDeleteTag = (tagToDelete) => {
@@ -602,41 +599,39 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
               />
               <div className = "Tag-input">
               <Autocomplete
-                  multiple
-                  freeSolo
-                  options={[]}
-                  defaultValue={allData.tags}
-                  onChange={(newValue) => {
-                      setTags(newValue);
-                  }}
-
-                  renderTags={(value, getTagProps) =>
-                    value.map((tag, index) => (
-                      <Chip
-                        sx={{ bgcolor: '#02AEEC', color: 'white' }}
-                        key={tag}
-                        label={tag}
-                        {...getTagProps({ index })}
-                      />
-                    ))
-                  }
-
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="outlined"
-                      style={{ width: 700 }}
-                      label="Tags"
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          handleAddTag(event, event.target.value);
-                          event.target.value = '';
-                          event.preventDefault();
-                        }
-                      }}
+                multiple
+                freeSolo
+                options={[]}
+                defaultValue={allData.tags}
+                onChange={(event, newValue) => {
+                  setTags(newValue);
+                }}
+                renderTags={(value, getTagProps) =>
+                  value.map((tag, index) => (
+                    <Chip
+                      sx={{ bgcolor: '#02AEEC', color: 'white' }}
+                      key={tag}
+                      label={tag}
+                      {...getTagProps({ index })}
                     />
-                  )}
-                />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    style={{ width: 700 }}
+                    label="Tags"
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        handleAddTag(event, event.target.value);
+                        event.target.value = '';
+                        event.preventDefault();
+                      }
+                    }}
+                  />
+                )}
+              />
                 </div>
 
                 <Autocomplete
