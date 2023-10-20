@@ -300,6 +300,7 @@ export default function PermsCard(props) {
                 onClick={() => {
                   handleClose();
                   updateUserPermissions(tempUserId, groupId, changedPerm);
+                  window.location.reload(false);
                 }}
                 >
                   Submit Change
