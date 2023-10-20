@@ -91,7 +91,6 @@ function GroupDetails(props) {
     } , // <- function that will run on every dependency update
     [] // <-- empty dependency array
   ) 
-
   const registerUser = async (userId, groupId, permission) => {
     const data = {
       user_id: userId,
@@ -110,7 +109,7 @@ function GroupDetails(props) {
     } catch (error) {
       console.error('Error:', error);
     }
-
+  }
   const updateUserPermissions = async (userId, groupId, permission) => {
     if(userPermission == 'requested') {
       setInButtonTxt('Access has been requested and is pending admin approval');
@@ -152,7 +151,6 @@ function GroupDetails(props) {
     backgroundPosition: minimized ? 'center' : 'center left',
     boxShadow: '0px 5px 5px rgba(0, 0, 0, 0.2)',
   };
-
   const minimizeButton = {
     color:'white',
     float: 'right',
@@ -199,7 +197,6 @@ function GroupDetails(props) {
     marginTop: '35px',
     marginRight: '15px',
   }
-
   return (
     <div
       className={`minimizable-div ${minimized ? 'minimized' : ''}`}
@@ -335,7 +332,7 @@ function GroupDetails(props) {
 
     </div>
   );
-  } 
-}
+} 
+
 
 export default GroupDetails;
