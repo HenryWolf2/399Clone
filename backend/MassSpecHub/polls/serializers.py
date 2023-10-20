@@ -55,7 +55,7 @@ class PostAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostAnalysis
         fields = ['result_df', 'data_input', 'tolerance', 'peak_height', 'multi_protein', 'only_best', 'calibrate',
-                  'min_primaries', 'max_primaries', 'max_adducts', 'valence']
+                  'min_primaries', 'max_primaries', 'max_adducts', 'valence', 'manual_calibration']
 
     def create(self, validated_data):
         postAnalysis = PostAnalysis(
@@ -69,7 +69,8 @@ class PostAnalysisSerializer(serializers.ModelSerializer):
             min_primaries=validated_data['min_primaries'],
             max_primaries=validated_data['max_primaries'],
             max_adducts=validated_data['max_adducts'],
-            valence=validated_data['valence']
+            valence=validated_data['valence'],
+            manual_calibration=validated_data['manual_calibration']
         )
         postAnalysis.save()
         return postAnalysis

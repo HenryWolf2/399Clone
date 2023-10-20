@@ -100,6 +100,7 @@ const handleProfileUpdate = async () => {
       //display error message (username or password incorrect)
       console.error(e)
   }
+  window.location.reload(false);
 }
 
   return (

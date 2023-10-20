@@ -11,6 +11,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import { Container, FormControlLabel, Stack } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
+import MobileOverlay from '../components/MobileOverlay';
 
 export default function Post() {
   const [PublicPosts, setPublicPosts] = useState([])
@@ -117,6 +118,7 @@ export default function Post() {
 
   return (
     <div className="container">
+      <MobileOverlay />
       <NavigationBar />
       <div className="App">
 

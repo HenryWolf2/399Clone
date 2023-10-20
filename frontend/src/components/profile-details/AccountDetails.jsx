@@ -279,7 +279,7 @@ function AccountDetails(props) {
                   You have no posts yet
                 </Typography>   
                 <NavLink to="/create-post" style={{ textDecoration: 'none'}}>
-                <Button variant="contained">Create Post</Button>
+                <Button variant="contained" style={{backgroundColor: '#02AEEC', marginTop:'10px'}}>Create Post</Button>
                 </NavLink>
                   </Box>
                 ) : (
