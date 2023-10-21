@@ -160,8 +160,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     } catch(e) {
       console.error(e)
     }
-    setOpen(false);
-    window.location.reload(false);
+    // setOpen(false);
+    // window.location.reload(false);
   }
 
   const spectrumCalibrationOptions = [
@@ -527,31 +527,14 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                 />
                 <TextField
                   margin="normal"
-                  select
-                  required
-                  size="large"
-                  sx={{ width: '48%', float: 'left' }}
-                  label="Set for multiple proteins?"
-                  name="multiProtein"
-                  value={multi_protein}
-                  onChange={e => setMultiProtein(e.target.value)}
-                >
-                  {onOff.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  margin="normal"
-                  sx={{ width: '48%', float: 'right', marginBottom: '32px' }}
+                  sx={{ width: '48%', float: 'left', marginBottom: '32px' }}
                   select
                   required
                   className='Floater'
                   size="large"
                   label="Data Publicity"
                   name="setDataPublic"
-                  defaultValue={stringDataPublicity}
+                  value={stringDataPublicity || ''}  // Use `value` instead of `defaultValue`
                   onChange={e => setDataPublic(e.target.value)}
                 >
                   {publicPrivate.map((option) => (
@@ -559,8 +542,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                       {option.label}
                     </MenuItem>
                   ))}
-                </TextField>
-                
+                </TextField>            
                 </div>
                 {isLoading ? (
                     <CircularProgress sx={{float: "right"}} />
@@ -606,8 +588,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                   freeSolo
                   options={[]}
                   defaultValue={allData.tags}
-                  onChange={(newValue) => {
-                      setTags(newValue);
+                  onChange={(event, newTag) => {
+                    setTags(newTag);
                   }}
 
                   renderTags={(value, getTagProps) =>
@@ -645,7 +627,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                   multiple
                   freeSolo
                   options={[]}
-                  defaultValue={collaboratorsList}
+                  value={collaboratorsList}
                   onChange={(event, newValue) => {
                     checkCollaborators(newValue)
                   }}
