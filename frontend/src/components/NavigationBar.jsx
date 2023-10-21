@@ -87,7 +87,10 @@ function ResponsiveAppBar() {
     paddingTop: 10,
   };
 
- 
+  let finalProfile = ""
+  try {
+    finalProfile = instance.defaults.baseURL.replace("/api", "") + profileImage
+  } catch { }
 
   return (
     <AppBar position="static" sx={{backgroundColor:'black'}}>
@@ -176,7 +179,11 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open Settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="User Profile" src={instance.defaults.baseURL.replace("/api", "") + profileImage} />
+                {profileImage !== "" ? (
+                  <Avatar src={finalProfile} />
+                ) : ( 
+                  <Avatar />
+                )}
               </IconButton>
             </Tooltip>
             <Menu
