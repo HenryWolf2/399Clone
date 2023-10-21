@@ -5,16 +5,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Checkbox from '@mui/material/Checkbox';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 
 export default function CheckboxListSecondary(props) {
-  const [checked, setChecked] = React.useState([1]);
-  const [open, setOpen] = React.useState(false);
-
-
-  const [groupName, setGroupname] = useState('');
   const [memberList, setMemberList] = useState([]);
   const [memberObjectList, setMemberObjectList] = useState([]);
 
@@ -26,7 +19,6 @@ export default function CheckboxListSecondary(props) {
           method: "GET",
           params: {group_id: props.group_id},       
       }).then((res) => {
-        setGroupname(res.data.name)
         setMemberList(res.data.members)
         //Need to define perms
       });
@@ -36,7 +28,7 @@ export default function CheckboxListSecondary(props) {
     }
     GetGroupInformation();
     } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    [props.group_id] // <-- empty dependency array
   ) 
 
   const GetMemberInformation = async (id) => {
@@ -65,7 +57,7 @@ export default function CheckboxListSecondary(props) {
       const memberObjectList = [];
       for (const id of memberIdList) {
         const memberInfo = await GetMemberInformation(id[0]);
-        if (id[1] != 'requested') {
+        if (id[1] !== 'requested') {
           memberObjectList.push(memberInfo);
         }
       }
@@ -77,18 +69,7 @@ export default function CheckboxListSecondary(props) {
   }, [memberList]);
 
 
-  const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  };
+  
 
 
   return (

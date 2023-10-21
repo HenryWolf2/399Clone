@@ -134,8 +134,8 @@ export default function PermsCard(props) {
       }
     }
     GetGroupInformation();
-    } , // <- function that will run on every dependency update
-    [props.group_id] // <-- empty dependency array
+    } , 
+    [props.group_id] 
   ) 
 
   const updateUserPermissions = async (userId, groupId, permission) => {
@@ -251,6 +251,7 @@ export default function PermsCard(props) {
                   <Button
                   className="custom-button"
                   variant="contained"
+                  sx={{ backgroundColor: '#02AEEC' }}
                   onClick={() => {
                     handleOpen();
                     setCurrentPerm(value[2]);

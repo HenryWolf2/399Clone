@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import '../../assets/styles/global.css';
-import GroupBar from '../profile-details/GroupBar';
 import PostGrid from '../individual-posts/postgrid';
 import Box from '@mui/material/Box';
 import instance from '../api/api_instance';
 
 function GroupData(props) {
 
-  {/* API Integration */}
-
-  const [groupname, setGroupname] = useState('')
   const [groupPosts, setGroupPosts] = useState([])
 
-  // Still need to organize user perms
 
   useEffect(() => {
     async function GetGroupInformation() {
@@ -25,20 +18,19 @@ function GroupData(props) {
           params: {group_id: props.group_id}    
       }).then((res) => {
         setGroupPosts(res.data.posts)
-        //Need to define perms
       });
       } catch(e) {
         console.error(e)
       }
     }
     GetGroupInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    } , 
+    [props.group_id] 
   ) 
 
   const divStyle = {
     width: '100%',
-    backgroundColor: 'grey', // Use 'backgroundColor' instead of 'backgroundColour'
+    backgroundColor: 'grey', 
     height: '1000px',
   };
 
