@@ -21,7 +21,10 @@ export default function Root() {
   const [AllPosts, setAllPosts] = useState([])
   const [AllGroups, setAllGroups] = useState([])
 
+  
+
   useEffect(() => {
+    if(localStorage.getItem('token') != null){
     async function GetAllPostsIDs() {
       try{ 
         await instance ({
@@ -30,15 +33,20 @@ export default function Root() {
       }).then((res) => {
         setAllPosts(res.data)
       });
-      } catch(e) { }
+      } catch(e) {
+        console.log(e)
+       }
     }
-    GetAllPostsIDs();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    
+      GetAllPostsIDs();
+    }
+    } , 
+    [] 
   ) 
 
 
   useEffect(() => {
+    if(localStorage.getItem('token') != null){
     async function GetAllGroupsIDs() {
       try{ 
         await instance ({
@@ -51,8 +59,8 @@ export default function Root() {
        }
     }
     GetAllGroupsIDs();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    }} , 
+    [] 
   ) 
 
   let postRoutes = AllPosts.map((post_id) => <Route key={post_id} path={`/post/${post_id}`} element = {<PostPage post_id={post_id} />} />);
