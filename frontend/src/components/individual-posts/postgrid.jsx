@@ -1,7 +1,6 @@
 import * as React from 'react';
 import IndividualPost from './post';
 import { Grid } from '@mui/material';
-import { Link } from 'react-router-dom';
 
 export default function PostGrid({narrow, post_array}) {
     let arrayDataItems;

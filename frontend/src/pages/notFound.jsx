@@ -5,6 +5,7 @@ import logo from '../assets/images/LogoMSH_Transparent.png';
 import '../assets/styles/global.css';
 
 export default function NotFound() {
+  
   return (
     <div className="container">
       <MobileOverlay />

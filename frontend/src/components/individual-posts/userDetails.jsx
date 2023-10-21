@@ -2,7 +2,6 @@ import instance from '../api/api_instance';
 import { useState, useEffect } from 'react';
 
 
-// Will need to be redone once we have data
 
 export default function UserDetails(user_id) {
   const [user, setUser] = useState([])

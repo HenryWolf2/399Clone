@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, PureComponent } from 'react';
+import { useState, useEffect } from 'react';
 import instance from '../api/api_instance';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
 
@@ -23,7 +23,7 @@ export default function PostGraph(props) {
       }
     }
     GetAnalysis();
-  }, [])
+  }, [props.post_id])
 
   
   const CustomTooltip = ({ active, payload }) => {
@@ -55,7 +55,7 @@ export default function PostGraph(props) {
   };
 
   const customXAxisTickFormatter = (value) => {
-    return Math.round(value / 200) * 200; // Round to the nearest whole number
+    return Math.round(value / 200) * 200; 
   };
 
   return (

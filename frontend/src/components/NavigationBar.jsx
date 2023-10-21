@@ -1,29 +1,24 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-/*import Image from 'next/image'; */
 import Box from '@mui/material/Box';
 import LogoTransparent from '../assets/images/LogoMSH_Transparent.png';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import AddIcon from '@mui/icons-material/Add';
 import { NavLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import instance from './api/api_instance';
-import { Navigate, useNavigate } from 'react-router-dom';
-import Link from '@mui/material/Link';
+import { useNavigate } from 'react-router-dom';
 
 
 function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [profileImage, setProfileImage] = useState('')
   const navigate = useNavigate();
@@ -36,16 +31,11 @@ function ResponsiveAppBar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
+ 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
@@ -72,7 +62,7 @@ function ResponsiveAppBar() {
     }else{
       navigate("/login")
     }
-  },[])
+  })
 
   useEffect(() => {
     async function GetProfileInformation() {
@@ -132,7 +122,6 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <NavLink to="/" style={{ textDecoration: 'none' }}>
               <Button
-                onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
                   backgroundColor: 'grey',
                 },}}
@@ -142,7 +131,6 @@ function ResponsiveAppBar() {
 
             <NavLink to="/groups" style={{ textDecoration: 'none' }}>
               <Button
-                onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
                   backgroundColor: 'grey',
                 },}}
@@ -152,7 +140,6 @@ function ResponsiveAppBar() {
 
               <NavLink to="/public-data" style={{ textDecoration: 'none' }}>
               <Button
-                onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block', '&:hover': {
                   backgroundColor: 'grey',
                 },}}

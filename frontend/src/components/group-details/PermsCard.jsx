@@ -212,14 +212,14 @@ export default function PermsCard(props) {
     <div>
       <List dense sx={{ width: '100%', maxWidth: 700, bgcolor: 'background.paper' }}>
       {admin ? (
-        memberObjectList.map((value) => {
+        memberObjectList.map((value, index) => {
           const labelId = `${value[0]}`;
           const isRequested = checkIsRequested(value[2]);
           return (
             <div>
               {isRequested ? (
                   <ListItem
-                  key={value}
+                  key={`${value[3]}-${index}`}
                   secondaryAction={
                     <Button
                     className="custom-button"
@@ -249,7 +249,7 @@ export default function PermsCard(props) {
                 </ListItem>
               ) : (
                 <ListItem
-                key={value}
+                key={`${value[3]}-${index}`}
                 secondaryAction={
                   <Button
                   className="custom-button"
@@ -284,11 +284,11 @@ export default function PermsCard(props) {
           );
         })
       ) : (
-        memberObjectList.map((value) => {
+        memberObjectList.map((value, index) => {
           const labelId = `${value[0]}`;
           return (
             <ListItem
-              key={value}
+              key={`${value[3]}-${index}`}
               disablePadding
             >
               <ListItemButton>

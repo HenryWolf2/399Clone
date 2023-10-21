@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import GroupBar from './GroupBar'
 import instance from '../api/api_instance';
 import '../../assets/styles/global.css';
 import EditWindow from './EditProfileWindow';
 import PostGrid from '../individual-posts/postgrid';
 import Box from '@mui/material/Box';
-import Image from './template-banner.jpg';
 import TextField from '@mui/material/TextField';
 import ReactMarkdown from 'react-markdown';
 import { Typography } from '@mui/material';
@@ -16,7 +14,6 @@ import { NavLink } from 'react-router-dom';
 function AccountDetails(props) {
 
   const [PublicPosts, setPublicPosts] = useState([])
-  {/* API Integration */}
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -48,8 +45,8 @@ function AccountDetails(props) {
       }
     }
     GetProfileInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    } ,
+    [] 
   ) 
 
   useEffect(() => {
@@ -63,7 +60,6 @@ function AccountDetails(props) {
     checkZeroPosts();
   })
 
-  {/* Handle Notepad Functionality */}
 
   const [editing, setEditing] = useState(false);
   
@@ -93,7 +89,6 @@ function AccountDetails(props) {
   }
 
 
-  {/* Responsive Design Control */}
 
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
@@ -117,11 +112,8 @@ function AccountDetails(props) {
     };
   }, []);
 
-  {/* Styling is present as it requires API reference or is used for responsiveness; styling that doesn't require API is located is global.css */}
 
-  const imagePath1 = './'+bannerImage;
 
-  const Image2 = require('./template-banner.jpg');
 
   const bannerStyle = {
     height: '200px',
@@ -169,16 +161,6 @@ function AccountDetails(props) {
     ...overlay2Position,
   };
 
-  /*
-  const groupBarDiv = {
-    position: 'absolute',
-    right: '50px',
-    textAlign: 'right',
-    width: '350px',
-    height: '200px',
-    zIndex: 1,
-  }
-  */
 
   return (
     <div>
@@ -197,25 +179,6 @@ function AccountDetails(props) {
             
           }}
         >
-          {/* GROUP BAR ELEMENT NEEDS TO BE IMPLEMENTED IN NEXT ITERATION
-          <div className='group-bar-div'>
-            {isWindowWideEnough && (
-              <>
-                <h1 style={headerStyle2}> Groups </h1>
-                <hr
-                  style={{
-                    width: '200px',
-                    border: '2px solid #000',
-                    marginTop: '-20px',
-                    marginRight: '-15px',
-                    marginBottom: '10px',
-                  }}
-                />
-                <GroupBar />
-              </>
-            )}
-          </div>
-                */}
         </div>
 
                       {/* Overlay Container for Avatar Icon and edit button*/}
@@ -322,4 +285,3 @@ function AccountDetails(props) {
 
 export default AccountDetails;
 
-//<Button sx={{margin:2, top:'250px', left: '25px'}} className="custom-button" variant='contained'>Edit Profile</Button>

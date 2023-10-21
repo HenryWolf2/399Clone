@@ -1,10 +1,8 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
 import { useEffect, useState } from 'react';
 import instance from '../api/api_instance';
 
-// Will need to be redone once we have data
 
 export default function ProfilePicture(props) {
   const [profilePicture, setProfileImage] = useState('')
@@ -27,8 +25,8 @@ export default function ProfilePicture(props) {
       }
     }
     GetIndividualInformation();
-    } }, // <- function that will run on every dependency update
-    [props.author] // <-- empty dependency array
+    } }, 
+    [props.author] 
   )
 
   return (

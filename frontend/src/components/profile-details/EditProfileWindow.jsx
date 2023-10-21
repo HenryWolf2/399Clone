@@ -54,8 +54,8 @@ useEffect(() => {
     }
   }
   GetProfileInformation();
-  } , // <- function that will run on every dependency update
-  [] // <-- empty dependency array
+  } , 
+  [] 
 ) 
 
 

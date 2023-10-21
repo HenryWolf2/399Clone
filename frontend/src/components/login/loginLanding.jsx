@@ -1,7 +1,5 @@
-import { size } from "@floating-ui/core";
 import HomeGraph from "../home/homeGraph";
-import PostGraph from "../individual-posts/postGraph";
-import { Stack, Box, Button} from "@mui/material";
+import { Stack, Button} from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 const LoginLanding = () => {

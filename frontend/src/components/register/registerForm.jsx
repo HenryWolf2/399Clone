@@ -7,8 +7,7 @@ import Grid from '@mui/material/Grid';
 import { Container, FormControlLabel, Stack } from '@mui/material';
 import {Checkbox} from '@mui/material';
 import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/Alert';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const RegisterForm = () => {
@@ -22,8 +21,6 @@ const RegisterForm = () => {
     const [rePassword, setRePassword] = useState("")
     const [userName,setUserName] = useState("")
 
-    const [emailError,setEmailError] = useState(false)
-    const [userNameError,setUserNameError] = useState(false) 
     const [passwordMatchError, setPasswordMatchError] = useState(false)
 
     const [errorMessage, setErrorMessage] = useState('')
@@ -117,7 +114,6 @@ const RegisterForm = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                error = {emailError}
                 onChange={e => setEmail(e.target.value)}
                 />
                 <TextField
@@ -162,7 +158,7 @@ const RegisterForm = () => {
                 type="submit"
                 size = "large"
                 variant="contained"
-                style={{ backgroundColor: '#02AEEC' }}
+                sx={{ backgroundColor: '#02AEEC' }}
                 >
                 Create Account
                 </Button>

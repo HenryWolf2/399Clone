@@ -75,7 +75,7 @@ const GroupForm = () => {
             type="submit"
             size="large"
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3, mb: 2 , backgroundColor: '#02AEEC'}} 
             style={{ margin: '30px' }}
           >
             Create Group
