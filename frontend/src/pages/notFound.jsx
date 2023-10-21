@@ -14,7 +14,8 @@ export default function NotFound() {
       <div className = 'App-header'>
         <div className='NotFound-popup'>
         <img src={logo} className="Post-logo" alt="logo" />
-        <h1 className = 'Overlay-title'>404: PAGE NOT FOUND</h1>
+        <h1 className = 'Overlay-title' style={{marginBottom: 0}}>404: PAGE NOT FOUND</h1>
+        <h3 className = 'Post-title'>Please refresh if this is mistake</h3>
         </div>
         
       </div>
