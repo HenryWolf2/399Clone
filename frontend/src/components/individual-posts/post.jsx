@@ -1,12 +1,9 @@
 import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Contributors from './contributors';
 import ProfilePicture from './profile';
-import StockImage from '../../assets/images/stock-image.jpg';
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
 import instance from '../api/api_instance.js'
@@ -20,7 +17,6 @@ export default function IndividualPost(props) {
   
   const [title, setTitle] = useState('')
   const [banner, setBanner] = useState('')
-  const [summary, setSummary] = useState('')
   const [publicity, setPublicity] = useState('')
   const [description, setDescription] = useState('')
   const [date, setDate] = useState('')
@@ -38,7 +34,6 @@ export default function IndividualPost(props) {
           
       }).then((res) => {
         setTitle(res.data.title)
-        setSummary(res.data.summary)
         setPublicity(res.data.publicity)
         setDescription(res.data.description)
         setDate(new Date(res.data.post_time).toLocaleDateString())
@@ -52,8 +47,8 @@ export default function IndividualPost(props) {
       }
     }
     GetPostInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    } ,
+    [props.post_id] 
   )
   
 

@@ -21,14 +21,6 @@ const style = {
   p: 4,
 };
 
-const centerFlex = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  textAlign: 'center',
-  padding: '30px',
-};
 
 
 
@@ -38,7 +30,6 @@ export default function EditModal(props) {
     const handleClose = () => setOpen(false);
 
     const [memberList, setMemberList] = useState([]);
-    const [memberObjectList, setMemberObjectList] = useState([]);
     const [memberCount, setMemberCount] = useState(0);
 
     useEffect(() => {
@@ -58,7 +49,7 @@ export default function EditModal(props) {
       }
       GetGroupInformation();
       } , // <- function that will run on every dependency update
-      [] // <-- empty dependency array
+      [props.group_id] // <-- empty dependency array
     ) 
 
     const GetMemberInformation = async (id) => {
@@ -87,11 +78,10 @@ export default function EditModal(props) {
         const memberObjectList = [];
         for (const id of memberIdList) {
           const memberInfo = await GetMemberInformation(id[0]);
-          if (id[1] != 'requested') {
+          if (id[1] !== 'requested') {
             memberObjectList.push(memberInfo);
           }
         }
-        setMemberObjectList(memberObjectList.map(memberInfo => memberInfo));
         setMemberCount(memberObjectList.length);
       };
 
@@ -104,7 +94,7 @@ export default function EditModal(props) {
       <Button
         style={{backgroundColor:'#02AEEC'}}
         variant="contained"
-        onClick={handleOpen} // Use onClick here to open the modal
+        onClick={handleOpen} 
       >
         {memberCount} Members
       </Button>

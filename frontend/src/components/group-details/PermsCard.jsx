@@ -41,12 +41,12 @@ export default function PermsCard(props) {
   };
   
   const changeAdminPerm = (perm) => {
-    if (perm == "admin" || perm == "owner") {
+    if (perm === "admin" || perm === "owner") {
       setCheckingAdmin(true);
     }
-    if (currentUserPerm == "owner" && perm == "owner") {
+    if (currentUserPerm === "owner" && perm === "owner") {
       setCheckingAdmin(true);
-    } else if (currentUserPerm == "owner" && perm != "owner") {
+    } else if (currentUserPerm === "owner" && perm !== "owner") {
       setCheckingAdmin(false);
     }
   }
@@ -98,15 +98,15 @@ export default function PermsCard(props) {
 
   const calcRemainingPerms = (perm) => {
     const perms = [];
-    if (perm == "admin") {
+    if (perm === "admin") {
       perms.push("poster");
       perms.push("viewer");
       setRemainingPerms(perms);
-    } else if (perm == "poster") {
+    } else if (perm === "poster") {
       perms.push("admin");
       perms.push("viewer");
       setRemainingPerms(perms);
-    } else if (perm == "viewer") {
+    } else if (perm === "viewer") {
       perms.push("admin");
       perms.push("poster");
       setRemainingPerms(perms);
@@ -124,7 +124,7 @@ export default function PermsCard(props) {
         setMemberList(res.data.members)
         const currentUserPerm = res.data.user_permission
         setCurrentUserPerm(currentUserPerm)
-        if (currentUserPerm == 'admin' || currentUserPerm == 'owner') {
+        if (currentUserPerm === 'admin' || currentUserPerm === 'owner') {
           setAdmin(true)
         }
 
@@ -135,7 +135,7 @@ export default function PermsCard(props) {
     }
     GetGroupInformation();
     } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    [props.group_id] // <-- empty dependency array
   ) 
 
   const updateUserPermissions = async (userId, groupId, permission) => {
@@ -195,16 +195,13 @@ export default function PermsCard(props) {
   }, [memberList]);
 
   function checkIsRequested(perm) {
-    if (perm == 'requested') {
+    if (perm === 'requested') {
       return true;
     } else {
       return false;
     }
   }
 
-  function reloadPage() {
-    window.location.reload(false);
-  }
 
 
 
