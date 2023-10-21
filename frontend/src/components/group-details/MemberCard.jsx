@@ -102,7 +102,7 @@ export default function EditModal(props) {
   return (
     <div>
       <Button
-        className="custom-button"
+        style={{backgroundColor:'#02AEEC'}}
         variant="contained"
         onClick={handleOpen} // Use onClick here to open the modal
       >
