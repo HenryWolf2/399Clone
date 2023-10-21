@@ -297,7 +297,7 @@ def add_post_to_group(request):
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
-        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'poster', 'owner'):
             group.posts.add(post)
             return Response({'message': f'Post {post.title} added to group {group.name}.'},
                             status=status.HTTP_200_OK)
@@ -317,7 +317,7 @@ def remove_post_from_group(request):
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
-        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'poster', 'owner'):
             group.posts.remove(post)
             return Response({'message': f'Post {post.title} removed from group {group.name}.'},
                             status=status.HTTP_200_OK)
@@ -858,7 +858,6 @@ def delete_post(request):
 def delete_group(request):
     if request.method == 'DELETE':
         group_id = request.data.get('group_id')
-        print("GROUPID:", group_id)
         group = Group.objects.get(id=group_id)   
         group.delete()
         return Response({'message': 'Group deleted successfully'}, status=status.HTTP_200_OK)
