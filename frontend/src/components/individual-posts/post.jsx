@@ -39,7 +39,7 @@ export default function IndividualPost(props) {
         setPublicity(res.data.publicity)
         setDescription(res.data.description)
         setDate(new Date(res.data.post_time).toLocaleDateString())
-        setPostID("/post/"+props.post_id)
+        setPostID("/analysis/"+props.post_id)
         setTags(res.data.tags)
         setCollaborators(res.data.collaborators)
         setBanner(res.data.post_pic)
