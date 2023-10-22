@@ -394,6 +394,7 @@ const PostForm = () => {
                     name="spectrumCalibration"
                     value={calibrate}
                     onChange={e => setSpectrumCalibration(e.target.value)}
+                    sx={{textAlign: "left"}}
                   >
                     {spectrumCalibrationOptions.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -414,7 +415,7 @@ const PostForm = () => {
                 </div>
                 <TextField
                   margin="normal"
-                  sx = {{width: '300px'}}
+                  sx = {{width: '300px', textAlign: "left"}}
                   select
                   required
                   size="large"
@@ -488,6 +489,7 @@ const PostForm = () => {
                   label="Set for multiple proteins?"
                   name="multiProtein"
                   value={multi_protein}
+                  sx={{textAlign: "left"}}
                   onChange={e => setMultiProtein(e.target.value)}
                 >
                   {onOff.map((option) => (
@@ -505,6 +507,7 @@ const PostForm = () => {
                   name="setDataPublic"
                   value={data_publicity}
                   onChange={e => setDataPublic(e.target.value)}
+                  sx={{textAlign: "left"}}
                 >
                   {publicPrivate.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
