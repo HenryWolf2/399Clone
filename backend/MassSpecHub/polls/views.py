@@ -833,8 +833,8 @@ def check_post_group(request):
 def get_groups_to_add_to_post(request):
     if request.method == 'GET':
         user = CustomUser.objects.get(id=request.user.id)
-        groups = user.groups.filter(permissions__in=['admin', 'poster'])
-        groups = groups.values_list('id', flat=True)
+        usergroups = UserGroup.objects.filter(user=user.id, permissions__in=['admin', 'poster', 'owner'])
+        groups = Group.objects.filter(usergroup__in=usergroups).values_list('id', flat=True)
         return Response(groups, status=status.HTTP_200_OK)
     
 @api_view(['GET'])

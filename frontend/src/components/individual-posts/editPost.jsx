@@ -301,10 +301,10 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     async function getGroupInformation() {
       try {
         const response = await instance({
-          url: "/group/landing",
+          url: "/user/get_groups_for_post",
           method: "GET",
         });
-        setGroupIDs(response.data.users_groups);
+        setGroupIDs(response.data);
       } catch (error) {
         console.error("Error fetching group information:", error);
       }
@@ -343,7 +343,11 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     getAnalysisDetails();
   }}, [allData.associated_results]);
   
-  let arrayDataItems = groupIDs.map((group_id) =>  <Grid item key={group_id} xs={6} sx={{ paddingTop: "0px", marginBottom: "20px"}}> <EditGroupCard group_id={group_id} post_id={allData.id}  setCheckboxStates={setCheckboxStates} checkboxStates={checkboxStates}/> </Grid>); 
+  let arrayDataItems = groupIDs.map((group_id) =>  
+    <Grid item key={group_id} xs={6} sx={{ paddingTop: "0px", marginBottom: "20px"}}> 
+      <EditGroupCard group_id={group_id} post_id={allData.id}  setCheckboxStates={setCheckboxStates} checkboxStates={checkboxStates}/> 
+    </Grid>
+  ); 
 
   let stringPublicity = ""
   if (allData.publicity === false) {
@@ -391,7 +395,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
               </>
             ) : (
               <>
-              <h4>Sorry, you have not joined a group yet. You will need to join a group in the groups tab to add your analyses to them.</h4>
+              <h4>Sorry, you have not joined a group yet. You will need to request access and be accepted a group in the groups tab in order to add your analyses to them.</h4>
               </>
             )}
 
