@@ -80,8 +80,8 @@ export default function PostPage(props) {
       }
     }
     GetPostInformation();
-    } , // <- function that will run on every dependency update
-    [props.post_id] // <-- empty dependency array
+    } , 
+    [props.post_id] 
     
   )
 
@@ -129,7 +129,7 @@ export default function PostPage(props) {
       }
     }
     GetIndividualInformation();
-    }}, [allData.author] // <-- empty dependency array
+    }}, [allData.author] 
   )
 
   let CheckedResultsId = resultsId
@@ -273,25 +273,20 @@ export default function PostPage(props) {
               <h2>Download Files</h2>
 
               {massSpectrumFile !== "" && compoundFile !== "" && adductFile !== "" ? (
-                <Grid item container spacing={12}>
-                  <Grid item xs={3}>
+                <Box display="flex" justifyContent="space-between">
+
                     <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={boundsDownload}>
                       Download Bounds Spectrum File
                     </Button>
-                  </Grid>
-
-                  <Grid item xs={3}>
+ 
                     <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={adductsDownload}>
                       Download Adducts File
                     </Button>
-                  </Grid>
 
-                  <Grid item xs={3}>
                     <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={compoundsDownload}>
                       Download Compounds File
                     </Button>
-                  </Grid>
-                </Grid>
+                </Box>
               ) : (
                 <p>
                   Unfortunately, you are not a collaborator on this post or the data itself is not public.
