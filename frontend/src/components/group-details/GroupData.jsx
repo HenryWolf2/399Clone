@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import '../../assets/styles/global.css';
-import GroupBar from '../profile-details/GroupBar';
 import PostGrid from '../individual-posts/postgrid';
 import Box from '@mui/material/Box';
 import instance from '../api/api_instance';
-import LogoTransparent from '../../assets/images/LogoMSH_Transparent.png';
 
 function GroupData(props) {
-
-  {/* API Integration */}
-
-  const [groupname, setGroupname] = useState('')
   const [groupPosts, setGroupPosts] = useState([])
   const [currentPerm, setCurrentPerm] = useState('')
   const [canView, setCanView] = React.useState(false)
@@ -32,7 +24,7 @@ function GroupData(props) {
 
   useEffect(() => {
     function checkIsViewer() {
-      if (currentPerm == "owner" || currentPerm == "viewer" || currentPerm == "poster" || currentPerm == "admin") {
+      if (currentPerm === "owner" || currentPerm === "viewer" || currentPerm === "poster" || currentPerm === "admin") {
         setCanView(true);
       } else {
         setCanView(false);
@@ -51,15 +43,13 @@ function GroupData(props) {
       }).then((res) => {
         setGroupPosts(res.data.posts)
         setCurrentPerm(res.data.user_permission)
-        //Need to define perms
       });
       } catch(e) {
         console.error(e)
       }
     }
     GetGroupInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    } , [props.group_id]
   ) 
 
   const divStyle = {

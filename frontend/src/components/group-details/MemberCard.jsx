@@ -92,7 +92,7 @@ export default function EditModal(props) {
   return (
     <div>
       <Button
-        style={{backgroundColor:'#02AEEC'}}
+        sx={{backgroundColor:'#02AEEC'}}
         variant="contained"
         onClick={handleOpen} 
       >
