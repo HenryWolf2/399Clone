@@ -276,7 +276,7 @@ export default function PostPage(props) {
                 <Box display="flex" justifyContent="space-between">
 
                     <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={boundsDownload}>
-                      Download Bounds Spectrum File
+                      Download Bound Spectrum File
                     </Button>
  
                     <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={adductsDownload}>
