@@ -8,29 +8,33 @@ export default function ProfilePicture(props) {
   const [profilePicture, setProfileImage] = useState('')
 
   useEffect(() => {
-    console.log(props.author)
-    if (props.author !== undefined) {
-    async function GetIndividualInformation() {
-      try{ 
-        await instance ({
-          url: "user/info",
-          method: "GET",
-          params: { 
-            user_id: props.author 
-          }
-        }).then((res) => {
-          setProfileImage(res.data.profile_pic);
-        });
-      } catch(e) {
-        console.error(e)
+    if (props.author !== "") {
+      async function GetIndividualInformation() {
+        try{ 
+          await instance ({
+            url: "user/info",
+            method: "GET",
+            params: { 
+              user_id: props.author 
+            }
+          }).then((res) => {
+            setProfileImage(res.data.profile_pic);
+          });
+        } catch(e) {
+          console.error(e)
+        }
       }
-    }
-    GetIndividualInformation();
-    } }, 
-    [props.author] 
+      GetIndividualInformation();
+      } }, 
+      [props.author] 
   )
-    console.log(profilePicture)
   return (
-    <Avatar src={instance.defaults.baseURL.replace("/api", "") + profilePicture} />
+    <>
+      {profilePicture ? (
+        <Avatar src={instance.defaults.baseURL.replace("/api", "") + profilePicture} />
+      ) : (
+        <Avatar />
+      )}
+    </>
   );
 }

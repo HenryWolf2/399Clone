@@ -126,8 +126,6 @@ export default function EditModal(props) {
     }
     formData.append('description', description);
 
-    console.log(formData);
-
     try{
       await instance.put('/groups/edit', formData, {
         params: {
@@ -160,7 +158,6 @@ export default function EditModal(props) {
           'Content-Type': 'application/json',
         },
       });
-      console.log('Permissions updated successfully');
     } catch (error) {
       console.error('Error:', error);
     }

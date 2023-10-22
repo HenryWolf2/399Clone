@@ -93,7 +93,6 @@ function GroupDetails(props) {
             'Content-Type': 'application/json',
           },
         });
-        console.log('Permissions updated successfully');
       } catch (error) {
         console.error('Error:', error);
       }
@@ -113,7 +112,6 @@ function GroupDetails(props) {
           'Content-Type': 'application/json',
         },
       })
-      console.log('Permissions updated successfully');
       } catch (error) {
         console.error("Error:", error);
       }
@@ -122,7 +120,9 @@ function GroupDetails(props) {
 
   let numbers = [];
   for(let i = 0; i < groupMembers.length; i++){
-    numbers.push(groupMembers[i][0]);
+    if (groupMembers[i][1] !== "requested") {
+      numbers.push(groupMembers[i][0]);
+    }
   }
 
   const divStyle = {
