@@ -208,17 +208,17 @@ export default function PermsCard(props) {
   return (
     <div>
       <List dense sx={{ width: '100%', maxWidth: 700, bgcolor: 'background.paper' }}>
-      {admin ? (
-        memberObjectList.map((value, index) => {
-          const labelId = `${value[0]}`;
-          const isRequested = checkIsRequested(value[2]);
-          return (
-            <div>
-              {isRequested ? (
-                  <ListItem
-                  key={`${value[3]}-${index}`}
-                  secondaryAction={
-                    <Button
+        {admin ? (
+          memberObjectList.map((value, index) => {
+            const labelId = `${value[0]}`;
+            const isRequested = checkIsRequested(value[2]);
+            return (
+              <ListItem
+                key={`${value[3]}-${index}`}
+                disablePadding
+              >
+                {isRequested ? (
+                  <Button
                     className="custom-button"
                     variant="contained"
                     sx={{backgroundColor:'#02AEEC'}}
@@ -227,47 +227,26 @@ export default function PermsCard(props) {
                       setCurrentName(value[0]);
                       handleOpenAccess();
                     }}
-                    >
-                      Manage Access
-                    </Button>
-                    
-                  }
-                  disablePadding
-                >
-
-                  <ListItemButton>
-                    <ListItemAvatar>
-                      <Avatar
-                        alt={`${value[0]}`}
-                        src={instance.defaults.baseURL.replace('/api', "") + value[1]}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText id={labelId} primary={`${value[0]}`} secondary={`${value[2]}`} />
-                  </ListItemButton>
-                </ListItem>
-              ) : (
-                <ListItem
-                key={`${value[3]}-${index}`}
-                secondaryAction={
+                  >
+                    Manage Access
+                  </Button>
+                ) : (
                   <Button
-                  className="custom-button"
-                  variant="contained"
-                  sx={{ backgroundColor: '#02AEEC' }}
-                  onClick={() => {
-                    handleOpen();
-                    setCurrentPerm(value[2]);
-                    calcRemainingPerms(value[2]);
-                    setCurrentName(value[0]);
-                    changeAdminPerm(value[2]);
-                    setCurrentId(value[3]);
-                  }}
+                    className="custom-button"
+                    variant="contained"
+                    sx={{ backgroundColor: '#02AEEC' }}
+                    onClick={() => {
+                      handleOpen();
+                      setCurrentPerm(value[2]);
+                      calcRemainingPerms(value[2]);
+                      setCurrentName(value[0]);
+                      changeAdminPerm(value[2]);
+                      setCurrentId(value[3]);
+                    }}
                   >
                     Change Permissions
                   </Button>
-                }
-                disablePadding
-              >
-
+                )}
                 <ListItemButton>
                   <ListItemAvatar>
                     <Avatar
@@ -278,32 +257,30 @@ export default function PermsCard(props) {
                   <ListItemText id={labelId} primary={`${value[0]}`} secondary={`${value[2]}`} />
                 </ListItemButton>
               </ListItem>
-              )}
-            </div>
-          );
-        })
-      ) : (
-        memberObjectList.map((value, index) => {
-          const labelId = `${value[0]}`;
-          return (
-            <ListItem
-              key={`${value[3]}-${index}`}
-              disablePadding
-            >
-              <ListItemButton>
-                <ListItemAvatar>
-                  <Avatar
-                    alt={`${value[0]}`}
-                    src={instance.defaults.baseURL.replace('/api', "") + value[1]}
-                  />
-                </ListItemAvatar>
-                <ListItemText id={labelId} primary={`${value[0]}`} secondary={`${value[2]}`} />
-              </ListItemButton>
-            </ListItem>
-          );
-        })
-      )}
-    </List>
+            );
+          })
+        ) : (
+          memberObjectList.map((value, index) => {
+            const labelId = `${value[0]}`;
+            return (
+              <ListItem
+                key={`${value[3]}-${index}`}
+                disablePadding
+              >
+                <ListItemButton>
+                  <ListItemAvatar>
+                    <Avatar
+                      alt={`${value[0]}`}
+                      src={instance.defaults.baseURL.replace('/api', "") + value[1]}
+                    />
+                  </ListItemAvatar>
+                  <ListItemText id={labelId} primary={`${value[0]}`} secondary={`${value[2]}`} />
+                </ListItemButton>
+              </ListItem>
+            );
+          })
+        )}
+      </List>
         <div>
         {checkingAdmin ? (
           <Modal

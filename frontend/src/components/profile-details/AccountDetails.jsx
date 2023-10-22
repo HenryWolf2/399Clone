@@ -239,10 +239,10 @@ function AccountDetails(props) {
                       backgroundColor:'#35CFFF'
                     }}>
                       <Typography id="modal-modal-title" variant="h6" component="h2" sx={{textAlign: 'center', fontWeight: 'bold', fontSize: '30px', color: 'white'}}>
-                  You have no posts yet
+                  You have no Analyses yet
                 </Typography>   
                 <NavLink to="/create-post" style={{ textDecoration: 'none'}}>
-                <Button variant="contained" style={{backgroundColor: '#02AEEC', marginTop:'10px'}}>Create Post</Button>
+                <Button variant="contained" sx={{backgroundColor: '#02AEEC'}} style={{ marginTop:'10px'}}>Create Analysis</Button>
                 </NavLink>
                   </Box>
                 ) : (
