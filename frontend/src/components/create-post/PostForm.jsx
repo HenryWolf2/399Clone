@@ -624,10 +624,15 @@ const PostForm = () => {
                   <Box sx={{ width: '700px', bgcolor: '#FFFFFF', borderRadius: '10px', padding: "10px 0px 10px 0px", boxShadow: 5 }}>
                     <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
                       <Grid container alignItems="center" >
-
+                      
 
                         <Grid item sx={{margin: "0px 0px 0px 20px"}}>
                           <ProfilePicture />
+                        </Grid>
+                        <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
+                          <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px", color: 'black', textAlign: 'left'}}>
+                            {formattedDate} { publicity === "True" &&( <PublicIcon />)} {publicity === "False" && (<LockIcon />)}
+                          </Typography>
                         </Grid>
 
                         <Grid item sx={{margin: "0px 20px 0px 0px"}}>

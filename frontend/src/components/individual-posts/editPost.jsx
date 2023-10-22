@@ -37,9 +37,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   const navigate = useNavigate() 
   const [value, setValue] = useState(0);
   const [groupIDs, setGroupIDs] = useState([]);
-  const [analysisContent, setAnalysisContent] = useState([])
   const [collaboratorsList, setCollaborators] = useState([])
-  const [collaboratorIDs, setCollaboratorIDs] = useState([]);
+  const [collaboratorIDs] = useState([]);
 
   const [tags, setTags] = useState(allData.tags);
   const [error, setError] = useState(false);
@@ -197,16 +196,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     }
   ]
   
-  const onOff = [
-    {
-      value: 'on',
-      label: 'On',
-    },
-    {
-      value: 'off',
-      label: 'Off'
-    }
-  ]
+  
+  
 
   useEffect(() => {
       setTags(allData.tags);
@@ -218,9 +209,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     }
   };
 
-  const handleDeleteTag = (tagToDelete) => {
-    setTags((prevTags) => prevTags.filter(tag => tag !== tagToDelete));
-  };
+  
 
   const handleGroupChanges = async (event) => {
     event.preventDefault();
@@ -335,7 +324,6 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
           method: "GET",
           params: { analysis_id: allData.associated_results },
         });
-        setAnalysisContent(response.data);
         setTolerance(response.data.tolerance)
         setMinimumPeakHeight(response.data.peak_height)
         setSpectrumCalibration(response.data.calibrate)
