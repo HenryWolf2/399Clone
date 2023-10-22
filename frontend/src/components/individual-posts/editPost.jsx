@@ -40,6 +40,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   const [analysisContent, setAnalysisContent] = useState([])
   const [collaboratorsList, setCollaborators] = useState([])
   const [collaboratorIDs, setCollaboratorIDs] = useState([]);
+
   const [tags, setTags] = useState(allData.tags);
   const [error, setError] = useState(false);
   const [title, setTitle] = useState("")
@@ -75,11 +76,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
         })
         .then(response => {
             let reply = Object.values(response.data)[0];
-
-            if (!collaboratorIDs.some(user => user.username === reply.username)) {
-                collaboratorIDs.push(reply);
-            }
-            
+            collaboratorIDs.push(reply);
         })
         .catch(error => {
             console.error(error);
@@ -93,9 +90,6 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
       final_publicity = stringPublicity
     }
 
-    if (tags === undefined) {
-      setTags(allData.tags)
-    }
   try {
     await instance.put('/post/edit', {
       post_id: allData.id,
@@ -120,7 +114,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     e.preventDefault();
     setIsLoading(true);
     try{
-      await instance.delete('post/delete', {
+      await instance.delete('/groups/post/delete', {
         data: {
           post_id: allData.id,
         },
@@ -214,9 +208,13 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     }
   ]
 
+  useEffect(() => {
+      setTags(allData.tags);
+  }, [allData.tags]);
+
   const handleAddTag = (event, newTag) => {
-    if (tags !== undefined && newTag && !tags.includes(newTag)) {
-      setTags(prevTags => [...prevTags, newTag]);
+    if (tags && newTag && !tags.includes(newTag)) {
+      setTags([...tags, newTag]);
     }
   };
 
@@ -286,35 +284,29 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     })
   }
 
-  
+  const collaboratorsArray = allData.collaborators;
   
   useEffect(() => {
-    if (allData.collaborators !== undefined) {
-      const collaboratorsArray = allData.collaborators;
-      async function GetIndividualInformation(user_id) {
-        try{ 
-          await instance ({
-            url: "user/info",
-            method: "GET",
-            params: { 
-              user_id: user_id 
-            }
-          }).then((res) => {
-            setCollaborators(prevUsers => [...prevUsers, res.data.username]);
-          });
-        } catch(e) {
-          console.error(e)
-        }
+    async function GetIndividualInformation(user_id) {
+      try{ 
+        await instance ({
+          url: "user/info",
+          method: "GET",
+          params: { 
+            user_id: user_id 
+          }
+        }).then((res) => {
+          setCollaborators(prevUsers => [...prevUsers, res.data.username]);
+        });
+      } catch(e) {
+        console.error(e)
       }
-      setCollaborators([])
-      Promise.all(collaboratorsArray?.map(user_id => GetIndividualInformation(user_id)) || [])
-  }}, [allData.collaborators]);
-
-  useEffect(() => {
-    if (allData.tags) {
-      setTags(allData.tags);
     }
-  }, [allData.tags]);
+
+    Promise.all(collaboratorsArray?.map(user_id => GetIndividualInformation(user_id)) || [])
+  }, [collaboratorsArray]);
+
+
 
   useEffect(() => {
     async function getGroupInformation() {
@@ -535,31 +527,14 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                 />
                 <TextField
                   margin="normal"
-                  select
-                  required
-                  size="large"
-                  sx={{ width: '48%', float: 'left' }}
-                  label="Set for multiple proteins?"
-                  name="multiProtein"
-                  value={multi_protein}
-                  onChange={e => setMultiProtein(e.target.value)}
-                >
-                  {onOff.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  margin="normal"
-                  sx={{ width: '48%', float: 'right', marginBottom: '32px' }}
+                  sx={{ width: '48%', float: 'left', marginBottom: '32px' }}
                   select
                   required
                   className='Floater'
                   size="large"
                   label="Data Publicity"
                   name="setDataPublic"
-                  defaultValue={stringDataPublicity}
+                  value={stringDataPublicity || ''}  // Use `value` instead of `defaultValue`
                   onChange={e => setDataPublic(e.target.value)}
                 >
                   {publicPrivate.map((option) => (
@@ -567,8 +542,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                       {option.label}
                     </MenuItem>
                   ))}
-                </TextField>
-                
+                </TextField>            
                 </div>
                 {isLoading ? (
                     <CircularProgress sx={{float: "right"}} />
@@ -610,39 +584,41 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
               />
               <div className = "Tag-input">
               <Autocomplete
-                multiple
-                freeSolo
-                options={[]}
-                defaultValue={allData.tags}
-                onChange={(event, newValue) => {
-                  setTags(newValue);
-                }}
-                renderTags={(value, getTagProps) =>
-                  value.map((tag, index) => (
-                    <Chip
-                      sx={{ bgcolor: '#02AEEC', color: 'white' }}
-                      key={tag}
-                      label={tag}
-                      {...getTagProps({ index })}
+                  multiple
+                  freeSolo
+                  options={[]}
+                  defaultValue={allData.tags}
+                  onChange={(event, newTag) => {
+                    setTags(newTag);
+                  }}
+
+                  renderTags={(value, getTagProps) =>
+                    value.map((tag, index) => (
+                      <Chip
+                        sx={{ bgcolor: '#02AEEC', color: 'white' }}
+                        key={tag}
+                        label={tag}
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      style={{ width: 700 }}
+                      label="Tags"
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                          handleAddTag(event, event.target.value);
+                          event.target.value = '';
+                          event.preventDefault();
+                        }
+                      }}
                     />
-                  ))
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    style={{ width: 700 }}
-                    label="Tags"
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        handleAddTag(event, event.target.value);
-                        event.target.value = '';
-                        event.preventDefault();
-                      }
-                    }}
-                  />
-                )}
-              />
+                  )}
+                />
                 </div>
 
                 <Autocomplete
@@ -651,7 +627,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                   multiple
                   freeSolo
                   options={[]}
-                  defaultValue={collaboratorsList}
+                  value={collaboratorsList}
                   onChange={(event, newValue) => {
                     checkCollaborators(newValue)
                   }}
