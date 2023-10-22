@@ -38,7 +38,12 @@ export default function Groups() {
         [] // <-- empty dependency array
     ) 
 
-
+    let uniqueIDs = []; 
+    for (let i = 0; i < postIDs.length; i++) { 
+        if (uniqueIDs.indexOf(postIDs[i]) === -1) { 
+          uniqueIDs.push(postIDs[i]); 
+        } 
+    } 
 
   return (
     <div className="container">
@@ -52,7 +57,7 @@ export default function Groups() {
 
         <Box sx={{width: "53%", height: "100vh", padding: "0% 1%", backgroundColor: "white", overflow:'scroll'}}>
             <h1 style={{textAlign: 'center'}}>Data from the groups you've joined</h1>
-          <PostGrid narrow={true} post_array={postIDs} />    
+          <PostGrid narrow={true} post_array={uniqueIDs} />    
         </Box>
 
         <Box sx={{width: "22%", height: "100vh", padding: "0% 1%", backgroundColor: "#09A9EC"}}>
