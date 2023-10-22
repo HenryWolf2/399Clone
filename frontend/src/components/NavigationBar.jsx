@@ -167,7 +167,7 @@ function ResponsiveAppBar() {
                 'aria-labelledby': 'create-button',
               }}
             >
-              <NavLink to="/create-post" style={{ textDecoration: 'none'}}>
+              <NavLink to="/create-analysis" style={{ textDecoration: 'none'}}>
                 <MenuItem onClick={handleClose}><Typography textAlign={'center'}>Analysis</Typography></MenuItem>
               </NavLink>
               <NavLink to="/create-group" style={{ textDecoration: 'none'}}>
