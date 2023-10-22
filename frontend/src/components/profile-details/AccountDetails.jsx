@@ -247,7 +247,7 @@ function AccountDetails(props) {
                   </Box>
                 ) : (
                   <Box sx={{ flexGrow: 1, width: "48.5%", padding: "5%" }}>
-                  <PostGrid narrow={true} post_array={PublicPosts} />    
+                  <PostGrid narrow={true} post_array={PublicPosts.reverse()} />    
                 </Box>
                 )}
 

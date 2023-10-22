@@ -218,7 +218,7 @@ function GroupDetails(props) {
             <div style={{display: 'flex', marginTop: '-20px', color: 'white', fontSize: '14px'}}>
               <h1 style={{marginRight: '15px'}}><MemberCard group_id={props.group_id} member_count={memberCount}/></h1>
               <span style={circleDot}></span>
-              <h1>{postCount} Posts</h1>
+              <h1>{postCount} Analyses</h1>
             </div>
             <div style={{float:'left', marginTop: '-10px'}}>
               <Contributors collaborators = {numbers} />
