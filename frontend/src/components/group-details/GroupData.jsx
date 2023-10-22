@@ -64,7 +64,7 @@ function GroupData(props) {
 
   const divStyle = {
     width: '100%',
-    backgroundColor: 'grey', // Use 'backgroundColor' instead of 'backgroundColour'
+    backgroundColor: 'grey',
     height: '1000px',
   };
 
@@ -86,35 +86,41 @@ function GroupData(props) {
             <h1 style={{marginTop: '40px', color: 'white'}}>Specific Group Data Navigation</h1>
         </div>
 
-        <div
-        style={{
-          height:'875px',
-          display: 'flex',
-          flexDirection: 'row',
-          backgroundColor: '#fff',
-          boxShadow: '0px 8px 5px rgba(0, 0, 0, 0.2)',
-          justifyContent: 'center',
-          overflow: 'scroll',
-        }}
-      >
         {canView ? (
-          <div>
+          <div style={{
+            height:'875px',
+            display: 'flex',
+            flexDirection: 'row',
+            backgroundColor: '#fff',
+            boxShadow: '0px 8px 5px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            overflow: 'scroll',
+          }}>
           {!zeroPosts ? (
             <div style={{alignItems:'center', alignContent:'center', justifyContent:'center'}}>
-            <h1 style={{marginTop:'300px', height:'5%', backgroundColor:'#02AEEC', color:'white', padding:'20px', borderRadius:'10px', boxShadow: '0px 5px 5px rgba(0, 0, 0, 0.2)',}}>New is No Group Data</h1>
-          </div>
+              <h1 style={{margin: "300px 20px 0px 20px", minHeight:'5%', backgroundColor:'#02AEEC', color:'white', padding:'20px', borderRadius:'10px', boxShadow: '0px 5px 5px rgba(0, 0, 0, 0.2)', textAlign: "center" }}>There is No Group Data</h1>
+            </div>
           ) : (
             <Box sx={{ flexGrow: 1, width: "48.5%", padding: "5%" }}>
-            <PostGrid narrow={true} post_array={groupPosts} />    
+              <PostGrid narrow={true} post_array={groupPosts} />    
             </Box>
           )}
           </div>
         ) : (
-          <div style={{alignItems:'center', alignContent:'center', justifyContent:'center'}}>
-            <h1 style={{marginTop:'300px', height:'5%', backgroundColor:'#02AEEC', color:'white', padding:'20px', borderRadius:'10px', boxShadow: '0px 5px 5px rgba(0, 0, 0, 0.2)',}}>You Do Not Have Permission to View Group Data</h1>
+          <div style={{
+            height:'875px',
+            display: 'flex',
+            flexDirection: 'row',
+            backgroundColor: '#fff',
+            boxShadow: '0px 8px 5px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            overflow: 'scroll',
+          }}>
+            <div style={{alignItems:'center', alignContent:'center', justifyContent:'center'}}>
+              <h1 style={{margin: "300px 20px 0px 20px", minHeight:'5%', backgroundColor:'#02AEEC', color:'white', padding:'20px', borderRadius:'10px', boxShadow: '0px 5px 5px rgba(0, 0, 0, 0.2)', textAlign: "center" }}>You Do Not Have Permission to View Group Data</h1>
+            </div>
           </div>
         )}
-      </div>
 
 
     </div>
