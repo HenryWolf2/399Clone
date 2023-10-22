@@ -216,11 +216,20 @@ export default function PermsCard(props) {
                 key={`${value[3]}-${index}`}
                 disablePadding
               >
+                <ListItemButton>
+                  <ListItemAvatar>
+                    <Avatar
+                      alt={`${value[0]}`}
+                      src={instance.defaults.baseURL.replace('/api', "") + value[1]}
+                    />
+                  </ListItemAvatar>
+                  <ListItemText id={labelId} primary={`${value[0]}`} secondary={`${value[2]}`} />
+                </ListItemButton>
                 {isRequested ? (
                   <Button
                     className="custom-button"
                     variant="contained"
-                    sx={{backgroundColor:'#02AEEC'}}
+                    sx={{backgroundColor:'#02AEEC', marginRight:'20px'}}
                     onClick={() => {
                       setCurrentId(value[3]);
                       setCurrentName(value[0]);
@@ -233,7 +242,7 @@ export default function PermsCard(props) {
                   <Button
                     className="custom-button"
                     variant="contained"
-                    sx={{ backgroundColor: '#02AEEC' }}
+                    sx={{ backgroundColor: '#02AEEC', marginRight:'20px'}}
                     onClick={() => {
                       handleOpen();
                       setCurrentPerm(value[2]);
@@ -246,15 +255,6 @@ export default function PermsCard(props) {
                     Change Permissions
                   </Button>
                 )}
-                <ListItemButton>
-                  <ListItemAvatar>
-                    <Avatar
-                      alt={`${value[0]}`}
-                      src={instance.defaults.baseURL.replace('/api', "") + value[1]}
-                    />
-                  </ListItemAvatar>
-                  <ListItemText id={labelId} primary={`${value[0]}`} secondary={`${value[2]}`} />
-                </ListItemButton>
               </ListItem>
             );
           })
