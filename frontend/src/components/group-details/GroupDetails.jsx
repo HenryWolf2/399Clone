@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import '../../assets/styles/global.css';
-import GroupBar from '../profile-details/GroupBar';
+import Contributors from '../individual-posts/contributors';
 import instance from '../api/api_instance';
 import PermsCard from './PermsCard';
 import MemberCard from './MemberCard';
@@ -19,6 +19,7 @@ function GroupDetails(props) {
   const [description, setDescription] = useState('')
   const [banner, setBanner] = useState('')
   const [memberCount, setMemberCount] = useState('')
+  const [groupMembers, setGroupMembers] = useState([])
   const [postCount, setPostCount] = useState('')
   const [creationDate, setCreationDate] = useState('')
   const [userPermission, setUserPermission] = useState('')
@@ -55,6 +56,7 @@ function GroupDetails(props) {
         setDescription(res.data.description)
         setBanner(res.data.group_pic)
         setMemberCount(res.data.members.length)
+        setGroupMembers(res.data.members)
         setPostCount(res.data.posts.length)
         setCreationDate(new Date(res.data.created).toLocaleDateString())
         setUserPermission(res.data.user_permission)
@@ -98,6 +100,11 @@ function GroupDetails(props) {
       window.location.reload(false);
     }
   };
+
+  let numbers = [];
+  for(let i = 0; i < groupMembers.length; i++){
+    numbers.push(groupMembers[i][0]);
+  }
 
   const divStyle = {
     width: minimized ? '15%' : '50%',
@@ -194,7 +201,9 @@ function GroupDetails(props) {
               <span style={circleDot}></span>
               <h1>{postCount} Posts</h1>
             </div>
-            <div style={{float:'left', marginTop: '-10px'}}><GroupBar></GroupBar></div>
+            <div style={{float:'left', marginTop: '-10px'}}>
+              <Contributors collaborators = {numbers} />
+            </div>
             <br></br>
             <h1 style={{color: 'white', marginTop: '20px', fontSize: '27px'}}> Description </h1>
             <hr style={{width:'400px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
