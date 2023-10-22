@@ -1,7 +1,8 @@
 import React from 'react';
 import NavigationBar from '../components/NavigationBar';
 import MobileOverlay from '../components/MobileOverlay';
-import logo from '../assets/images/LogoMSH_Transparent.png';
+import logo from '../assets/images/msh-loading.gif';
+
 import '../assets/styles/global.css';
 
 export default function NotFound() {
