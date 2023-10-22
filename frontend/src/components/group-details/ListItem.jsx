@@ -61,7 +61,6 @@ export default function CheckboxListSecondary(props) {
           memberObjectList.push(memberInfo);
         }
       }
-      console.log("MemberObjectList", memberObjectList);
       setMemberObjectList(memberObjectList.map(memberInfo => memberInfo));
     };
   

@@ -18,7 +18,6 @@ function RestrictedAppBar() {
   useEffect(() => {
     if(localStorage.getItem('token') != null){
       instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
-      console.log(instance.defaults.headers.common['Authorization']);
     }
   },[])
 

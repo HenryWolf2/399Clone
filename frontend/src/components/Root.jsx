@@ -33,9 +33,7 @@ export default function Root() {
       }).then((res) => {
         setAllPosts(res.data)
       });
-      } catch(e) {
-        console.log(e)
-       }
+      } catch(e) { }
     }
     
       GetAllPostsIDs();

@@ -152,7 +152,6 @@ export default function PermsCard(props) {
           // Include your authentication tokens in the headers if needed
         },
       });
-      console.log('Permissions updated successfully');
     } catch (error) {
       console.error('Error:', error);
     }

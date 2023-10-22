@@ -93,7 +93,6 @@ function GroupDetails(props) {
             'Content-Type': 'application/json',
           },
         });
-        console.log('Permissions updated successfully');
       } catch (error) {
         console.error('Error:', error);
       }
@@ -113,7 +112,6 @@ function GroupDetails(props) {
           'Content-Type': 'application/json',
         },
       })
-      console.log('Permissions updated successfully');
       } catch (error) {
         console.error("Error:", error);
       }
