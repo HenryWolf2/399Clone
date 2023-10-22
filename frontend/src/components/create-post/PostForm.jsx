@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import instance from '../api/api_instance';
 import MenuItem from '@mui/material/MenuItem';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
@@ -15,13 +14,10 @@ import Chip from '@mui/material/Chip';
 import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import ProfilePicture from '../individual-posts/profile';
-import StockImage from '../../assets/images/stock-image.jpg';
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
-import Contributors from '../individual-posts/contributors';
-import Tags from '../individual-posts/tags';
 
-const steps = ['Post files', 'Peak search settings', 'Feasible set settings', 'Post description']
+const steps = ['Analysis files', 'Peak search settings', 'Feasible set settings', 'Analysis description']
 
 const spectrumCalibrationOptions = [
   {
@@ -72,7 +68,7 @@ const PostForm = () => {
 
     const [tags, setTags] = useState([]);
     const [collaboratorsList, setCollaborators] = useState([]);
-    const [collaboratorIDs, setCollaboratorIDs] = useState([]);
+    const [collaboratorIDs] = useState([]);
 
     const [analysis_id, setAnalysisID] = useState("")
     const navigate = useNavigate();
@@ -95,8 +91,9 @@ const PostForm = () => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [publicity, setPostPublic] = useState("False")
+    const [userID, setUserID] = useState("")
 
-    const [date, setDate] = useState(new Date());
+    const [date] = useState(new Date());
     const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear().toString().slice(-2)}`;
 
     const [post_pic, setPostImageFile] = useState("")
@@ -134,7 +131,6 @@ const PostForm = () => {
 
       try{
         await instance.post('/post/create/data', formData, {
-            // url: "/post/create/data",
             headers: {
               'Content-Type': 'multipart/form-data'
             }
@@ -144,7 +140,6 @@ const PostForm = () => {
             }
           );
         } catch(e){
-            //display error message (username or password incorrect)
             console.error(e)
         }
   }
@@ -181,8 +176,6 @@ const PostForm = () => {
           'Content-Type': 'multipart/form-data'
         }
       }).then((res) => {
-        //needs to navigate to the profile page once up
-        console.log(res)
         navigate("/profile");
       });
     } catch(e){
@@ -190,7 +183,7 @@ const PostForm = () => {
     }
 }
   const handleNext = () => {
-    if (bounds_file == '' || compounds_file == '' || adducts_file == '') {
+    if (bounds_file === '' || compounds_file === '' || adducts_file === '') {
       alert("Please upload all files")
       return;
     }
@@ -212,7 +205,6 @@ const PostForm = () => {
 
   const handleDeleteTag = (tagToDelete) => {
     setTags(tags.filter((tag) => tag !== tagToDelete));
-    console.log(tags);
   };
 
   const checkCollaborators = (newValue) => {
@@ -223,7 +215,7 @@ const PostForm = () => {
     })
     .then(function (response) {
       let reply = Object.values(response.data)[0];
-    if (reply != -1 || newValue.length == 0){
+    if (reply !== -1 || newValue.length === 0){
       setCollaborators(newValue)
       setError(false)
     }
@@ -235,6 +227,24 @@ const PostForm = () => {
       console.error(error)
     })
   }
+
+  useEffect(() => {
+    async function GetProfileInformation() {
+      try{ 
+        await instance ({
+          url: "/profile/get",
+          method: "GET",          
+      }).then((res) => {
+        setUserID(res.data.id)
+      });
+      } catch(e) {
+        console.error(e)
+      }
+    }
+    GetProfileInformation();
+    } ,
+    []
+  );
 
     return(
         <React.Fragment>
@@ -250,18 +260,18 @@ const PostForm = () => {
                   key={label} 
                   sx={{
                     '& .MuiStepIcon-root.Mui-completed': {
-                      color: '#02AEEC', // circle color (COMPLETED)
+                      color: '#02AEEC', 
                     },
                     '& .MuiStepIcon-root.Mui-active':
                       {
-                        color: '#02AEEC', // Just text label (COMPLETED)
+                        color: '#02AEEC', 
                       },
                     '& .MuiStepLabel-label.Mui-active.MuiStepLabel-alternativeLabel':
                       {
-                        color: 'common.white', // Just text label (ACTIVE)
+                        color: 'common.white', 
                       },
                     '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
-                      fill: 'white', // circle's number (ACTIVE)
+                      fill: 'white', 
                     },
                   }}
                   {...stepProps}>
@@ -287,7 +297,7 @@ const PostForm = () => {
         
         <form id="form1" onSubmit ={handleSubmit1} encType="multipart/form-data">  
         <Stack spacing={2}>
-                {activeStep == 0 && (
+                {activeStep === 0 && (
                   <div>
                   <h6>Upload your files</h6>
                   <div className = "File-div">
@@ -348,7 +358,7 @@ const PostForm = () => {
                   </div>
                   </div>
                 )}
-                {activeStep == 1 && (
+                {activeStep === 1 && (
                   <div>
                 <h6>Set your peak search settings</h6>
                 <div className = "Grid-container"> 
@@ -384,6 +394,7 @@ const PostForm = () => {
                     name="spectrumCalibration"
                     value={calibrate}
                     onChange={e => setSpectrumCalibration(e.target.value)}
+                    sx={{textAlign: "left"}}
                   >
                     {spectrumCalibrationOptions.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -404,7 +415,7 @@ const PostForm = () => {
                 </div>
                 <TextField
                   margin="normal"
-                  sx = {{width: '300px'}}
+                  sx = {{width: '300px', textAlign: "left"}}
                   select
                   required
                   size="large"
@@ -421,7 +432,7 @@ const PostForm = () => {
                 </TextField>
                 </div>
                 )}
-                {activeStep == 2 && (
+                {activeStep === 2 && (
                   <div>
                 <h6>Set your feasible set settings</h6>
                 <div className = "Grid-container"> 
@@ -478,6 +489,7 @@ const PostForm = () => {
                   label="Set for multiple proteins?"
                   name="multiProtein"
                   value={multi_protein}
+                  sx={{textAlign: "left"}}
                   onChange={e => setMultiProtein(e.target.value)}
                 >
                   {onOff.map((option) => (
@@ -495,6 +507,7 @@ const PostForm = () => {
                   name="setDataPublic"
                   value={data_publicity}
                   onChange={e => setDataPublic(e.target.value)}
+                  sx={{textAlign: "left"}}
                 >
                   {publicPrivate.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -507,7 +520,7 @@ const PostForm = () => {
                 )}
         </Stack>
         </form>
-        {activeStep == 3 && (
+        {activeStep === 3 && (
         <form id="form2" onSubmit ={handleSubmit2} encType="multipart/form-data">  
         <Stack spacing={2}>          
                 <h6>Describe your analysis</h6>
@@ -562,7 +575,6 @@ const PostForm = () => {
                       variant="outlined"
                       style={{ width: 700 }}
                       label="Tags"
-                      // placeholder="Enter tags"
                       onKeyDown={(event) => {
                         if (event.key === 'Enter') {
                           handleAddTag(event, event.target.value);
@@ -634,22 +646,18 @@ const PostForm = () => {
                   <Box sx={{ width: '700px', bgcolor: '#FFFFFF', borderRadius: '10px', padding: "10px 0px 10px 0px", boxShadow: 5 }}>
                     <Box sx={{ my: 3, mx: 2, margin: "0px" }}>
                       <Grid container alignItems="center" >
-
-                        {/* Profile picture will need to be reviewed when the backend is linked */}
+                      
 
                         <Grid item sx={{margin: "0px 0px 0px 20px"}}>
-                          <ProfilePicture />
+                          <ProfilePicture author={userID}/>
                         </Grid>
                         <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
                           <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px", color: 'black', textAlign: 'left'}}>
-                            Group name <br></br>{formattedDate} { publicity == "True" &&( <PublicIcon />)} {publicity == "False" && (<LockIcon />)}
+                            {formattedDate} { publicity === "True" &&( <PublicIcon />)} {publicity === "False" && (<LockIcon />)}
                           </Typography>
                         </Grid>
 
-                        {/* Contributors pictures will also need to be reviewed when the backend is linked */} 
-
                         <Grid item sx={{margin: "0px 20px 0px 0px"}}>
-                            {/* <Contributors /> */}
                         </Grid>
                       </Grid>
                       <Typography gutterBottom variant="h4" component="div" sx={{margin: "0px 20px 0px 20px", color: 'black', textAlign: 'left'}}>
@@ -670,44 +678,44 @@ const PostForm = () => {
         </form>
         )}
         <div className="Movement-buttons">
-        {(activeStep == 0) && (
+        {(activeStep === 0) && (
         <p></p>
         )}
-        {(activeStep == 1 || activeStep == 2 || activeStep == 3) && (
+        {(activeStep === 1 || activeStep === 2 || activeStep === 3) && (
         <Button
           size="medium"
           className = "Back-button"
-          hidden = {activeStep == 1}
+          hidden = {activeStep === 1}
           variant="outlined"
           sx={{ mt: 3, mb: 2 }}
           style = {{margin: 30, color: '#02AEEC' }}
           onClick = {handleBack}
           >Back</Button>
         )}
-        {(activeStep == 0 || activeStep == 1) && (
+        {(activeStep === 0 || activeStep === 1) && (
           <Button
         size="medium"
         className = "Next-button"
         variant="contained"
-        sx={{ mt: 0, mb: 1 }}
-        style = {{margin: 30, backgroundColor: '#02AEEC'}}
+        sx={{ mt: 0, mb: 1, backgroundColor: '#02AEEC'}}
+        style = {{margin: 30}}
         onClick = {handleNext}
         >Next</Button>
       )}
-      {(activeStep == 2) && (
+      {(activeStep === 2) && (
         <Button
         type="submit"
         form="form1"
         className = "Next-button"
         size="large"
         variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-        style = {{margin: 30, backgroundColor: '#02AEEC'}}
+        sx={{ mt: 3, mb: 2, backgroundColor: '#02AEEC' }}
+        style = {{margin: 30}}
         >
         Send Data
         </Button>
       )}
-      {(activeStep == 3) && (
+      {(activeStep === 3) && (
         <div className = "Submit-button">
         <Button
         className = "Next-button"
@@ -715,10 +723,10 @@ const PostForm = () => {
         form="form2"
         size="large"
         variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-        style = {{margin: 30, backgroundColor: '#02AEEC'}}
+        sx={{ mt: 3, mb: 2, backgroundColor: '#02AEEC'}}
+        style = {{margin: 30}}
         >
-        Submit post
+        Submit Analysis
         </Button>
         </div>
       )}

@@ -7,8 +7,7 @@ import Grid from '@mui/material/Grid';
 import { Container, FormControlLabel, Stack } from '@mui/material';
 import {Checkbox} from '@mui/material';
 import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/Alert';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const RegisterForm = () => {
@@ -22,8 +21,6 @@ const RegisterForm = () => {
     const [rePassword, setRePassword] = useState("")
     const [userName,setUserName] = useState("")
 
-    const [emailError,setEmailError] = useState(false)
-    const [userNameError,setUserNameError] = useState(false) 
     const [passwordMatchError, setPasswordMatchError] = useState(false)
 
     const [errorMessage, setErrorMessage] = useState('')
@@ -96,7 +93,6 @@ const RegisterForm = () => {
                     label="First Name"
                     name="firstName"
                     autoComplete="firstname"
-                    autoFocus
                     onChange={e => setFirstName(e.target.value)}
                     />
                     <TextField
@@ -107,7 +103,6 @@ const RegisterForm = () => {
                     label="Last Name"
                     name="lastName"
                     autoComplete="lastname"
-                    autoFocus
                     onChange={e => setLastName(e.target.value)}
                     />
                 </Stack>
@@ -119,8 +114,6 @@ const RegisterForm = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                autoFocus
-                error = {emailError}
                 onChange={e => setEmail(e.target.value)}
                 />
                 <TextField
@@ -131,7 +124,6 @@ const RegisterForm = () => {
                 label="Username"
                 name="userName"
                 autoComplete="off"
-                autoFocus
                 onChange={e => setUserName(e.target.value)}
                 />
                 {passwordMatchError ? <Alert severity="error" > Passwords do not match</Alert> : null}
@@ -166,7 +158,7 @@ const RegisterForm = () => {
                 type="submit"
                 size = "large"
                 variant="contained"
-                style={{ backgroundColor: '#02AEEC' }}
+                sx={{ backgroundColor: '#02AEEC' }}
                 >
                 Create Account
                 </Button>

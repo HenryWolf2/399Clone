@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup, PostGroup
+from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup, PostGroup, TagPost
 from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
@@ -47,10 +47,12 @@ def user_login(request):
                 pass
 
         if not user:
-            user = authenticate(username=username, password=password)
+            auth_user = authenticate(username=username, password=password)
+        else:
+            auth_user = authenticate(username=user.username, password=password)
 
-        if user:
-            token, _ = Token.objects.get_or_create(user=user)
+        if auth_user:
+            token, _ = Token.objects.get_or_create(user=auth_user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
 
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -150,7 +152,7 @@ def create_group(request):
         if serializer.is_valid():
             serializer.save()
             CustomUser.objects.get(id=request.user.id).groups.add(serializer.instance,
-                                                                  through_defaults={'permissions': 'admin'})
+                                                                  through_defaults={'permissions': 'owner'})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -201,13 +203,17 @@ def update_group_perms(request):
         permissions = request.data.get('permissions')
         if not permissions:
             return Response({'message': 'No permissions added'}, status=status.HTTP_400_BAD_REQUEST)
-        if permissions not in ['admin', 'poster', 'viewer', 'requested']:
+        if permissions not in ['admin', 'poster', 'viewer', 'requested', 'remove']:
             return Response({'message': f'Permission {permissions} is not a valid permission'},
                             status=status.HTTP_400_BAD_REQUEST)
         group = Group.objects.get(id=group_id)
-        user = CustomUser.objects.get(id=user_id)
+        user = CustomUser.objects.get(id=user_id)       
         try:
             usergroup = UserGroup.objects.get(user=user.id, group=group.id)
+            if permissions == 'remove':
+                usergroup.delete()
+                return Response({'message': f'User {user.username} removed from {group.name}.'},
+                                status=status.HTTP_200_OK)
         except:
             return Response({'message': f'User {user.username} not in {group.name}'})
         usergroup.permissions = permissions
@@ -291,17 +297,14 @@ def add_post_to_group(request):
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
-        if post.publicity == True:
-            if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
-                group.posts.add(post)
-                return Response({'message': f'Post {post.title} added to group {group.name}.'},
-                                status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'User does not have permission to add post to group'},
-                                status=status.HTTP_401_UNAUTHORIZED)
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'poster', 'owner'):
+            group.posts.add(post)
+            return Response({'message': f'Post {post.title} added to group {group.name}.'},
+                            status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Post is not public'}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({'error': 'User does not have permission to add post to group'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+        
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def remove_post_from_group(request):
@@ -314,7 +317,7 @@ def remove_post_from_group(request):
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
-        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'poster', 'owner'):
             group.posts.remove(post)
             return Response({'message': f'Post {post.title} removed from group {group.name}.'},
                             status=status.HTTP_200_OK)
@@ -354,16 +357,21 @@ def search_post_by_tag(request):
         if not posts:
             return Response({'error': 'No posts found for the provided tags.'}, status=status.HTTP_404_NOT_FOUND)
 
-        posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        posts = set(posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time'))
         return Response(posts, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_tags(request):
-    if request.method == 'GET':
-        tags = Tag.objects.order_by('name')
-        tags = TagSerializer(tags, many=True)
-        return Response(tags.data, status=status.HTTP_200_OK)
+    tag_names = []
+    tags = list(TagPost.objects.values('tag_id').distinct())
+    for tag_id in tags:
+        try:
+            tag = Tag.objects.get(id=tag_id['tag_id'])
+            tag_names.append(tag.name)
+        except:
+            pass
+    return Response(tag_names, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -376,6 +384,7 @@ def get_profile(request):
         profile_data['description'] = user.description
         profile_data['first_name'] = user.first_name
         profile_data['last_name'] = user.last_name
+        profile_data['id'] = request.user.id
         if user.profile_pic:  # TODO REVIEW
             profile_data['profile_pic'] = user.profile_pic.url
         if user.cover_photo:  # TODO REVIEW
@@ -391,8 +400,6 @@ def get_post_by_id(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
-        post.interactions += 1
-        post.save()
         serializer = PostSerializer(post)
         data = serializer.data
         data['tags'] = post.tags.values_list('name', flat=True)
@@ -410,7 +417,12 @@ def edit_post(request):
             summary = request.data.get('summary')
             description = request.data.get('description')
             publicity = request.data.get('publicity')
-            collaborators = request.POST.getlist('collaborators')
+            collaborators = request.data.get('collaborators')
+            tags = request.data.get('tags')
+
+            post.tags.clear()
+            post.collaborators.clear()
+
             if title:
                 post.title = title
             if description:
@@ -419,8 +431,14 @@ def edit_post(request):
                 post.publicity = publicity
             if summary:
                 post.summary = summary
+            if tags:
+                for tag_name in tags:
+                    try:
+                        tag = Tag.objects.get(name=tag_name)
+                    except ObjectDoesNotExist:
+                        tag = Tag.objects.create(name=tag_name)
+                    post.tags.add(tag)
             if collaborators:
-                post.collaborators.clear()
                 for collaborator in collaborators:
                     try:
                         user = CustomUser.objects.get(id=collaborator)
@@ -514,7 +532,7 @@ def get_group_by_id(request):
             return_data = serializer.data
             return_data['post_count'] = group.posts.count()
             return_data['member_count'] = UserGroup.objects.filter(group=group_id, permissions__in=['admin', 'poster',
-                                                                                                    'viewer']).count()
+                                                                                                    'viewer', 'owner']).count()
             return Response(return_data, status=status.HTTP_200_OK)
         except:
             return Response({'message': "Group not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -526,6 +544,8 @@ def get_graph_data(request):
     if request.method == 'GET':
         post_id = request.query_params.get('post_id')
         post = Post.objects.get(id=post_id)
+        post.interactions += 1
+        post.save()
         analysis = post.associated_results
         linked_analysis = post.associated_results.result_df
         data_id = analysis.data_input_id
@@ -614,7 +634,8 @@ def get_group_info(request):
             group_data['group_pic'] = group.group_pic.url
             group_data['posts'] = group.posts.values_list('id', flat=True)
             group_data['members'] = UserGroup.objects.filter(group=group_id,
-                                                              permissions__in=['admin', 'poster', 'viewer']).values_list('user', 'permissions')
+                                                              permissions__in=['admin', 'poster', 'viewer', 'requested', 'owner']).values_list('user', 'permissions')
+
             group_data['created'] = group.created
             try:
                 user_permission = UserGroup.objects.get(user=request.user.id, group=group_id).permissions
@@ -637,6 +658,7 @@ def get_user_profile_info(request):
         user = CustomUser.objects.get(id=request.query_params.get('user_id'))
         user_data = {}
         user_data['username'] = user.username
+        user_data['email'] = user.email
         if(user.profile_pic):
             user_data['profile_pic'] = user.profile_pic.url
         else:
@@ -699,6 +721,12 @@ def edit_analysis(request):
             max_primaries = request.data.get('max_primaries')
             max_adducts = request.data.get('max_adducts')
             valence = request.data.get('valence')
+            publicity = request.data.get('publicity')
+            manual_calibration = request.data.get('manual_calibration')
+            if publicity != None:
+                data.data_publicity = publicity
+            if manual_calibration:
+                analysis.manual_calibration = manual_calibration
             if tolerance:
                 analysis.tolerance = tolerance
             if peak_height:
@@ -730,6 +758,7 @@ def edit_analysis(request):
             json_df = json.loads(json_df)
             analysis.result_df = json_df
             analysis.save()
+            data.save()
             return Response({'message': 'Analysis config updated successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -747,11 +776,30 @@ def get_config(request):
         config_data['multi_protein'] = analysis.multi_protein
         config_data['only_best'] = analysis.only_best
         config_data['calibrate'] = analysis.calibrate
+        config_data['manual_calibration'] = analysis.manual_calibration
         config_data['min_primaries'] = analysis.min_primaries
         config_data['max_primaries'] = analysis.max_primaries
         config_data['max_adducts'] = analysis.max_adducts
         config_data['valence'] = analysis.valence
+        config_data['data'] = analysis.data_input.data_publicity
         return Response(config_data, status=status.HTTP_200_OK)
+    
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_data(request):
+    if request.method == 'PUT':
+        try:
+            data_id = request.data.get('data_id')
+            data = Data.objects.get(id=data_id)
+            publicity = request.data.get('publicity')
+            if publicity:
+                data.data_publicity = publicity
+            data.save()
+            return Response({'message': 'Analysis config updated successfully.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 @api_view(['GET'])
@@ -785,8 +833,8 @@ def check_post_group(request):
 def get_groups_to_add_to_post(request):
     if request.method == 'GET':
         user = CustomUser.objects.get(id=request.user.id)
-        groups = user.groups.filter(permissions__in=['admin', 'poster'])
-        groups = groups.values_list('id', flat=True)
+        usergroups = UserGroup.objects.filter(user=user.id, permissions__in=['admin', 'poster', 'owner'])
+        groups = Group.objects.filter(usergroup__in=usergroups).values_list('id', flat=True)
         return Response(groups, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
@@ -795,3 +843,35 @@ def get_trending_posts(request):
     if request.method == 'GET':
         posts = Post.objects.filter(publicity=True).order_by('-interactions').values_list('id', flat=True)
         return Response(posts, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_post(request):
+    if request.method == 'DELETE':
+        post_id = request.data.get('post_id')
+        post = Post.objects.get(id=post_id)
+        post.delete()
+        return Response({'message': 'Post deleted successfully'}, status=status.HTTP_200_OK)
+        
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_group(request):
+    if request.method == 'DELETE':
+        group_id = request.data.get('group_id')
+        group = Group.objects.get(id=group_id)   
+        group.delete()
+        return Response({'message': 'Group deleted successfully'}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_post_files(request):
+    if request.method == 'GET':
+        analysis_id = request.query_params.get('analysis_id')
+        data = PostAnalysis.objects.get(id=analysis_id).data_input
+        return_data = {}
+        return_data['publicity'] = data.data_publicity
+        return_data['compounds'] = data.compounds_file.url
+        return_data['adducts'] = data.adducts_file.url
+        return_data['bounds'] = data.bounds_file.url
+        return Response(return_data, status=status.HTTP_200_OK)
+

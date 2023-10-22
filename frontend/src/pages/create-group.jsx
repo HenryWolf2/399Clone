@@ -3,10 +3,12 @@ import NavigationBar from '../components/NavigationBar';
 import GroupForm from '../components/create-group/group-form';
 import { useState, useEffect } from 'react';
 import LogoTransparent from '../assets/images/LogoMSH_Transparent.png';
+import MobileOverlay from '../components/MobileOverlay';
 
 export default function CreateGroup() {
   return (
     <div className="container">
+      <MobileOverlay />
       <NavigationBar />
       <div className="Post">
         <div className='Post-header'>

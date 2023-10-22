@@ -21,14 +21,7 @@ const style = {
   p: 4,
 };
 
-const centerFlex = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  textAlign: 'center',
-  padding: '30px',
-};
+
 
 
 export default function EditModal(props) {
@@ -36,15 +29,74 @@ export default function EditModal(props) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    const [memberList, setMemberList] = useState([]);
+    const [memberCount, setMemberCount] = useState(0);
+
+    useEffect(() => {
+      async function GetGroupInformation() {
+        try{ 
+          await instance ({
+            url: "/group/info",
+            method: "GET",
+            params: {group_id: props.group_id},       
+        }).then((res) => {
+          setMemberList(res.data.members)
+          //Need to define perms
+        });
+        } catch(e) {
+          console.error(e)
+        }
+      }
+      GetGroupInformation();
+      } , // <- function that will run on every dependency update
+      [props.group_id] // <-- empty dependency array
+    ) 
+
+    const GetMemberInformation = async (id) => {
+      try {
+        return await instance({
+          url: "/user/info",
+          method: "GET",
+          params: {user_id: id},      
+        }).then((res) => {
+          const username = res.data.username
+          const email = res.data.email
+          const profilePic = res.data.profile_pic && res.data.profile_pic !== '' ? res.data.profile_pic : 'missingImage';
+          const memberList = [username, profilePic, email]
+
+          return memberList
+        });
+      } catch(e) {
+        console.error(e);
+      }
+    };
+
+
+    useEffect(() => {
+      const fetchMemberInformation = async () => {
+        const memberIdList = memberList;
+        const memberObjectList = [];
+        for (const id of memberIdList) {
+          const memberInfo = await GetMemberInformation(id[0]);
+          if (id[1] !== 'requested') {
+            memberObjectList.push(memberInfo);
+          }
+        }
+        setMemberCount(memberObjectList.length);
+      };
+
+      fetchMemberInformation();
+    }, [memberList]);
+
 
   return (
     <div>
       <Button
-        className="custom-button"
+        sx={{backgroundColor:'#02AEEC'}}
         variant="contained"
-        onClick={handleOpen} // Use onClick here to open the modal
+        onClick={handleOpen} 
       >
-        {props.member_count} Members
+        {memberCount} Members
       </Button>
       <Modal
         open={open}

@@ -1,7 +1,7 @@
 import instance from '../api/api_instance';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const GroupForm = () => {
   const [name, setName] = useState('');
@@ -9,7 +9,7 @@ const GroupForm = () => {
   const [groupPicture, setGroupPicture] = useState('');
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault(); 
 
     const formData = new FormData();
     formData.append('name', name);
@@ -23,7 +23,6 @@ const GroupForm = () => {
           'Content-Type': 'multipart/form-data',
         },
       }).then((response) => {
-        console.log(response)
         navigate('/')
       });
       
@@ -75,7 +74,7 @@ const GroupForm = () => {
             type="submit"
             size="large"
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3, mb: 2 , backgroundColor: '#02AEEC'}} 
             style={{ margin: '30px' }}
           >
             Create Group

@@ -58,9 +58,6 @@ export default function PostTable(props) {
     <Table stickyHeader sx={{ minWidth: 650, maxHeight: 500 }} aria-label="simple table">
     <TableHead>
       <TableRow style={{ background: '#02AEEC' }}>
-        {/* {finaldf?.columns?.map((column, index) => (
-          <TableCell style={{ background: 'none', color: "white", fontWeight: "bold", fontSize: 16 }} key={index}>{column}</TableCell>
-        ))} */}
           <TableCell style={{ background: 'none', color: "white", fontWeight: "bold", fontSize: 16 }}>Identity</TableCell>
           <TableCell style={{ background: 'none', color: "white", fontWeight: "bold", fontSize: 16 }}>PO</TableCell>
           <TableCell style={{ background: 'none', color: "white", fontWeight: "bold", fontSize: 16 }}>Intensity</TableCell>

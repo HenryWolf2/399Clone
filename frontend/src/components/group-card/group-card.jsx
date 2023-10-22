@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import instance from '../api/api_instance.js'
 import '../../assets/styles/global.css';
-import StockImage from '../../assets/images/stock-image.jpg';
 import { Link } from 'react-router-dom';
 
 export default function GroupCard(props) {
   
   const [name, setName] = useState("")
-  const [description, setDescription] = useState("")
   const [memberCount, setMemberCount] = useState("")
   const [postCount, setPostCount] = useState("")
   let [groupPicture, setGroupPicture] = useState("")
@@ -28,7 +24,6 @@ export default function GroupCard(props) {
           
       }).then((res) => {
         setName(res.data.name)
-        setDescription(res.data.description)
         setGroupPicture(res.data.group_pic)
         setMemberCount(res.data.member_count)
         setPostCount(res.data.post_count)
@@ -39,8 +34,7 @@ export default function GroupCard(props) {
       }
     }
     GetGroupInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    } , [props.group_id] 
   )  
   const groupPictureURL = `${instance.defaults.baseURL.replace("/api", "")}${groupPicture}`;
 

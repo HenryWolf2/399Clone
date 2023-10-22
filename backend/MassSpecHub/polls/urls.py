@@ -1,6 +1,7 @@
 from django.urls import path
 
-from .views import get_trending_posts, get_groups_to_add_to_post,check_post_group, check_username, register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, search_post_by_tag, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_graph_data, get_group_landing_info, get_group_by_id, get_group_info, get_user_profile_info, edit_notepad, get_citation, get_all_groups_by_id, update_group_perms, get_config, edit_analysis, get_all_post_ids,get_all_tags, remove_post_from_group, get_graph_data_home
+
+from .views import get_post_files, delete_post, delete_group, get_trending_posts, get_groups_to_add_to_post,check_post_group, check_username, register_user, user_login, user_logout, create_post, create_group, add_data, add_post_to_group, get_all_groups, get_group_by_field, assign_user_to_group, search_post, search_post_by_tag, edit_profile, get_profile, edit_post, edit_group, get_all_posts, get_post_by_id, get_analysis_by_id, get_graph_data, get_group_landing_info, get_group_by_id, get_group_info, get_user_profile_info, edit_notepad, get_citation, get_all_groups_by_id, update_group_perms, get_config, edit_analysis, get_all_post_ids,get_all_tags, remove_post_from_group, get_graph_data_home, update_data
 
 urlpatterns = [
     path('register/', register_user, name='register'),
@@ -41,5 +42,9 @@ urlpatterns = [
     path('user/get_groups_for_post', get_groups_to_add_to_post, name='get_groups_to_add_to_post'),
     path('groups/post/delete', remove_post_from_group, name='remove_post_from_group'),
     path('home/graph', get_graph_data_home, name='get_graph_data_home'),
-    path('posts/trending', get_trending_posts, name='get_trending_posts')
+    path('posts/trending', get_trending_posts, name='get_trending_posts'),
+    path('data/update', update_data, name='update_data'),
+    path('post/delete', delete_post, name='delete_post'),
+    path('group/delete', delete_group, name='delete_group'),
+    path('post/files', get_post_files, name='get_post_files')
 ]

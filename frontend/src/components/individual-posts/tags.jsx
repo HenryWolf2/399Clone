@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
 import { Stack, Chip } from '@mui/material';
 
 export default function Tags(props) { 
@@ -14,7 +12,7 @@ export default function Tags(props) {
   }
   
   return (
-    <Stack direction="row" spacing={1} sx={{margin: "0px 20px 0px 20px"}}>
+    <Stack direction="row" spacing={1} sx={{margin: "0px 20px 0px 20px", overflow:"scroll", overflowY:"hidden"}}>
       {newArray}
     </Stack>
   );
