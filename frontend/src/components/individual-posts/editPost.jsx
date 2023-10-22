@@ -342,7 +342,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     
     getAnalysisDetails();
   }}, [allData.associated_results]);
-
+  
   let arrayDataItems = groupIDs.map((group_id) =>  <Grid item key={group_id} xs={6} sx={{ paddingTop: "0px", marginBottom: "20px"}}> <EditGroupCard group_id={group_id} post_id={allData.id}  setCheckboxStates={setCheckboxStates} checkboxStates={checkboxStates}/> </Grid>); 
 
   let stringPublicity = ""
@@ -371,21 +371,31 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
         <Box sx={{ flex: 1 }}>
 
           <TabPanel value={value} index={0} sx={{ margin: 20 }}>
-            <h3>Add your Post to your Groups</h3>
+          <h3>Add your Post to your Groups</h3>
 
-            <Grid container spacing={2} sx={{marginTop: '20px', marginBottom: '20px', maxHeight: '300px', overflowY: "scroll"}}>
-              {arrayDataItems}
-              
-            </Grid>
-            <Grid item xs={12}>
-                {isLoading ? (
-                    <CircularProgress sx={{float: "right"}} />
-                ) : (
-                  <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB" }} onClick={handleGroupChanges}>
-                  Submit Groups
-                </Button>
-                )}
-            </Grid>
+            {arrayDataItems.length !== 0 ? (
+              <>
+                <Grid container spacing={2} sx={{marginTop: '20px', marginBottom: '20px', maxHeight: '300px', overflowY: "scroll"}}>
+                {arrayDataItems}
+                
+              </Grid>
+              <Grid item xs={12}>
+                  {isLoading ? (
+                      <CircularProgress sx={{float: "right"}} />
+                  ) : (
+                    <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB" }} onClick={handleGroupChanges}>
+                    Submit Groups
+                  </Button>
+                  )}
+              </Grid>
+              </>
+            ) : (
+              <>
+              <h4>Sorry, you have not joined a group yet. You will need to join a group in the groups tab to add your analyses to them.</h4>
+              </>
+            )}
+
+            
 
            
           </TabPanel>
