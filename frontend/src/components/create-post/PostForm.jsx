@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
@@ -91,6 +91,7 @@ const PostForm = () => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [publicity, setPostPublic] = useState("False")
+    const [userID, setUserID] = useState("")
 
     const [date] = useState(new Date());
     const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear().toString().slice(-2)}`;
@@ -226,6 +227,24 @@ const PostForm = () => {
       console.error(error)
     })
   }
+
+  useEffect(() => {
+    async function GetProfileInformation() {
+      try{ 
+        await instance ({
+          url: "/profile/get",
+          method: "GET",          
+      }).then((res) => {
+        setUserID(res.data.id)
+      });
+      } catch(e) {
+        console.error(e)
+      }
+    }
+    GetProfileInformation();
+    } ,
+    []
+  );
 
     return(
         <React.Fragment>
@@ -627,7 +646,7 @@ const PostForm = () => {
                       
 
                         <Grid item sx={{margin: "0px 0px 0px 20px"}}>
-                          <ProfilePicture />
+                          <ProfilePicture author={userID}/>
                         </Grid>
                         <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
                           <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px", color: 'black', textAlign: 'left'}}>

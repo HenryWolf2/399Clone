@@ -18,6 +18,7 @@ export default function IndividualPost(props) {
   const [title, setTitle] = useState('')
   const [banner, setBanner] = useState('')
   const [publicity, setPublicity] = useState('')
+  const [author, setAuthor] = useState('')
   const [description, setDescription] = useState('')
   const [date, setDate] = useState('')
   const [post_id, setPostID] = useState('')
@@ -34,6 +35,7 @@ export default function IndividualPost(props) {
           
       }).then((res) => {
         setTitle(res.data.title)
+        setAuthor(res.data.author)
         setPublicity(res.data.publicity)
         setDescription(res.data.description)
         setDate(new Date(res.data.post_time).toLocaleDateString())
@@ -61,7 +63,7 @@ export default function IndividualPost(props) {
           {/* Profile picture will need to be reviewed when the backend is linked */}
 
           <Grid item sx={{margin: "0px 0px 0px 20px"}}>
-            <ProfilePicture />
+            <ProfilePicture author={author} />
           </Grid>
           <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
             <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px"}}>

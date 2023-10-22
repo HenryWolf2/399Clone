@@ -8,6 +8,7 @@ export default function ProfilePicture(props) {
   const [profilePicture, setProfileImage] = useState('')
 
   useEffect(() => {
+    console.log(props.author)
     if (props.author !== undefined) {
     async function GetIndividualInformation() {
       try{ 
@@ -28,7 +29,7 @@ export default function ProfilePicture(props) {
     } }, 
     [props.author] 
   )
-
+    console.log(profilePicture)
   return (
     <Avatar src={instance.defaults.baseURL.replace("/api", "") + profilePicture} />
   );
