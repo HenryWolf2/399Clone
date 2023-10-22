@@ -101,6 +101,25 @@ function GroupDetails(props) {
     }
   };
 
+  const deleteUser = async (userId, groupId, permission) => {
+    const data = {
+      user_id: userId,
+      group_id: groupId,
+      permissions: permission,
+    };
+    try {
+      await instance.put('/groups/update_perms', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      console.log('Permissions updated successfully');
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      window.location.reload(false);
+    }
+
   let numbers = [];
   for(let i = 0; i < groupMembers.length; i++){
     numbers.push(groupMembers[i][0]);
@@ -214,7 +233,7 @@ function GroupDetails(props) {
             <EditGroupWindow group_id={props.group_id}></EditGroupWindow>
           )}
           {!isOwner ? ( 
-              <Button sx={{marginTop:'50px', backgroundColor:'red', width:'150px'}} color='error' variant='contained' onClick={() => updateUserPermissions(loggedInId, props.group_id, "remove")}>Leave Group</Button>
+              <Button sx={{marginTop:'50px', backgroundColor:'red', width:'150px'}} color='error' variant='contained' onClick={() => deleteUser(loggedInId, props.group_id, "remove")}>Leave Group</Button>
           ) : ( 
             <div></div>
           )}
