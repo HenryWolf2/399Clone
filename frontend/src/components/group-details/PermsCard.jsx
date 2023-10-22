@@ -221,6 +221,7 @@ export default function PermsCard(props) {
                     <Button
                     className="custom-button"
                     variant="contained"
+                    sx={{backgroundColor:'#02AEEC'}}
                     onClick={() => {
                       setCurrentId(value[3]);
                       setCurrentName(value[0]);
@@ -353,6 +354,7 @@ export default function PermsCard(props) {
                 <Button
                 className="custom-button"
                 variant="contained"
+                sx={{backgroundColor:'#02AEEC'}}
                 onClick={() => {
                   handleClose();
                   updateUserPermissions(tempUserId, groupId, changedPerm);
@@ -395,6 +397,7 @@ export default function PermsCard(props) {
                 <Button
                 className="custom-button"
                 variant="contained"
+                sx={{backgroundColor:'#02AEEC'}}
                 onClick={() => {
                   handleClose();
                   updateUserPermissions(tempUserId, groupId, 'viewer');

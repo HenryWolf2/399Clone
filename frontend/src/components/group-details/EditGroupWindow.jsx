@@ -171,7 +171,8 @@ export default function EditModal(props) {
   return (
     <div>
       <Button
-        style = {{marginBottom:'-50px', backgroundColor:'#02AEEC', width:'150px'}}
+        style = {{marginBottom:'-50px', width:'150px'}}
+        sx={{backgroundColor:'#02AEEC'}}
         className="custom-button"
         variant="contained"
         onClick={handleOpen} 
