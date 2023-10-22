@@ -2,15 +2,12 @@ import React from 'react';
 import NavigationBar from '../components/NavigationBar';
 import { useState, useEffect } from 'react';
 import instance from '../components/api/api_instance';
-import { Box, Button, Chip, Stack, Typography, Grid } from '@mui/material';
-import StockImage from '../assets/images/stock-image.jpg';
+import { Box, Button, Stack, Typography, Grid } from '@mui/material';
 import PostTable from '../components/individual-posts/postTable.jsx'
 import PostGraph from '../components/individual-posts/postGraph';
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
-import EditIcon from '@mui/icons-material/Edit';
 import Tags from '../components/individual-posts/tags';
-import ProfilePicture from '../components/individual-posts/profile';
 import Contributors from '../components/individual-posts/contributors';
 import EditPopup from '../components/individual-posts/editPost';
 import PostCitation from '../components/individual-posts/postCitation';
@@ -20,7 +17,6 @@ import MobileOverlay from '../components/MobileOverlay';
 export default function PostPage(props) {
 
   const [title, setTitle] = useState('')
-  const [summary, setSummary] = useState('')
   const [publicity, setPublicity] = useState('')
   const [description, setDescription] = useState('')
   const [date, setDate] = useState('')
@@ -33,7 +29,6 @@ export default function PostPage(props) {
   const [massSpectrumFile, setMassSpectrumFile] = useState("");
   const [compoundFile, setCompoundFile] = useState("");
   const [adductFile, setAdductFile] = useState("");
-  const [dataPublicity, setDataPublicity] = useState(false);
   const [userID, setUserID] = useState("")
 
   const handleOpenCitation = () => {
@@ -72,7 +67,6 @@ export default function PostPage(props) {
           params: {post_id: props.post_id}
       }).then((res) => {
         setTitle(res.data.title)
-        setSummary(res.data.summary)
         setPublicity(res.data.publicity)
         setDescription(res.data.description)
         setResultsID(res.data.associated_results)
