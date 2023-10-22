@@ -113,7 +113,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     e.preventDefault();
     setIsLoading(true);
     try{
-      await instance.delete('/groups/post/delete', {
+      await instance.delete('/post/delete', {
         data: {
           post_id: allData.id,
         },
