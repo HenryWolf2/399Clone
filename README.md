@@ -51,7 +51,7 @@ cd frontend
 npm install
 npm start
 ```
-
+On the login page, when running locally, there needs to be a graph with an ID of 1 in the database to load the example graph. In practice, before deploying we will load this into the database so it works, but this needs to be done to display the example graph locally.
 
 ## Usage Examples
 Please see below some example videos of the website in use, with the different sections and their purpose. 
