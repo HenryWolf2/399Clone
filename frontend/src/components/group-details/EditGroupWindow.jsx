@@ -6,9 +6,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import { FormControl, FormLabel } from '@mui/material';
-import UploadIcon from '@mui/icons-material/Upload';
-import Upload from '@mui/icons-material/Upload';
-import {Routes, Route, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const style = {
   position: 'absolute',
@@ -39,22 +37,16 @@ export default function EditModal(props) {
   const handleClose = () => setOpen(false);
   const navigate = useNavigate();
 
-  const [groupname, setGroupname] =   useState('')
-  const [description, setDescription] = useState('')
-  const [banner, setBanner] = useState('')
-  const [groupPosts, setGroupPosts] = useState([])
-  const [memberCount, setMemberCount] = useState('')
-  const [postCount, setPostCount] = useState('')
-  const [creationDate, setCreationDate] = useState('')
-  const [userPermission, setUserPermission] = useState('')
-  const [inGroupText, setInGroupText] = useState('Request Group Membership');
-  const [loggedInId, setLoggedInId] = useState('');
+  const [groupname, setGroupname] =   useState('');
+  const [description, setDescription] = useState('');
+  const [banner, setBanner] = useState('');
+  const [userPermission, setUserPermission] = useState('');
   const [isOwner, setIsOwner] = React.useState(false);
-  const [memberList, setMemberList] = useState([])
+  const [memberList, setMemberList] = useState([]);
 
   useEffect(() => {
     function updateDeleteView() {
-      if(userPermission == "owner") {
+      if(userPermission === "owner") {
         setIsOwner(true);
       }
     }
@@ -62,7 +54,6 @@ export default function EditModal(props) {
   })
 
   const navigateToLanding = () => {
-    // 👇️ navigate to /contacts
     navigate('/groups');
   };
 
@@ -74,17 +65,11 @@ export default function EditModal(props) {
             method: "GET",
             params: {group_id: props.group_id},       
         }).then((res) => {
-          setLoggedInId(res.data.current_user_id)
           setGroupname(res.data.name)
           setDescription(res.data.description)
           setBanner(res.data.group_pic)
-          setGroupPosts(res.data.posts)
-          setMemberCount(res.data.members.length)
-          setPostCount(res.data.posts.length)
-          setCreationDate(new Date(res.data.created).toLocaleDateString())
           setUserPermission(res.data.user_permission)
           setMemberList(res.data.members);
-          //Need to define perms
 
         });
         } catch(e) {
@@ -92,8 +77,8 @@ export default function EditModal(props) {
         }
       }
       GetGroupInformation();
-      } , // <- function that will run on every dependency update
-      [] // <-- empty dependency array
+      } , 
+      [props.group_id] 
     ) 
 
 
@@ -112,19 +97,18 @@ export default function EditModal(props) {
   async function removeAllMembers() {
     const memberIdList = memberList;
     for (const id of memberIdList) {
-      const memberInfo = await updateUserPermissions(id[0], props.group_id, 'remove');
+      await updateUserPermissions(id[0], props.group_id, 'remove');
     }
   }
 
   async function handleDeleteGroup() {
     try {
       removeAllMembers();
-      const res = await instance({
+      await instance({
         url: "/group/delete",
         method: "DELETE",
         data: {group_id: props.group_id}
       });
-      // Do something with res
     } catch(e) {
       console.error(e);
     }
@@ -142,8 +126,6 @@ export default function EditModal(props) {
     }
     formData.append('description', description);
 
-    console.log(formData);
-
     try{
       await instance.put('/groups/edit', formData, {
         params: {
@@ -158,7 +140,6 @@ export default function EditModal(props) {
         }
       );
     } catch(e){
-        //display error message (username or password incorrect)
         console.error(e)
     }
     window.location.reload(false);
@@ -175,10 +156,8 @@ export default function EditModal(props) {
       await instance.put('groups/update_perms', data, {
         headers: {
           'Content-Type': 'application/json',
-          // Include your authentication tokens in the headers if needed
         },
       });
-      console.log('Permissions updated successfully');
     } catch (error) {
       console.error('Error:', error);
     }
@@ -189,10 +168,11 @@ export default function EditModal(props) {
   return (
     <div>
       <Button
-        style = {{marginBottom:'-50px', backgroundColor:'#02AEEC', width:'150px'}}
+        style = {{marginBottom:'-50px', width:'150px'}}
+        sx={{backgroundColor:'#02AEEC'}}
         className="custom-button"
         variant="contained"
-        onClick={handleOpen} // Use onClick here to open the modal
+        onClick={handleOpen} 
       >
         Edit Group
       </Button>

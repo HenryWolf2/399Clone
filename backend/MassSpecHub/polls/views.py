@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, logout
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup, PostGroup
+from .models import CustomUser, Group, Post, Tag, PostAnalysis, Data, UserGroup, PostGroup, TagPost
 from .analysistool.src import binding_site_search, peak_search, utils
 import copy
 import json
@@ -297,7 +297,7 @@ def add_post_to_group(request):
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
-        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'poster', 'owner'):
             group.posts.add(post)
             return Response({'message': f'Post {post.title} added to group {group.name}.'},
                             status=status.HTTP_200_OK)
@@ -317,7 +317,7 @@ def remove_post_from_group(request):
             post = Post.objects.get(id=post_id)
         except ObjectDoesNotExist:
             return Response({'error': 'Post or Group not found'}, status=status.HTTP_404_NOT_FOUND)
-        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'member'):
+        if UserGroup.objects.get(user=user.id, group=group.id).permissions in ('admin', 'poster', 'owner'):
             group.posts.remove(post)
             return Response({'message': f'Post {post.title} removed from group {group.name}.'},
                             status=status.HTTP_200_OK)
@@ -357,16 +357,21 @@ def search_post_by_tag(request):
         if not posts:
             return Response({'error': 'No posts found for the provided tags.'}, status=status.HTTP_404_NOT_FOUND)
 
-        posts = posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time')
+        posts = set(posts.filter(publicity=True).values_list('id', flat=True).order_by('post_time'))
         return Response(posts, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_tags(request):
-    if request.method == 'GET':
-        tags = Tag.objects.order_by('name')
-        tags = TagSerializer(tags, many=True)
-        return Response(tags.data, status=status.HTTP_200_OK)
+    tag_names = []
+    tags = list(TagPost.objects.values('tag_id').distinct())
+    for tag_id in tags:
+        try:
+            tag = Tag.objects.get(id=tag_id['tag_id'])
+            tag_names.append(tag.name)
+        except:
+            pass
+    return Response(tag_names, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -828,8 +833,8 @@ def check_post_group(request):
 def get_groups_to_add_to_post(request):
     if request.method == 'GET':
         user = CustomUser.objects.get(id=request.user.id)
-        groups = user.groups.filter(permissions__in=['admin', 'poster'])
-        groups = groups.values_list('id', flat=True)
+        usergroups = UserGroup.objects.filter(user=user.id, permissions__in=['admin', 'poster', 'owner'])
+        groups = Group.objects.filter(usergroup__in=usergroups).values_list('id', flat=True)
         return Response(groups, status=status.HTTP_200_OK)
     
 @api_view(['GET'])
@@ -853,7 +858,6 @@ def delete_post(request):
 def delete_group(request):
     if request.method == 'DELETE':
         group_id = request.data.get('group_id')
-        print("GROUPID:", group_id)
         group = Group.objects.get(id=group_id)   
         group.delete()
         return Response({'message': 'Group deleted successfully'}, status=status.HTTP_200_OK)

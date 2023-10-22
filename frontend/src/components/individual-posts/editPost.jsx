@@ -37,9 +37,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
   const navigate = useNavigate() 
   const [value, setValue] = useState(0);
   const [groupIDs, setGroupIDs] = useState([]);
-  const [analysisContent, setAnalysisContent] = useState([])
   const [collaboratorsList, setCollaborators] = useState([])
-  const [collaboratorIDs, setCollaboratorIDs] = useState([]);
+  const [collaboratorIDs] = useState([]);
 
   const [tags, setTags] = useState(allData.tags);
   const [error, setError] = useState(false);
@@ -114,7 +113,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     e.preventDefault();
     setIsLoading(true);
     try{
-      await instance.delete('/groups/post/delete', {
+      await instance.delete('/post/delete', {
         data: {
           post_id: allData.id,
         },
@@ -197,16 +196,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     }
   ]
   
-  const onOff = [
-    {
-      value: 'on',
-      label: 'On',
-    },
-    {
-      value: 'off',
-      label: 'Off'
-    }
-  ]
+  
+  
 
   useEffect(() => {
       setTags(allData.tags);
@@ -218,9 +209,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     }
   };
 
-  const handleDeleteTag = (tagToDelete) => {
-    setTags((prevTags) => prevTags.filter(tag => tag !== tagToDelete));
-  };
+  
 
   const handleGroupChanges = async (event) => {
     event.preventDefault();
@@ -312,10 +301,10 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     async function getGroupInformation() {
       try {
         const response = await instance({
-          url: "/group/landing",
+          url: "/user/get_groups_for_post",
           method: "GET",
         });
-        setGroupIDs(response.data.users_groups);
+        setGroupIDs(response.data);
       } catch (error) {
         console.error("Error fetching group information:", error);
       }
@@ -335,7 +324,6 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
           method: "GET",
           params: { analysis_id: allData.associated_results },
         });
-        setAnalysisContent(response.data);
         setTolerance(response.data.tolerance)
         setMinimumPeakHeight(response.data.peak_height)
         setSpectrumCalibration(response.data.calibrate)
@@ -354,8 +342,12 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
     
     getAnalysisDetails();
   }}, [allData.associated_results]);
-
-  let arrayDataItems = groupIDs.map((group_id) =>  <Grid item key={group_id} xs={6} sx={{ paddingTop: "0px", marginBottom: "20px"}}> <EditGroupCard group_id={group_id} post_id={allData.id}  setCheckboxStates={setCheckboxStates} checkboxStates={checkboxStates}/> </Grid>); 
+  
+  let arrayDataItems = groupIDs.map((group_id) =>  
+    <Grid item key={group_id} xs={6} sx={{ paddingTop: "0px", marginBottom: "20px"}}> 
+      <EditGroupCard group_id={group_id} post_id={allData.id}  setCheckboxStates={setCheckboxStates} checkboxStates={checkboxStates}/> 
+    </Grid>
+  ); 
 
   let stringPublicity = ""
   if (allData.publicity === false) {
@@ -383,21 +375,31 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
         <Box sx={{ flex: 1 }}>
 
           <TabPanel value={value} index={0} sx={{ margin: 20 }}>
-            <h3>Add your Post to your Groups</h3>
+          <h3>Add your Post to your Groups</h3>
 
-            <Grid container spacing={2} sx={{marginTop: '20px', marginBottom: '20px', maxHeight: '300px', overflowY: "scroll"}}>
-              {arrayDataItems}
-              
-            </Grid>
-            <Grid item xs={12}>
-                {isLoading ? (
-                    <CircularProgress sx={{float: "right"}} />
-                ) : (
-                  <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB" }} onClick={handleGroupChanges}>
-                  Submit Groups
-                </Button>
-                )}
-            </Grid>
+            {arrayDataItems.length !== 0 ? (
+              <>
+                <Grid container spacing={2} sx={{marginTop: '20px', marginBottom: '20px', maxHeight: '300px', overflowY: "scroll"}}>
+                {arrayDataItems}
+                
+              </Grid>
+              <Grid item xs={12}>
+                  {isLoading ? (
+                      <CircularProgress sx={{float: "right"}} />
+                  ) : (
+                    <Button variant="contained" sx={{ width: "30%", marginBottom: "0px", float: "right", backgroundColor:"#04ADEB" }} onClick={handleGroupChanges}>
+                    Submit Groups
+                  </Button>
+                  )}
+              </Grid>
+              </>
+            ) : (
+              <>
+              <h4>Sorry, you have not joined a group yet. You will need to request access and be accepted a group in the groups tab in order to add your analyses to them.</h4>
+              </>
+            )}
+
+            
 
            
           </TabPanel>
@@ -527,31 +529,14 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                 />
                 <TextField
                   margin="normal"
-                  select
-                  required
-                  size="large"
-                  sx={{ width: '48%', float: 'left' }}
-                  label="Set for multiple proteins?"
-                  name="multiProtein"
-                  value={multi_protein}
-                  onChange={e => setMultiProtein(e.target.value)}
-                >
-                  {onOff.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  margin="normal"
-                  sx={{ width: '48%', float: 'right', marginBottom: '32px' }}
+                  sx={{ width: '48%', float: 'left', marginBottom: '32px' }}
                   select
                   required
                   className='Floater'
                   size="large"
                   label="Data Publicity"
                   name="setDataPublic"
-                  defaultValue={stringDataPublicity}
+                  value={stringDataPublicity || ''}  // Use `value` instead of `defaultValue`
                   onChange={e => setDataPublic(e.target.value)}
                 >
                   {publicPrivate.map((option) => (
@@ -559,8 +544,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                       {option.label}
                     </MenuItem>
                   ))}
-                </TextField>
-                
+                </TextField>            
                 </div>
                 {isLoading ? (
                     <CircularProgress sx={{float: "right"}} />
@@ -606,8 +590,8 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                   freeSolo
                   options={[]}
                   defaultValue={allData.tags}
-                  onChange={(newValue) => {
-                      setTags(newValue);
+                  onChange={(event, newTag) => {
+                    setTags(newTag);
                   }}
 
                   renderTags={(value, getTagProps) =>
@@ -645,7 +629,7 @@ export default function EditPopup({ open, setOpen, handleClose, allData }) {
                   multiple
                   freeSolo
                   options={[]}
-                  defaultValue={collaboratorsList}
+                  value={collaboratorsList}
                   onChange={(event, newValue) => {
                     checkCollaborators(newValue)
                   }}

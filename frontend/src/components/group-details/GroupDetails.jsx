@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Banner from '../../assets/images/group-template-banner.jpg';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import '../../assets/styles/global.css';
-import GroupBar from '../profile-details/GroupBar';
+import Contributors from '../individual-posts/contributors';
 import instance from '../api/api_instance';
 import PermsCard from './PermsCard';
 import MemberCard from './MemberCard';
-import { Typography } from '@mui/material';
 import EditGroupWindow from './EditGroupWindow';
 
 function GroupDetails(props) {
@@ -17,13 +14,12 @@ function GroupDetails(props) {
     setMinimized(!minimized);
   };
 
-  {/* API Integration */}
 
   const [groupname, setGroupname] = useState('')
   const [description, setDescription] = useState('')
   const [banner, setBanner] = useState('')
-  const [groupPosts, setGroupPosts] = useState([])
   const [memberCount, setMemberCount] = useState('')
+  const [groupMembers, setGroupMembers] = useState([])
   const [postCount, setPostCount] = useState('')
   const [creationDate, setCreationDate] = useState('')
   const [userPermission, setUserPermission] = useState('')
@@ -34,23 +30,13 @@ function GroupDetails(props) {
   const [isAdmin, setIsAdmin] = React.useState(false);
   const [inButtonTxt, setInButtonTxt] = useState('Request Access');
 
-  // Still need to organize user perms
-
-  function checkAdmin() {
-    console.log(userPermission);
-    if(userPermission == 'admin') {
-      setIsAdmin(true);
-    } else {
-      setIsAdmin(false);
-    }
-  }
-
+  
   useEffect(() => {
     function updatePermissionView() {
-      if(userPermission == "admin" || userPermission == "viewer" || userPermission == "poster" || userPermission == "owner") {
+      if(userPermission === "admin" || userPermission === "viewer" || userPermission === "poster" || userPermission === "owner") {
         setMemberinGroup(true)
         setInGroupText("Permissions")
-      } else if (userPermission == "requested") {
+      } else if (userPermission === "requested") {
         setInButtonTxt('Access has been requested and is pending admin approval')
       }
     }
@@ -69,16 +55,16 @@ function GroupDetails(props) {
         setGroupname(res.data.name)
         setDescription(res.data.description)
         setBanner(res.data.group_pic)
-        setGroupPosts(res.data.posts)
         setMemberCount(res.data.members.length)
+        setGroupMembers(res.data.members)
         setPostCount(res.data.posts.length)
         setCreationDate(new Date(res.data.created).toLocaleDateString())
         setUserPermission(res.data.user_permission)
         const currentUserPerm = res.data.user_permission
-        if (currentUserPerm == 'admin' || currentUserPerm == 'owner') {
+        if (currentUserPerm === 'admin' || currentUserPerm === 'owner') {
           setIsAdmin(true)
         }
-        if (currentUserPerm == "owner" || currentUserPerm == 'requested' || currentUserPerm == 'N/A') {
+        if (currentUserPerm === "owner" || currentUserPerm === 'requested' || currentUserPerm === 'N/A') {
           setIsOwner(true);
         }
 
@@ -88,30 +74,12 @@ function GroupDetails(props) {
       }
     }
     GetGroupInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    } , 
+    [props.group_id] 
   ) 
-  const registerUser = async (userId, groupId, permission) => {
-    const data = {
-      user_id: userId,
-      group_id: groupId,
-      permissions: permission,
-    };
-  
-    try {
-      await instance.post('users/assign_groups', data, {
-        headers: {
-          'Content-Type': 'application/json',
-          // Include your authentication tokens in the headers if needed
-        },
-      });
-      console.log('User Registered successfully');
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
+ 
   const updateUserPermissions = async (userId, groupId, permission) => {
-    if(userPermission == 'requested') {
+    if(userPermission === 'requested') {
       setInButtonTxt('Access has been requested and is pending admin approval');
     } else {
       const data = {
@@ -123,10 +91,8 @@ function GroupDetails(props) {
         await instance.post('/users/assign_groups', data, {
           headers: {
             'Content-Type': 'application/json',
-            // Include your authentication tokens in the headers if needed
           },
         });
-        console.log('Permissions updated successfully');
       } catch (error) {
         console.error('Error:', error);
       }
@@ -134,9 +100,34 @@ function GroupDetails(props) {
     }
   };
 
+  const deleteUser = async (userId, groupId, permission) => {
+    const data = {
+      user_id: userId,
+      group_id: groupId,
+      permissions: permission,
+    };
+    try {
+      await instance.put('/groups/update_perms', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      window.location.reload(false);
+    }
+
+  let numbers = [];
+  for(let i = 0; i < groupMembers.length; i++){
+    if (groupMembers[i][1] !== "requested") {
+      numbers.push(groupMembers[i][0]);
+    }
+  }
+
   const divStyle = {
     width: minimized ? '15%' : '50%',
-    backgroundColor: 'grey', // Use 'backgroundColor' instead of 'backgroundColour'
+    backgroundColor: 'grey', 
     height: '1000px',
   };
 
@@ -182,7 +173,6 @@ function GroupDetails(props) {
 
   const overlayStyleMinimized = {
     position: 'relative',
-    display: 'flex',
     alignItems: 'right',
     width: '56%',
     height: 'auto',
@@ -228,9 +218,11 @@ function GroupDetails(props) {
             <div style={{display: 'flex', marginTop: '-20px', color: 'white', fontSize: '14px'}}>
               <h1 style={{marginRight: '15px'}}><MemberCard group_id={props.group_id} member_count={memberCount}/></h1>
               <span style={circleDot}></span>
-              <h1>{postCount} Posts</h1>
+              <h1>{postCount} Analyses</h1>
             </div>
-            <div style={{float:'left', marginTop: '-10px'}}><GroupBar></GroupBar></div>
+            <div style={{float:'left', marginTop: '-10px'}}>
+              <Contributors collaborators = {numbers} />
+            </div>
             <br></br>
             <h1 style={{color: 'white', marginTop: '20px', fontSize: '27px'}}> Description </h1>
             <hr style={{width:'400px', border:' 2px solid #fff', marginRight: '450px',zIndex:900, marginTop: '-10px'}} />
@@ -241,7 +233,7 @@ function GroupDetails(props) {
             <EditGroupWindow group_id={props.group_id}></EditGroupWindow>
           )}
           {!isOwner ? ( 
-              <Button sx={{marginTop:'50px', backgroundColor:'red', width:'150px'}} color='error' variant='contained' onClick={() => updateUserPermissions(loggedInId, props.group_id, "remove")}>Leave Group</Button>
+              <Button sx={{marginTop:'50px', backgroundColor:'red', width:'150px'}} color='error' variant='contained' onClick={() => deleteUser(loggedInId, props.group_id, "remove")}>Leave Group</Button>
           ) : ( 
             <div></div>
           )}

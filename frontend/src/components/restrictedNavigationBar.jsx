@@ -4,7 +4,7 @@ import LogoTransparent from '../assets/images/LogoMSH_Transparent.png';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import instance from './api/api_instance';
 
 
@@ -18,7 +18,6 @@ function RestrictedAppBar() {
   useEffect(() => {
     if(localStorage.getItem('token') != null){
       instance.defaults.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
-      console.log(instance.defaults.headers.common['Authorization']);
     }
   },[])
 
@@ -33,7 +32,7 @@ function RestrictedAppBar() {
             variant="h6"
             noWrap
             component="a"
-            href="/"
+            href="/login"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -44,7 +43,7 @@ function RestrictedAppBar() {
               textDecoration: 'none',
             }}
           >
-            MSH
+            MaSH
           </Typography>
         </Toolbar>
       </Container>

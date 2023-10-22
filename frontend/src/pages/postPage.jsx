@@ -2,15 +2,12 @@ import React from 'react';
 import NavigationBar from '../components/NavigationBar';
 import { useState, useEffect } from 'react';
 import instance from '../components/api/api_instance';
-import { Box, Button, Chip, Stack, Typography, Grid } from '@mui/material';
-import StockImage from '../assets/images/stock-image.jpg';
+import { Box, Button, Stack, Typography, Grid } from '@mui/material';
 import PostTable from '../components/individual-posts/postTable.jsx'
 import PostGraph from '../components/individual-posts/postGraph';
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
-import EditIcon from '@mui/icons-material/Edit';
 import Tags from '../components/individual-posts/tags';
-import ProfilePicture from '../components/individual-posts/profile';
 import Contributors from '../components/individual-posts/contributors';
 import EditPopup from '../components/individual-posts/editPost';
 import PostCitation from '../components/individual-posts/postCitation';
@@ -20,7 +17,6 @@ import MobileOverlay from '../components/MobileOverlay';
 export default function PostPage(props) {
 
   const [title, setTitle] = useState('')
-  const [summary, setSummary] = useState('')
   const [publicity, setPublicity] = useState('')
   const [description, setDescription] = useState('')
   const [date, setDate] = useState('')
@@ -33,7 +29,6 @@ export default function PostPage(props) {
   const [massSpectrumFile, setMassSpectrumFile] = useState("");
   const [compoundFile, setCompoundFile] = useState("");
   const [adductFile, setAdductFile] = useState("");
-  const [dataPublicity, setDataPublicity] = useState(false);
   const [userID, setUserID] = useState("")
 
   const handleOpenCitation = () => {
@@ -72,7 +67,6 @@ export default function PostPage(props) {
           params: {post_id: props.post_id}
       }).then((res) => {
         setTitle(res.data.title)
-        setSummary(res.data.summary)
         setPublicity(res.data.publicity)
         setDescription(res.data.description)
         setResultsID(res.data.associated_results)
@@ -86,8 +80,8 @@ export default function PostPage(props) {
       }
     }
     GetPostInformation();
-    } , // <- function that will run on every dependency update
-    [props.post_id] // <-- empty dependency array
+    } , 
+    [props.post_id] 
     
   )
 
@@ -135,7 +129,7 @@ export default function PostPage(props) {
       }
     }
     GetIndividualInformation();
-    }}, [allData.author] // <-- empty dependency array
+    }}, [allData.author] 
   )
 
   let CheckedResultsId = resultsId
@@ -238,14 +232,14 @@ export default function PostPage(props) {
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
           {userID === allData.author || collaborators.includes(userID) ? (
             <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={handleOpen}>
-              Edit Post
+              Edit Analysis
             </Button>
           ) : (<p></p>) }
             <EditPopup open={open} setOpen={setOpen} handleClose={handleClose} allData={allData}/>
           </Grid>
           <Grid item sx={{margin: "0px 20px 0px 0px"}}>
-            <Button variant="contained" onClick={handleOpenCitation} style={{ backgroundColor: '#02AEEC' }}>
-              Cite Post
+            <Button variant="contained" onClick={handleOpenCitation} sx={{ backgroundColor: '#02AEEC' }}>
+              Cite Analysis
             </Button>
             
             <PostCitation openCitation={openCitation} handleCloseCitation={handleCloseCitation}post_id={props.post_id}/>
@@ -279,25 +273,20 @@ export default function PostPage(props) {
               <h2>Download Files</h2>
 
               {massSpectrumFile !== "" && compoundFile !== "" && adductFile !== "" ? (
-                <Grid item container spacing={12}>
-                  <Grid item xs={3}>
-                    <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={boundsDownload}>
-                      Download Bounds Spectrum File
-                    </Button>
-                  </Grid>
+                <Box display="flex" justifyContent="space-between">
 
-                  <Grid item xs={3}>
+                    <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={boundsDownload}>
+                      Download Bound Spectrum File
+                    </Button>
+ 
                     <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={adductsDownload}>
                       Download Adducts File
                     </Button>
-                  </Grid>
 
-                  <Grid item xs={3}>
                     <Button variant="contained" sx={{backgroundColor:"#04ADEB"}} onClick={compoundsDownload}>
                       Download Compounds File
                     </Button>
-                  </Grid>
-                </Grid>
+                </Box>
               ) : (
                 <p>
                   Unfortunately, you are not a collaborator on this post or the data itself is not public.

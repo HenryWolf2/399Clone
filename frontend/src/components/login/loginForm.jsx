@@ -3,10 +3,10 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import instance from '../api/api_instance';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import Grid from '@mui/material/Grid';
-import{Box, Container} from '@mui/material';
+import{Container} from '@mui/material';
 
 import '../../assets/styles/global.css';
 
@@ -28,6 +28,7 @@ const LoginForm = () => {
             username: username,
             password: password
         }
+        setPassword("")
         try{
         await instance({
             url: "/login/",
@@ -38,17 +39,12 @@ const LoginForm = () => {
             instance.defaults.headers.common['Authorization'] = 'Token ' + res.data.token;
             //saving the token in local storage
             localStorage.setItem('token', res.data.token)
-            //needs to navigate to the profile page once up
             navigate("/");
           });
         } catch(e){
-            //display error message (username or password incorrect)
-            //clear the password field
             if(e.response.status === 401){
-                setPassword("")
                 setErrorMessage("Invalid Username or Password")
             }else{
-                setPassword("")
                 setErrorMessage("Internal Server Error")
             }
         }
@@ -58,7 +54,7 @@ const LoginForm = () => {
         
         <Container maxWidth= "sm">
         <React.Fragment>
-        {errorMessage ? <Alert severity="error" fullWidth> {errorMessage} — <strong>Please try again!</strong> </Alert> : null}
+        {errorMessage ? <Alert severity="error" > {errorMessage} — <strong>Please try again!</strong> </Alert> : null}
         <form onSubmit ={handleSubmit}>   
                 <TextField
                 margin="normal"
@@ -68,7 +64,6 @@ const LoginForm = () => {
                 label="Username"
                 name="username"
                 autoComplete="username"
-                autoFocus
                 onChange={e => setUsername(e.target.value)}
                 />
                 <TextField
@@ -86,7 +81,7 @@ const LoginForm = () => {
                 type="submit"
                 variant="contained"
                 size = "large"
-                style={{ backgroundColor: '#02AEEC' }}
+                sx={{ backgroundColor: '#02AEEC' }}
                 >
                 Login
                 </Button>

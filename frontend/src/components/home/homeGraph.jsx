@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, PureComponent } from 'react';
+import { useState, useEffect } from 'react';
 import instance from '../api/api_instance';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Dot } from 'recharts';
 

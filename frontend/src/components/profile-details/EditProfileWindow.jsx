@@ -6,8 +6,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import { FormControl, FormLabel } from '@mui/material';
-import UploadIcon from '@mui/icons-material/Upload';
-import Upload from '@mui/icons-material/Upload';
+
 
 const style = {
   position: 'absolute',
@@ -48,7 +47,6 @@ useEffect(() => {
         url: "/profile/get",
         method: "GET",          
     }).then((res) => {
-      console.log(res)
       setDescription(res.data.description)
     });
     } catch(e) {
@@ -56,8 +54,8 @@ useEffect(() => {
     }
   }
   GetProfileInformation();
-  } , // <- function that will run on every dependency update
-  [] // <-- empty dependency array
+  } , 
+  [] 
 ) 
 
 
@@ -83,11 +81,9 @@ const handleProfileUpdate = async () => {
   }
   formData.append('description', description);
 
-  console.log(formData);
 
   try{
     await instance.post('/profile/edit', formData, {
-      // url: "/post/create/data",
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -97,7 +93,6 @@ const handleProfileUpdate = async () => {
       }
     );
   } catch(e){
-      //display error message (username or password incorrect)
       console.error(e)
   }
   window.location.reload(false);
@@ -106,11 +101,10 @@ const handleProfileUpdate = async () => {
   return (
     <div>
       <Button
-        sx={{ margin: 3.5, top: '250px', left: '25px' }}
-        style = {{backgroundColor: '#02AEEC' }}
+        sx={{ margin: 3.5, top: '250px', left: '25px',backgroundColor: '#02AEEC' }}
         className="custom-button"
         variant="contained"
-        onClick={handleOpen} // Use onClick here to open the modal
+        onClick={handleOpen} 
       >
         Edit Profile
       </Button>

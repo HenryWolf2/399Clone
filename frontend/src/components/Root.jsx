@@ -8,55 +8,43 @@ import PublicPosts from '../pages/public-data';
 import NotFound from '../pages/notFound';
 import CreatePost from '../pages/create-post';
 import Profile from '../pages/profile';
-import IndividualPost from './individual-posts/post';
 import { useState, useEffect } from 'react';
 import instance from './api/api_instance';
 import PostPage from '../pages/postPage';
 import GroupSpecific from '../pages/group-specific';
 import Groups from '../pages/group-landing';
 import CreateGroup from '../pages/create-group';
-import GroupDetails from './group-details/GroupDetails';
 
 export default function Root() {
-  /* Unsure if this section here is needed but going to keep it for now */
-  const routes = [
-    { path: '/', name: 'Home', Component: Home, exact: true },
-    { path: '/login', name: 'Login', Component: Login, exact: false },
-    { path: '/loading', name: 'Loading', Component: Loading, exact: false },
-    { path: '/register', name: 'Register', Component: Register, exact: false },
-    { path: '/profile', name: 'Profile', Component: Profile, exact: false },
-    { path: '/public-data', name: 'PublicPosts', Component: PublicPosts, exact: false },
-    { path: '/create-post', name: 'Create Post', Component: CreatePost, exact: false},
-    { path: '/create-group', name: 'Create Group', Component: CreateGroup, exact: false},
-    { path: '*', name: 'No Match', Component: NotFound, exact: false },
-  ];
+  
 
   const [AllPosts, setAllPosts] = useState([])
   const [AllGroups, setAllGroups] = useState([])
 
+  
+
   useEffect(() => {
+    if(localStorage.getItem('token') != null){
     async function GetAllPostsIDs() {
       try{ 
         await instance ({
-          // Set URL to get all posts by ID
           url: "/post/get_all_objects",
           method: "GET",
       }).then((res) => {
         setAllPosts(res.data)
       });
-      } catch(e) {
-        console.error(e)
-      }
+      } catch(e) { }
     }
-    GetAllPostsIDs();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    
+      GetAllPostsIDs();
+    }
+    } , 
+    [] 
   ) 
 
-  // Change this endpoint to a new one that gets all the groups ID's
-  // It should work as soon as we change that :D
 
   useEffect(() => {
+    if(localStorage.getItem('token') != null){
     async function GetAllGroupsIDs() {
       try{ 
         await instance ({
@@ -66,15 +54,14 @@ export default function Root() {
         setAllGroups(res.data)
       });
       } catch(e) {
-        console.error(e)
-      }
+       }
     }
     GetAllGroupsIDs();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    }} , 
+    [] 
   ) 
 
-  let postRoutes = AllPosts.map((post_id) => <Route key={post_id} path={`/post/${post_id}`} element = {<PostPage post_id={post_id} />} />);
+  let postRoutes = AllPosts.map((post_id) => <Route key={post_id} path={`/analysis/${post_id}`} element = {<PostPage post_id={post_id} />} />);
   let groupRoutes = AllGroups.map((group_id) => <Route key={group_id} path={`/group/${group_id}`} element = {<GroupSpecific group_id={group_id} />} />);
 
   return (
@@ -86,7 +73,7 @@ export default function Root() {
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/profile" element={<Profile />} />
           <Route exact path="/public-data" element={<PublicPosts />} />
-          <Route exact path="/create-post" element={<CreatePost />} />
+          <Route exact path="/create-analysis" element={<CreatePost />} />
           <Route exact path="/groups" element={<Groups />} />
           <Route exact path="/create-group" element={<CreateGroup />} />
           

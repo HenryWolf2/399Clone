@@ -1,12 +1,9 @@
 import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Contributors from './contributors';
 import ProfilePicture from './profile';
-import StockImage from '../../assets/images/stock-image.jpg';
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
 import instance from '../api/api_instance.js'
@@ -20,8 +17,8 @@ export default function IndividualPost(props) {
   
   const [title, setTitle] = useState('')
   const [banner, setBanner] = useState('')
-  const [summary, setSummary] = useState('')
   const [publicity, setPublicity] = useState('')
+  const [author, setAuthor] = useState('')
   const [description, setDescription] = useState('')
   const [date, setDate] = useState('')
   const [post_id, setPostID] = useState('')
@@ -38,11 +35,11 @@ export default function IndividualPost(props) {
           
       }).then((res) => {
         setTitle(res.data.title)
-        setSummary(res.data.summary)
+        setAuthor(res.data.author)
         setPublicity(res.data.publicity)
         setDescription(res.data.description)
         setDate(new Date(res.data.post_time).toLocaleDateString())
-        setPostID("/post/"+props.post_id)
+        setPostID("/analysis/"+props.post_id)
         setTags(res.data.tags)
         setCollaborators(res.data.collaborators)
         setBanner(res.data.post_pic)
@@ -52,8 +49,8 @@ export default function IndividualPost(props) {
       }
     }
     GetPostInformation();
-    } , // <- function that will run on every dependency update
-    [] // <-- empty dependency array
+    } ,
+    [props.post_id] 
   )
   
 
@@ -66,11 +63,11 @@ export default function IndividualPost(props) {
           {/* Profile picture will need to be reviewed when the backend is linked */}
 
           <Grid item sx={{margin: "0px 0px 0px 20px"}}>
-            <ProfilePicture />
+            <ProfilePicture author={author} />
           </Grid>
           <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
             <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px"}}>
-              Group name <br></br>{date} { publicity ? <PublicIcon /> : <LockIcon /> }
+              {date} { publicity ? <PublicIcon /> : <LockIcon /> }
             </Typography>
           </Grid>
 

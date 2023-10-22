@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import NavigationBar from '../components/NavigationBar';
-import IndividualPost from '../components/individual-posts/post';
 import instance from '../components/api/api_instance';
 import { useEffect } from 'react';
 import PostGrid from '../components/individual-posts/postgrid';
-import { Grid, Item, Box,Button } from '@mui/material';
+import { Box,Button, Typography, Container } from '@mui/material';
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment'
-import { Container, FormControlLabel, Stack } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import Chip from '@mui/material/Chip';
 import MobileOverlay from '../components/MobileOverlay';
 
 export default function Post() {
@@ -21,6 +18,7 @@ export default function Post() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [tagInputValue, setTagInputValue] = useState("");
   const [allTags, setAllTags] = useState([]);
+  const[displayMessage, setDisplayMessage] = useState(false);
 
   const handleClick = event => {
 
@@ -33,13 +31,16 @@ export default function Post() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     
-    console.log(prompt)
     try{
     await instance({
         url: "post/search",
         method: "GET",
         params: {query: prompt}
     }).then((res) => {
+      setDisplayMessage(false)
+      if(res.data.length === 0){
+        setDisplayMessage(true)
+      }
         setPublicPosts(res.data);
         
     });
@@ -50,7 +51,6 @@ export default function Post() {
   const handleSubmit2 = async (event) => {
     event.preventDefault();
     
-    console.log(selectedTags);
     try{
       const queryString = selectedTags.map(tag => `query=${encodeURIComponent(tag)}`).join('&');
     
@@ -59,13 +59,16 @@ export default function Post() {
         method: "GET",
         params: {query: selectedTags}
     }).then((res) => {
+      setDisplayMessage(false)
+      if(res.data.length === 0){
+        setDisplayMessage(true)
+      }
         setPublicPosts(res.data);
-        console.log(res.data)
+        
         
     });
     } catch(e){
       console.error(e)
-      console.log(e.response)
     }}
 
   useEffect(() => {
@@ -96,7 +99,7 @@ export default function Post() {
       }).then((res) => {
         let newList = [];
         for(let i = 0; i < res.data.length; i++){
-          let names = res.data[i].name;
+          let names = res.data[i];
           newList.push(names);
 
           }
@@ -114,6 +117,8 @@ export default function Post() {
     [] // <-- empty dependency array
   ) 
 
+  
+
 
 
   return (
@@ -122,7 +127,7 @@ export default function Post() {
       <NavigationBar />
       <div className="App">
 
-        <h1> Public Posts </h1>
+        <h1> Public Analyses </h1>
       </div>
       <Container maxWidth= "sm">
           
@@ -130,12 +135,11 @@ export default function Post() {
             <div>
               <form onSubmit ={handleSubmit}>
               <TextField
-              margin="normal"
+              
               fullWidth
               value={prompt}
               label="Search"
               name="promt"
-              autoFocus
               onChange={e => setPrompt(e.target.value)}
               InputProps={{
                   endAdornment: (
@@ -145,16 +149,18 @@ export default function Post() {
                   ),
                   }}
               />
-              <Button variant="text" onClick={handleSubmit}> Submit</Button>     
+              <Box display="flex" justifyContent="space-between">
+              <Button variant="text" onClick={handleClick}> Search by Tag </Button>
+              <Button variant="text" onClick={handleSubmit}> Submit</Button>  
+              </Box>  
           </form>
-          <Button variant="text" onClick={handleClick}> Switch to Search by Tag </Button>
+          
             </div>
           ) : (
             <div>
               <form onSubmit ={handleSubmit2}>
                 <Autocomplete
                   multiple
-                  controlled
                   
                   options={allTags}
                   onChange={(event, newTag) => {
@@ -168,9 +174,12 @@ export default function Post() {
                     return <TextField label='Add Tag' {...params} />;
                   }}
                 ></Autocomplete>
+                <Box display="flex" justifyContent="space-between">
+                <Button variant="text" onClick={handleClick}> Search by Text </Button>
                 <Button variant="text" onClick={handleSubmit2}> Submit</Button> 
+                </Box>
                 </form>
-                <Button variant="text" onClick={handleClick}> Switch to Search by All </Button>
+                
             </div>
           )}
           
@@ -180,7 +189,18 @@ export default function Post() {
       
 
       <Box sx={{ flexGrow: 1, width: "98%", padding: "1%" }}>
-        <PostGrid narrow={false} post_array={PublicPosts} />    
+        <PostGrid narrow={false} post_array={PublicPosts} />
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="50vh"
+        >
+        {displayMessage ? <Typography color="text.secondary" variant="h4" sx={{margin: "0px 20px 0px 20px"}}>No Analyses Found</Typography> : null}
+
+        </Box>
+        
+           
       </Box>
     </div>
   );

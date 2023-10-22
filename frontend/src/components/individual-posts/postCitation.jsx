@@ -1,17 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import instance from '../api/api_instance';
-import { Navigate, useNavigate } from 'react-router-dom';
-import Alert from '@mui/material/Alert';
-import Grid from '@mui/material/Grid';
-import{Box, Container, Typography} from '@mui/material';
-import Snackbar from '@mui/material/Snackbar';
+import{Box,  Typography} from '@mui/material';
 import Dialog from '@mui/material/Dialog';
-import AppBar from '@mui/material/AppBar';
 import Tab from '@mui/material/Tab';
-import InputAdornment from '@mui/material/InputAdornment'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import '../../assets/styles/global.css';
