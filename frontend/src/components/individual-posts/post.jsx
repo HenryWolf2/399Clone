@@ -65,7 +65,7 @@ export default function IndividualPost(props) {
           </Grid>
           <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
             <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px"}}>
-              Group name <br></br>{date} { publicity ? <PublicIcon /> : <LockIcon /> }
+              {date} { publicity ? <PublicIcon /> : <LockIcon /> }
             </Typography>
           </Grid>
 

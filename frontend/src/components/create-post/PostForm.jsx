@@ -629,11 +629,6 @@ const PostForm = () => {
                         <Grid item sx={{margin: "0px 0px 0px 20px"}}>
                           <ProfilePicture />
                         </Grid>
-                        <Grid item xs sx={{padding: '0px 0px 0px 10px'}}>
-                          <Typography gutterBottom variant="h6" component="div" sx={{marginBottom: "0px", color: 'black', textAlign: 'left'}}>
-                            Group name <br></br>{formattedDate} { publicity === "True" &&( <PublicIcon />)} {publicity === "False" && (<LockIcon />)}
-                          </Typography>
-                        </Grid>
 
                         <Grid item sx={{margin: "0px 20px 0px 0px"}}>
                         </Grid>
@@ -675,8 +670,8 @@ const PostForm = () => {
         size="medium"
         className = "Next-button"
         variant="contained"
-        sx={{ mt: 0, mb: 1 }}
-        style = {{margin: 30, backgroundColor: '#02AEEC'}}
+        sx={{ mt: 0, mb: 1, backgroundColor: '#02AEEC'}}
+        style = {{margin: 30}}
         onClick = {handleNext}
         >Next</Button>
       )}
@@ -687,8 +682,8 @@ const PostForm = () => {
         className = "Next-button"
         size="large"
         variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-        style = {{margin: 30, backgroundColor: '#02AEEC'}}
+        sx={{ mt: 3, mb: 2, backgroundColor: '#02AEEC' }}
+        style = {{margin: 30}}
         >
         Send Data
         </Button>
@@ -701,8 +696,8 @@ const PostForm = () => {
         form="form2"
         size="large"
         variant="contained"
-        sx={{ mt: 3, mb: 2 }}
-        style = {{margin: 30, backgroundColor: '#02AEEC'}}
+        sx={{ mt: 3, mb: 2, backgroundColor: '#02AEEC'}}
+        style = {{margin: 30}}
         >
         Submit Analysis
         </Button>
